@@ -1,0 +1,126 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion33) precise; urgency=low
+ .
+   * Move from Google Code to Github #703
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat-quick
++++ securityonion-sostat-20120722/bin/sostat-quick
+@@ -65,7 +65,7 @@ header_single "                        S
+ 
+ echo "Collecting Security Onion Setup ...."
+ echo -e "\nPlease be patient as this can take a few minutes to complete ...."
+-echo "${yellow}The Security Onion Wiki can be referenced at https://code.google.com/p/security-onion/w/list${normal}"
++echo "${yellow}The Security Onion Wiki can be referenced at https://github.com/Security-Onion-Solutions/security-onion/wiki${normal}"
+ echo -e "\nNow that your Security Onion Installation has been completed, you will now need to fine tune its settings to your Network Requirements"
+ echo "Fine Tuning will take several weeks of your time, however; in the end it will provide you with all of the tools to protect your network environment."
+ echo -e "\nThis 'Quick' report will help to identify the ${red}' Most Common ' ${normal}issues and is not intended to be a ' Complete ' report of your installation. "
+@@ -103,7 +103,7 @@ next
+ header_top "The Server/Sensor memory is listed below. Please compare to the Wiki recommended specs."
+ header_mid "If you are maxing out the SO Installations memory, this can cause significant issues with your installation."
+ header_mid "Usage of SWAP memory can cause significant performance issues"
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/Hardware"
++url_bot "Help URL: https://github.com/Security-Onion-Solutions/security-onion/wiki/Hardware"
+ echo
+ echo "$data" | grep 'Mem:'
+ echo "$data" | grep 'Swap:'
+@@ -111,8 +111,8 @@ next
+ 
+ 
+ header_top "Check to see the you have sufficent Hard Drive Space"
+-url_top "Help URL: https://code.google.com/p/security-onion/wiki/FAQ   ${normal}' Why is my disk filling up? '${yellow}"
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/Hardware"
++url_top "Help URL: https://github.com/Security-Onion-Solutions/security-onion/wiki/FAQ   ${normal}' Why is my disk filling up? '${yellow}"
++url_bot "Help URL: https://github.com/Security-Onion-Solutions/security-onion/wiki/Hardware"
+ echo
+ df -h
+ next
+@@ -120,7 +120,7 @@ next
+ header_top "Check Link Statistics"
+ header_mid "Look at the interfaces below to see if you are getting traffic on your monitoring interfaces"
+ header_mid "You can also run ${normal}' tcpdump -nnvvAi {monitoring interface address} '${red}, To help diagnose network issues."
+-url_bot "HELP URL: https://code.google.com/p/security-onion/wiki/NetworkConfiguration"
++url_bot "Help URL: https://github.com/Security-Onion-Solutions/security-onion/wiki/NetworkConfiguration"
+ echo
+ ip -s -s link
+ next
+@@ -130,7 +130,7 @@ header_top "If The number of enabled rul
+ header_mid "Too many rules enabled and can lead to performance issues.  You should disable any rules you don't need."
+ header_mid "If you do not see any ${normal}' Enabled Rules '${red}, you can run ${normal}' sudo rule-update '${red}"
+ header_mid "If you receive a '504' error on sudo rule-update, it could be an issue with the SNORT website or an oinkcode issue."
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
++url_bot "Help URL: https://github.com/Security-Onion-Solutions/security-onion/wiki/ManagingAlerts"
+ echo
+ echo "$data" | grep -m 1 'Enabled Rules:'
+ next
+@@ -155,7 +155,7 @@ header_mid "  lower your uncategorized e
+ header_mid "* If you suppressed in threshold.conf correctly and restarted services but the events kept coming in, it's possible that barnyard2 was still"
+ header_mid "  processing a backlog of events that would've stopped whenever barnyard2 was fully caught up."
+ 
+-url_top "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
++url_top "Help URL: https://github.com/Security-Onion-Solutions/security-onion/wiki/ManagingAlerts"
+ url_bot "Help URL: http://taosecurity.blogspot.com/2013/02/recovering-from-suricata-gone-wild.html"
+ echo
+ echo "$data" | grep -A 1 COUNT
+@@ -177,7 +177,7 @@ header_top "Check to see if Snort/Surica
+ header_mid "If you are seeing packet drops, this can be related to several possibilities."
+ header_mid "Underpowered Box (CPU and/or Memory), Failed Services, Too many Enabled Rules and several others..."
+ header_mid "Follow all of the comments/recommendations in this report to determine the root cause."
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
++url_bot "Help URL: https://github.com/Security-Onion-Solutions/security-onion/wiki/ManagingAlerts"
+ echo
+ if [ "$ENGINE" = "suricata" ]; then
+         for i in /nsm/sensor_data/*/stats.log; do
+@@ -219,7 +219,7 @@ header_mid "The default firewall configu
+ header_mid "You may want to restrict ports to only accepting connections from a subset of IP addresses."
+ header_mid "NOTE! Before attempting any firewall changes, you should always ensure you have a backup plan should you accidentally block your own connection."
+ header_mid "So make sure that you have DRAC/KVM/physical or some other form of access."
+-url_bot "https://code.google.com/p/security-onion/wiki/Firewall"
++url_bot "https://github.com/Security-Onion-Solutions/security-onion/wiki/Firewall"
+ echo "First 28 lines of UFW are shown. If you have more than 28 lines in UFW, please run ${red}' sudo ufw status '${normal} after this report for a complete output."
+ sudo ufw status | head -n 28
+ next
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -8,21 +8,11 @@
+ # Fixes contributed by:
+ # Stephane Chazelas
+ # Shane Castle
+-#
+-# Version: 
+-# 20120423
+-#
+-# Changelog:
+-# 20120314 - Initial version
+-# 20120316 - Fix bug discovered by Lysemose
+-# 20120423 - Fix the following issues:
+-# http://code.google.com/p/security-onion/issues/detail?id=248
+-# http://code.google.com/p/security-onion/issues/detail?id=258
+ 
+ # Determine if we're running Snort or Suricata
+ source /etc/nsm/securityonion.conf
+ 
+-# Make it purty
++# Define a banner to separate sections
+ banner="========================================================================="
+ 
+ # Check for root

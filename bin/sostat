@@ -1,0 +1,239 @@
+#!/bin/bash
+#
+# /usr/bin/sostat
+#
+# Written by:
+# Doug Burks
+# Snorby stats contributed by Jason Baron
+# Fixes contributed by:
+# Stephane Chazelas
+# Shane Castle
+
+# Determine if we're running Snort or Suricata
+source /etc/nsm/securityonion.conf
+
+# Define a banner to separate sections
+banner="========================================================================="
+
+# Check for root
+[ "$(id -u)" -ne 0 ] && echo "This script must be run using sudo!" && exit 1
+
+header() {
+  printf '%s\n' "$banner" "$*" "$banner"
+}
+
+remove_ansi_escapes() {
+  sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
+}
+
+# Begin output
+header "Service Status"
+service nsm status 2>&1 | remove_ansi_escapes
+
+echo
+header "Interface Status"
+ifconfig
+
+echo
+header "Link Statistics"
+ip -s -s link
+
+echo
+header "Disk Usage"
+df -h
+
+echo
+header "Network Sockets"
+lsof -nP -i
+
+if [ -f /var/log/nsm/pulledpork.log ]; then
+	echo
+	header "IDS Rules Update"
+	date=$(date +'%a %b %_d')
+	tail -n 1000 /var/log/nsm/pulledpork.log |
+	  sed "/^$date/,\$!d;/./!d;/An error occurred: WARNING: /d" |
+	  remove_ansi_escapes
+fi
+
+echo
+header "CPU Usage"
+# Get the first six lines of top output (summary)
+top -b -n1 |head -6
+# Use "ps" to get a process listing and sort it by cpu usage
+ps -eo pcpu,pmem,args --sort -pcpu
+
+if [ -d /nsm/sensor_data ]; then
+	echo
+	FREQUENCY=`grep -A1 packets_received /var/ossec/etc/ossec.conf | tail -1 | cut -d\> -f2 | cut -d\< -f1`
+	header "Packets received during last monitoring interval ($FREQUENCY seconds)"
+	/usr/bin/sostat-interface-delta
+	echo
+	header "Log Archive"
+	for i in /nsm/sensor_data/*; do 
+		DAYS=`ls $i/dailylogs/ | wc -l`
+		echo "$i/dailylogs/ - $DAYS days"
+		cd $i/dailylogs
+		du --max-depth=1 -h|sort -k2
+		cd ->/dev/null
+		echo
+	done
+	DAYS=`ls /nsm/bro/logs/ | grep -v current | grep -v stats | wc -l`
+	echo "/nsm/bro/logs/ - $DAYS days"; cd /nsm/bro/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
+	echo
+	TMP=`mktemp`
+	su sguil -c '/opt/bro/bin/broctl netstats' > $TMP
+	if [ -s $TMP ]; then
+		header "Bro netstats"
+		echo -n "Average packet loss as percent across all Bro workers: "
+		cat $TMP | sed \
+		's/[a-z]*=//g' | awk '{ drop += $4 ; link += $5 } \
+		END { printf("%f\n", ((drop/NR) / (link/NR)) * 100) }'
+		echo
+		cat $TMP
+		echo
+		rm $TMP
+	fi
+	header "IDS Engine ($ENGINE) packet drops"
+	if [ "$ENGINE" = "suricata" ]; then
+		for i in /nsm/sensor_data/*/stats.log; do
+			echo "$i"
+			tail -n 50 "$i" |
+				grep -e "Date: " -e "drop"
+			echo
+		done
+	else
+		for i in /nsm/sensor_data/*/snort-*.stats; do 
+			if grep -q '^[^#]' "$i"; then
+				echo -n "$i last reported pkt_drop_percent as "
+				grep -v '^#' "$i" |tail -n 1 |cut -d\, -f2
+			else
+				echo "ERROR: No stats found in $i"
+			fi
+		done
+	fi
+	echo
+        if [ -f /proc/net/pf_ring/info ]; then
+                header "pf_ring stats"
+                cat /proc/net/pf_ring/info
+                ls /proc/net/pf_ring/*-* &>/dev/null && for i in /proc/net/pf_ring/*-* ; do
+                        echo
+                        echo $i
+                        grep "Appl. Name" $i
+                        grep "Tot Packets" $i
+                        grep "Tot Pkt Lost" $i
+                        grep "Errors" $i
+                        grep "Min Num Slots" $i
+                        grep "Num Free Slots" $i
+                done
+        fi
+fi
+
+if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
+        echo
+        header "Netsniff-NG - Reported Packet Loss (per interval)"
+ 	#awk 'BEGIN { RS="."; FS="/"; ORS="\n" } { if( $0 !~ /netsniff/ && substr( $2,2,length($2)-2 ) > 0 ) print "File:",FILENAME,"Processed:",$1,"Lost:",$2 }' /var/log/nsm/*/netsniff-ng.log | sed -e 's/(//' -e 's/)//' | column -t | grep -v "Lost:  -0"
+	for i in /var/log/nsm/*/netsniff*; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
+	if [ $? -gt 0 ]; then
+		echo "0 Loss"
+	fi
+fi
+
+if [ -d /var/lib/mysql/securityonion_db ]; then
+	echo
+	header "Sguil Uncategorized Events"
+	mysql -uroot -Dsecurityonion_db -e "SELECT COUNT(*) FROM event WHERE status=0"
+	echo
+	header "Sguil events summary for yesterday"
+	# List all sigs from yesterday that are not URLs captured by http_agent descending by count
+	mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc;"
+	mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen != 10001 and event.signature_id != 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
+	echo
+	header "Top 50 All time Sguil Events"
+	mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 group by event.signature order by Totals desc limit 50;"
+	mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen != 10001 and event.signature_id != 420042;"
+	# check for active http_agent
+	num_http_agents=$(mysql -uroot -Dsecurityonion_db -e "select * from sensor where agent_type='http' and active='Y';" | wc -l)
+	if [ $num_http_agents -gt 0 ]; then
+		echo
+		header "Top 50 URLs for yesterday"
+		mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, event.signature as Signature from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc limit 50;"
+		mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
+	fi
+fi
+
+if [ -d /var/lib/mysql/snorby ]; then
+	echo
+	header "Snorby Events Summary for yesterday"
+	mysql -uroot -e "use snorby;  select count(*) as Totals, concat(signature.sig_gid, ':', signature.sig_sid) as 'GenID:SigID', signature.sig_name as SignatureName from event, signature where event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) and event.signature=signature.sig_id group by event.signature order by Totals desc;"
+	mysql -uroot -e "use snorby;  select count(*) as Total from event, signature where event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) and event.signature=signature.sig_id;"
+	echo
+	header "Top 50 All Time Snorby Events"
+	mysql -uroot -e "use snorby;  select count(*) as Totals, concat(signature.sig_gid, ':', signature.sig_sid) as 'GenID:SigID', signature.sig_name as SignatureName from event, signature where event.signature=signature.sig_id group by event.signature order by Totals desc limit 50;"
+	mysql -uroot -e "use snorby;  select count(*) as Total from event, signature where event.signature=signature.sig_id;"
+fi
+
+if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [ "$ELSA" = "YES" ]; then
+        echo
+        header "ELSA"
+	echo "Syslog-ng"
+        echo "Checking for process:"
+	pgrep -lf syslog-ng
+        echo "Checking for connection:"
+	nc -vz localhost 514 2>&1
+	echo
+        echo "MySQL"
+        echo "Checking for process:"
+        pgrep -lf mysql
+        echo "Checking for connection:"
+        [ -d /var/lib/mysql/securityonion_db ] && nc -vz localhost 3306 2>&1 || nc -vz localhost 50000 2>&1
+        echo
+        echo "Sphinx"
+        echo "Checking for process:"
+        pgrep -lf sphinx
+        echo "Checking for connection:"
+        nc -vz localhost 9306 2>&1
+        echo
+        echo "ELSA Buffers in Queue:"
+        ls -alt /nsm/elsa/data/elsa/tmp/buffers/*
+        echo
+        echo "ELSA Directory Sizes:"
+        du --max-depth=0 -h /nsm/elsa/data /var/lib/mysql/syslog /var/lib/mysql/syslog_data
+        echo
+	echo "ELSA Index Date Range:"
+	mysql -uroot -Dsyslog -e "SELECT MIN(start), MAX(end) FROM syslog.v_indexes"
+	echo
+        if [ -d /var/lib/mysql/securityonion_db ]; then
+                # Master server
+		if grep "http://127.0.0.1:50" /etc/elsa_web.conf >/dev/null 2>&1; then
+                	echo "ELSA Log Node SSH Tunnels:"
+			(echo "PORT NODE IP/STATUS"
+			grep "http://127.0.0.1:50" /etc/elsa_web.conf | awk '{print $2}' | cut -d\/ -f3 | sort | while read PORT; do
+				NAME=$(grep -B1 $PORT /etc/elsa_web.conf | head -1 | cut -d\" -f2)
+				PORT_ONLY=$(echo $PORT | cut -d\: -f2)
+				if lsof -nP -i |grep "$PORT (LISTEN)" >/dev/null 2>&1; then
+					lsof -nP -i |grep "$PORT (LISTEN)" | awk '{print $9,$2}' | while read PORT PID; do
+						IP=`lsof -nP -i |grep "^sshd" | awk '{print $2,$9}' |grep "^$PID" |grep ":22" |awk '{print $2}' |cut -d\> -f2 | cut -d\: -f1 | head -1`
+						echo "$PORT_ONLY $NAME $IP"
+					done
+				else 
+					echo "$PORT_ONLY $NAME DISCONNECTED";
+				fi
+			done) | column -t
+		fi
+        else
+                # ELSA Log Node
+                echo "autossh"
+                echo "Checking for process:"
+                pgrep -lf autossh
+                echo
+                echo "Checking APIKEY:"
+                APIKEY=`grep '"apikey": "' /etc/elsa_web.conf | awk '{print $2}' | sed 's|"||g'`
+                source /root/.ssh/securityonion_ssh.conf
+                APIKEY_REMOTE=`ssh $SSH_USERNAME@$SERVERNAME -i /root/.ssh/securityonion grep -A2 $ELSA_PORT /etc/elsa_web.conf | grep apikey | awk '{print $2}' | sed 's|"||g'`
+                [ "$APIKEY" = "$APIKEY_REMOTE" ] && echo "APIKEY matches server." || echo "APIKEY not found on master server."
+                echo
+                echo "starman"
+                echo "Checking for processes:"
+                pgrep -lf starman
+        fi
+fi

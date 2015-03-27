@@ -1,0 +1,43 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion18) precise; urgency=low
+ .
+   * add 2>&1 to nc -vz
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -177,13 +177,13 @@ if [ -f /etc/nsm/securityonion.conf ] &&
+         echo "Checking for process:"
+         pgrep -lf mysql
+         echo "Checking for connection:"
+-        [ -d /var/lib/mysql/securityonion_db ] && nc -vz localhost 3306 || nc -vz localhost 50000
++        [ -d /var/lib/mysql/securityonion_db ] && nc -vz localhost 3306 2>&1 || nc -vz localhost 50000 2>&1
+         echo
+         echo "Sphinx"
+         echo "Checking for process:"
+         pgrep -lf sphinx
+         echo "Checking for connection:"
+-        nc -vz localhost 9306
++        nc -vz localhost 9306 2>&1
+         echo
+         echo "ELSA Buffers Directory:"
+         ls -alt /nsm/elsa/data/elsa/tmp/buffers/*

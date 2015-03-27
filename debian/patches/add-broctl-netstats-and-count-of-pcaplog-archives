@@ -1,0 +1,49 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion8) precise; urgency=low
+ .
+   * add broctl netstats and count of pcap/log archives
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -68,8 +68,19 @@ top -b -n1
+ if [ -d /nsm/sensor_data ]; then
+ 	echo
+ 	header "Log Archive"
+-	for i in /nsm/sensor_data/*; do echo $i/dailylogs/; cd $i/dailylogs; du --max-depth=1 -h|sort -k2; cd ->/dev/null; echo; done
+-	echo "/nsm/bro/logs/"; cd /nsm/bro/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
++	for i in /nsm/sensor_data/*; do 
++		DAYS=`ls $i/dailylogs/ | wc -l`
++		echo "$i/dailylogs/ - $DAYS days"
++		cd $i/dailylogs
++		du --max-depth=1 -h|sort -k2
++		cd ->/dev/null
++		echo
++	done
++	DAYS=`ls /nsm/bro/logs/ | grep -v current | grep -v stats | wc -l`
++	echo "/nsm/bro/logs/ - $DAYS days"; cd /nsm/bro/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
++	echo
++	header "Bro netstats"
++	broctl netstats
+ 	echo
+ 	header "IDS Engine ($ENGINE) packet drops"
+ 	if [ "$ENGINE" = "suricata" ]; then

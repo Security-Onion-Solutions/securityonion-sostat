@@ -1,0 +1,17 @@
+#!/bin/sh
+
+grep -v "^#" /etc/nsm/sensortab | awk '{print $4}' | while read SENSOR; do 
+	# we're going to store packet counts in a per-interface log
+        FILE="/var/log/nsm/$SENSOR-packets.log"
+	# append the number of packets received to the log
+        ifconfig $SENSOR |awk '/RX packets/ {print $2}' |cut -d\: -f2 >> $FILE
+	# delete everything but the last two lines	
+        tail -2 $FILE > $FILE.new
+        cp $FILE.new $FILE
+        rm $FILE.new
+	# output the difference in the last two values
+	echo -n "$SENSOR: "
+	RX1=`head -1 $FILE`
+	RX2=`tail -1 $FILE`
+	expr $RX2 - $RX1
+done

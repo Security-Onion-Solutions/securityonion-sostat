@@ -1,0 +1,97 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion27) precise; urgency=low
+ .
+   * sostat-interface to check for packets
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- /dev/null
++++ securityonion-sostat-20120722/bin/sostat-interface
+@@ -0,0 +1,9 @@
++#!/bin/sh
++
++grep -v "^#" /etc/nsm/sensortab | awk '{print $4}' | while read SENSOR; do 
++        FILE="/var/log/nsm/$SENSOR-packets.log"
++        ifconfig $SENSOR |awk '/RX packets/ {print $2}' |cut -d\: -f2 >> $FILE
++        tail -2 $FILE > $FILE.new
++        cp $FILE.new $FILE
++        rm $FILE.new
++done
+--- /dev/null
++++ securityonion-sostat-20120722/bin/sostat-interface-delta
+@@ -0,0 +1,11 @@
++#!/bin/sh
++
++grep -v "^#" /etc/nsm/sensortab |awk '{print $4}' |while read SENSOR; do
++        FILE="/var/log/nsm/$SENSOR-packets.log"
++        if [ -f $FILE ]; then
++                echo -n "$SENSOR: "
++                RX1=`head -1 $FILE`
++                RX2=`tail -1 $FILE`
++                expr $RX2 - $RX1
++        fi
++done
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -74,6 +74,9 @@ ps -eo pcpu,pmem,args --sort -pcpu
+ 
+ if [ -d /nsm/sensor_data ]; then
+ 	echo
++	header "Packets seen in the last 5-minute interval"
++	/usr/bin/sostat-interface-delta
++	echo
+ 	header "Log Archive"
+ 	for i in /nsm/sensor_data/*; do 
+ 		DAYS=`ls $i/dailylogs/ | wc -l`
+@@ -86,16 +89,18 @@ if [ -d /nsm/sensor_data ]; then
+ 	DAYS=`ls /nsm/bro/logs/ | grep -v current | grep -v stats | wc -l`
+ 	echo "/nsm/bro/logs/ - $DAYS days"; cd /nsm/bro/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
+ 	echo
+-	/opt/bro/bin/broctl netstats > /tmp/broctl-netstats
+-	if [ -s /tmp/broctl-netstats ]; then
++	TMP=`mktemp`
++	/opt/bro/bin/broctl netstats > $TMP
++	if [ -s $TMP ]; then
+ 		header "Bro netstats"
+ 		echo -n "Average packet loss as percent across all Bro workers: "
+-		cat /tmp/broctl-netstats | sed \
++		cat $TMP | sed \
+ 		's/[a-z]*=//g' | awk '{ drop += $4 ; link += $5 } \
+ 		END { printf("%f\n", ((drop/NR) / (link/NR)) * 100) }'
+ 		echo
+-		cat /tmp/broctl-netstats
++		cat $TMP
+ 		echo
++		rm $TMP
+ 	fi
+ 	header "IDS Engine ($ENGINE) packet drops"
+ 	if [ "$ENGINE" = "suricata" ]; then
+--- /dev/null
++++ securityonion-sostat-20120722/cron.d/sostat-interface
+@@ -0,0 +1,8 @@
++# /etc/cron.d/sostat-interface
++#
++# crontab entry to check interfaces for packets
++
++SHELL=/bin/sh
++PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
++
++*/5 *   * * * root  /usr/bin/sostat-interface

@@ -1,0 +1,132 @@
+#!/bin/bash
+
+#########################################
+# Variables
+#########################################
+
+# A banner for user output
+BANNER="###########################################################################"
+
+# Most updates don't require a reboot, but kernel updates do.
+# Also, if we install mysql-server updates, we have to stop all services,
+# so we might as well reboot to bring all services back up.
+REBOOT=no
+
+# Skip interactive key presses
+SKIP=0
+
+# Log to file
+LOG=0
+
+#########################################
+# Got r00t?
+#########################################
+if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+    echo "This script needs to be run as root.  Please try again using sudo."
+    exit
+fi
+
+#########################################
+# Options
+#########################################
+
+usage()
+{
+cat <<EOF
+
+Security Onion Update
+
+     Options:
+
+        -h      	This message
+	-l <file> 	Log stdout and stderr to specified file (Use with \`\`-y'')
+	-y		Skip interactive mode
+
+Usage: $0
+EOF
+}
+
+while getopts "hl:y" OPTION
+do
+     case $OPTION in
+         h)
+	     usage
+             exit 0
+             ;;
+	 l)
+	     LOG=1
+             LOGFILE="$OPTARG"
+             ;;
+         y)
+             SKIP=1
+             ;;
+     esac
+done
+
+if [ $LOG -eq 1 ]; then
+#	exec > >(tee "$LOGFILE") 2>&1
+	echo -e "\n --> Logging stdout & stderr to $LOGFILE"
+	exec > "$LOGFILE" 2>&1
+fi
+
+#########################################
+# UPDATE!
+#########################################
+
+if [ $SKIP -ne 1 ]; then
+	# Prompt user to continue
+	echo $BANNER
+	echo "This script will automatically install all available updates."
+	echo ""
+	echo "If mysql-server updates are available, it will stop sensor processes"
+	echo "to ensure a clean update."
+	echo ""
+	echo "At the end of the script, if mysql-server and/or kernel updates"
+	echo "were installed, you will be prompted to reboot."
+	echo $BANNER
+	echo ""
+	echo "Press Enter to continue or Ctrl-C to cancel."
+	read input
+fi
+
+# Sync with mirrors
+apt-get update
+
+# if mysql-server updates are available, we need to stop services and force reboot at end
+if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
+	echo $BANNER
+	echo -n "New mysql-server packages available. Stopping services for clean update."
+	service nsm stop > /dev/null 2>&1
+	echo -n "."
+	service syslog-ng stop > /dev/null 2>&1
+	echo -n "."
+	service apache2 stop > /dev/null 2>&1
+	echo -n "."
+	pkill autossh > /dev/null 2>&1
+	echo -n "."
+	pkill perl > /dev/null 2>&1
+	echo "done."
+	echo $BANNER
+	apt-get install -y mysql-server mysql-server-core-5.5 mysql-server-5.5
+	REBOOT=yes
+fi
+
+# Force pfring-module to install before any kernel updates
+apt-get install -y securityonion-pfring-module
+
+# If there is a kernel update available, we need to reboot at the end
+apt-get dist-upgrade --assume-no | grep linux-image >/dev/null && REBOOT=yes
+apt-get -y dist-upgrade
+
+# Final output
+echo $BANNER
+echo "All updates have been installed."
+
+# If we need to reboot, give the user a chance to cancel.
+if [ $REBOOT == "yes" ]; then
+	if [ $SKIP -ne 1 ]; then
+		echo "Press Enter to reboot or Ctrl-C to cancel."
+		read input
+	fi
+	reboot
+fi

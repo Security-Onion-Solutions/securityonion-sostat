@@ -1,0 +1,209 @@
+securityonion-sostat (20120722-0ubuntu0securityonion33) precise; urgency=low
+
+  * Move from Google Code to Github #703 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 27 Mar 2015 11:57:21 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion32) precise; urgency=low
+
+  * Issue 666: sostat: run Bro as non-root user 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 05 Jan 2015 15:01:03 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion31) precise; urgency=low
+
+  * add sostat-interface-delta back to sostat 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 03 Oct 2014 13:40:35 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion30) precise; urgency=low
+
+  * remove sostat-interface-delta from sostat 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 03 Oct 2014 13:20:48 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion29) precise; urgency=low
+
+  * remove sostat-interface-delta and cron job 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 03 Oct 2014 13:06:58 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion28) precise; urgency=low
+
+  * run sostat-interface every 10 minutes 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 03 Oct 2014 10:27:08 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion27) precise; urgency=low
+
+  * sostat-interface to check for packets 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 03 Oct 2014 09:59:19 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion26) precise; urgency=low
+
+  * sostat-quick should check for privs 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 31 May 2014 17:49:46 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion25) precise; urgency=low
+
+  * fix ssh_port redact 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 01 May 2014 06:47:05 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion24) precise; urgency=low
+
+  * sostat-redacted check for no ELSA log nodes 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 26 Apr 2014 22:40:25 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion23) precise; urgency=low
+
+  * only get the first PID match 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 25 Apr 2014 13:58:06 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion22) precise; urgency=low
+
+  * Issue 483: sostat-redacted should redact usernames
+  * Issue 509: sostat-quick
+  * Issue 510: sostat: change "ELSA Date Range" to "ELSA Index Date Range"
+  * Issue 515: sostat: avoid displaying "ELSA Log Node SSH Tunnels:" if there are no SSH tunnels
+  * Issue 517: sostat: only display "Top 50 URLs for yesterday" if http_agent is enabled
+  * Issue 531: sostat: improve checking of autossh tunnels 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 25 Apr 2014 09:15:53 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion21) precise; urgency=low
+
+  * Issue 481: soup: Add skip interactive option
+  * Issue 494: sostat should display ELSA v_indexes
+  * Issue 483: sostat-redacted should redact usernames
+  * Issue 497: sostat should ignore "Cannot set NIC flags!" in netsniff-ng.log 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 07 Mar 2014 16:17:55 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion20) precise; urgency=low
+
+  * check for syslog-ng connection 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 06 Feb 2014 09:32:42 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion19) precise; urgency=low
+
+  * check for syslog-ng 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 05 Feb 2014 13:11:44 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion18) precise; urgency=low
+
+  * add 2>&1 to nc -vz 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 05 Feb 2014 11:34:33 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion17) precise; urgency=low
+
+  * sostat-redacted should redact MAC addresses 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 04 Feb 2014 11:18:21 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion16) precise; urgency=low
+
+  * add ELSA directory sizes 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 04 Feb 2014 08:26:54 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion15) precise; urgency=low
+
+  * add verbosity for ELSA troubleshooting 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 04 Feb 2014 08:15:27 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion14) precise; urgency=low
+
+  * update sostat-redacted to redact IPv6 addresses 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 01 Feb 2014 15:51:27 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion13) precise; urgency=low
+
+  * improve pf_ring output 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 09 Jan 2014 17:19:23 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion12) precise; urgency=low
+
+  * Issue 437: sostat: more detailed interface stats via ip(8)
+  * Issue 457: sostat: add /proc/net/pf_ring/info
+  * Issue 458: sostat: include pf_ring Slots
+  * Issue 459: sostat: netsniff-ng loss output incorrect when running BPF 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 23 Dec 2013 08:13:58 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion11) precise; urgency=low
+
+  * fix bugs in percentage calculation 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 08 Nov 2013 09:58:30 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion10) precise; urgency=low
+
+  * broctl netstats percentage summary patch from Jon Schipp 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 08 Nov 2013 09:49:55 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion9) precise; urgency=low
+
+  * remove $HOSTNAME from netsniff-ng section 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 07 Nov 2013 13:50:06 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion8) precise; urgency=low
+
+  * add broctl netstats and count of pcap/log archives 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 05 Nov 2013 06:45:52 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion7) precise; urgency=low
+
+  * add sostat-redacted to debian/install 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 10 Oct 2013 12:44:24 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion6) precise; urgency=low
+
+  * add sostat-redacted to redact IP addresses 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 10 Oct 2013 12:21:06 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion5) precise; urgency=low
+
+  * ensure scripts are executable 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 08 Aug 2013 21:04:41 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion4) precise; urgency=low
+
+  * add netsniff-ng stats and soup 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 08 Aug 2013 20:36:21 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion3) precise; urgency=low
+
+  * don't limit pf_ring stats to eth* 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 30 Oct 2012 22:29:35 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion2) precise; urgency=low
+
+  * Shane Castle: include GID with SID, and output URL summaries
+  * Doug Burks: add support for pf_ring stats and multiple snort.stats
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 09 Oct 2012 13:44:42 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion1) precise; urgency=low
+
+  * Fixed install path
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 02 Jul 2012 13:43:00 -0400

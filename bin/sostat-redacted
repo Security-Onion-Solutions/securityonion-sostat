@@ -1,0 +1,26 @@
+#!/bin/bash
+# Converts IPv4 and IPv6 addresses to X.X.X.X to simplify public sharing of sostat
+# IPv6 regex pulled from http://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses/17871737#17871737
+# MAC Address, SSH_PORT, HOSTNAME and SSH_USERNAME redact.
+#
+
+SSH_PORT=$(grep "Port" /etc/ssh/sshd_config | awk '{print $2}')
+
+SSH_ARRAY=$(ls /home/)
+for x in ${SSH_ARRAY[@]}; do [ -z ${SSHVAR} ] && SSHVAR=${x} || SSHVAR="${SSHVAR}|${x}"; done
+
+ELSAVAR="randomrandomrandom"
+if grep "http://127.0.0.1:5" /etc/elsa_web.conf >/dev/null 2>&1; then
+	ELSA_ARRAY=$(grep -B1 "http://127.0.0.1:5" /etc/elsa_web.conf | grep "{" | cut -d\" -f2)
+	for x in ${ELSA_ARRAY[@]}; do [ -z ${ELSAVAR} ] && ELSAVAR=${x} || ELSAVAR="${ELSAVAR}|${x}"; done
+fi
+
+     /usr/bin/sostat |
+     sed -r 's/(\b[0-9]{1,3}\.){3}[0-9]{1,3}\b'/X.X.X.X/g |
+     sed -r 's/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/MM:MM:MM:MM:MM:MM/g' |
+     sed -r 's/(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\b'/X.X.X.X/g |
+     sed -r "s/X:"$SSH_PORT"/X:ssh_port/g" |
+     sed -r "s/\*:"$SSH_PORT"/*:ssh_port/g" |
+     sed -r "s/"$HOSTNAME"/SO-server/g" |
+     sed -r "s/"${ELSAVAR}"/SO-node/g" |
+     sed -r "s/"${SSHVAR}"/SO-user/g"

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+grep -v "^#" /etc/nsm/sensortab |awk '{print $4}' |while read SENSOR; do
+        FILE="/var/log/nsm/$SENSOR-packets.log"
+        if [ -f $FILE ]; then
+                echo -n "$SENSOR: "
+                RX1=`head -1 $FILE`
+                RX2=`tail -1 $FILE`
+                expr $RX2 - $RX1
+        fi
+done

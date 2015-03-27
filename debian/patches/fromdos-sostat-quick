@@ -1,0 +1,551 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion22) precise; urgency=low
+ .
+   * Issue 483: sostat-redacted should redact usernames
+   * Issue 509: sostat-quick
+   * Issue 510: sostat: change "ELSA Date Range" to "ELSA Index Date Range"
+   * Issue 515: sostat: avoid displaying "ELSA Log Node SSH Tunnels:" if there are no SSH tunnels
+   * Issue 517: sostat: only display "Top 50 URLs for yesterday" if http_agent is enabled
+   * Issue 531: sostat: improve checking of autossh tunnels
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat-quick
++++ securityonion-sostat-20120722/bin/sostat-quick
+@@ -1,259 +1,259 @@
+-#!/bin/bash
+-# Quick Compliance Check for Security Onion
+-# Original sostat by Doug Burks (Security Onion)
+-# sostat-quick - Written by BBcan177
+-
+-banner="=================================================================================================================================================="
+-
+-# Header Formats
+-
+-header_top() {
+-     printf '%s\n' "PAGE-$page" "$banner" "${red} $* ${normal}"
+-}
+-
+-header_mid() {
+-     printf '%s\n' "${red} $* ${normal}"
+-}
+-
+-header_bot() {
+-     printf '%s\n' "${red} $* ${normal}" "$banner"
+-}
+-
+-header_single() {
+-     printf '%s\n' "$banner" "${red} $* ${normal}" "$banner"
+-}
+-
+-url_top() {
+-     echo ""
+-     printf '%s\n' "${yellow} $* ${normal}"
+-}
+-
+-url_bot() {
+-     echo ""
+-     printf '%s\n' "${yellow} $* ${normal}" "$banner"
+-}
+-
+-
+-# Color Definitions
+-
+-red=$(tput setaf 1)
+-yellow=$(tput setaf 3)
+-normal=$(tput sgr0)
+-purple=$(tput setaf 5)
+-
+-
+-# Functions
+-next() {
+-   echo
+-   read -r -p "Press any key to continue..." -n 1
+-   page=$((page+1))
+-   clear
+-}
+-
+-
+-
+-# Determine if we're running Snort or Suricata
+-source /etc/nsm/securityonion.conf
+-page=0
+-clear
+-
+-# Collect data
+-header_single "                        Security Onion Quick Compliance Check v1.1"
+-
+-echo "Collecting Security Onion Setup ...."
+-echo -e "\nPlease be patient as this can take a few minutes to complete ...."
+-echo "${yellow}The Security Onion Wiki can be referenced at https://code.google.com/p/security-onion/w/list${normal}"
+-echo -e "\nNow that your Security Onion Installation has been completed, you will now need to fine tune its settings to your Network Requirements"
+-echo "Fine Tuning will take several weeks of your time, however; in the end it will provide you with all of the tools to protect your network environment."
+-echo -e "\nThis 'Quick' report will help to identify the ${red}' Most Common ' ${normal}issues and is not intended to be a ' Complete ' report of your installation. "
+-echo "When updates are available, please use ${red}' sudo soup '${normal} instead of ' apt-get update '"
+-echo -e "\nProcessing ..."
+-data=$(/usr/bin/sostat)
+-
+-echo -e "\n${purple}Data Collection Completed....${normal}"
+-echo -e "\nAnalysing Data for potential Issues/Improvements ...."
+-next
+-
+-# Begin Output
+-
+-header_top "Checking for Failed Security Onion Services"
+-echo
+-header_mid "If failed Services are found, consider running ${normal}' sudo service nsm restart '${red} or try Rebooting your SO Installation."
+-header_mid "Please note that there is a 60-second delay before the Security Onion processes are started after reboot or following restart of services"
+-header_mid "Services may ${normal}' FAIL '${red} for several reasons. Follow all of the comments/recommendations listed in the Full report below."
+-header_bot "If ' Bro ' has failed, try ${normal}' sudo broctl install '${red} followed by ${normal}' sudo broctl start '${red}"
+-echo
+-sudo service nsm status 2>&1 | sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
+-next
+-
+-header_top "CPU usage check - Consider running the command ${normal}' top '${red} to see the LIVE CPU process activity."
+-header_mid "The ${normal}' top '${red} command will provide a better representation of actual CPU load than a single snapshot report."
+-header_mid "If you are seeing processes utilizing a significant amount of memory, this can be related to several issues."
+-header_bot "Follow all of the comments/recommendations in this report to determine the root cause."
+-echo
+-echo "$data" | grep 'Cpu(s):'
+-echo
+-echo "$data" | grep -A 28 'PID USER'
+-next
+-
+-
+-header_top "The Server/Sensor memory is listed below. Please compare to the Wiki recommended specs."
+-header_mid "If you are maxing out the SO Installations memory, this can cause significant issues with your installation."
+-header_mid "Usage of SWAP memory can cause significant performance issues"
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/Hardware"
+-echo
+-echo "$data" | grep 'Mem:'
+-echo "$data" | grep 'Swap:'
+-next
+-
+-
+-header_top "Check to see the you have sufficent Hard Drive Space"
+-url_top "Help URL: https://code.google.com/p/security-onion/wiki/FAQ   ${normal}' Why is my disk filling up? '${yellow}"
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/Hardware"
+-echo
+-df -h
+-next
+-
+-header_top "Check Link Statistics"
+-header_mid "Look at the interfaces below to see if you are getting traffic on your monitoring interfaces"
+-header_mid "You can also run ${normal}' tcpdump -nnvvAi {monitoring interface address} '${red}, To help diagnose network issues."
+-url_bot "HELP URL: https://code.google.com/p/security-onion/wiki/NetworkConfiguration"
+-echo
+-ip -s -s link
+-next
+-
+-
+-header_top "If The number of enabled rules is over 12,000, You should consider disabling/thresholding/tuning."
+-header_mid "Too many rules enabled and can lead to performance issues.  You should disable any rules you don't need."
+-header_mid "If you do not see any ${normal}' Enabled Rules '${red}, you can run ${normal}' sudo rule-update '${red}"
+-header_mid "If you receive a '504' error on sudo rule-update, it could be an issue with the SNORT website or an oinkcode issue."
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
+-echo
+-echo "$data" | grep -m 1 'Enabled Rules:'
+-next
+-
+-
+-header_top "* If the Uncategorized events in Sguil are more than 500 you need to keep that number at a more manageable level."
+-header_mid "Each time SGUIL starts, it will load all of the uncategorized events into memory."
+-echo
+-header_mid "** Its important to categorize events on a daily basis! **"
+-echo
+-header_mid "Events can be tuned in the               ${normal}/etc/nsm/{ HOSTNAME-INTERFACE }/threshold.conf${red}  file."
+-header_mid "Events can be disabled by editing        ${normal}/etc/nsm/{ HOSTNAME-INTERFACE }/disablesid.conf${red} file."
+-header_mid "Events can be autocategorized in SGUIL.  ${normal}/etc/nsm/securityonion/autocat.conf${red}     file."
+-header_mid "Any changes to the 'threshold.conf' and/or 'disablesid.conf' file(s) will require a${normal} sudo rule-update${red}"
+-header_mid "Any changes to the 'autocat.conf' file will require a${normal} sudo nsm_server_ps-restart${red}"
+-echo
+-header_mid "If you allowed the uncategorized events to get out of control, you can do the following :"
+-echo
+-header_mid "* You can control the uncategorized events by editing ${normal}/etc/nsm/securityonion.conf${red} and set DAYSTOKEEP to a smaller number like 7."
+-header_mid "* You can also delete anything in the database older than 7 days, which should dramatically"
+-header_mid "  lower your uncategorized events in sguild with the following command ${normal}sudo sguil-db-purge."
+-header_mid "* If you suppressed in threshold.conf correctly and restarted services but the events kept coming in, it's possible that barnyard2 was still"
+-header_mid "  processing a backlog of events that would've stopped whenever barnyard2 was fully caught up."
+-
+-url_top "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
+-url_bot "Help URL: http://taosecurity.blogspot.com/2013/02/recovering-from-suricata-gone-wild.html"
+-echo
+-echo "$data" | grep -A 1 COUNT
+-next
+-
+-
+-header_top "Here are the ${normal}' Top 20 '${red} All time Sguil Events"
+-header_mid "Not only will the processing of these events slow our use of tools they will cost the analyst time"
+-header_mid "which could be better used in responding to alerts of greater significance."
+-echo
+-header_mid "If we're going to take action an alert, it's best to ensure that these alerts are benign as part of our tuning process."
+-header_bot "See which machines generated these alerts can be helpful in making that decision"
+-echo -e "\nThis will take a moment to complete ..."
+-sudo mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 group by event.signature order by Totals desc limit 20;"
+-next
+-
+-
+-header_top "Check to see if Snort/Suricata is dropping traffic"
+-header_mid "If you are seeing packet drops, this can be related to several possibilities."
+-header_mid "Underpowered Box (CPU and/or Memory), Failed Services, Too many Enabled Rules and several others..."
+-header_mid "Follow all of the comments/recommendations in this report to determine the root cause."
+-url_bot "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
+-echo
+-if [ "$ENGINE" = "suricata" ]; then
+-        for i in /nsm/sensor_data/*/stats.log; do
+-                echo "$i"
+-                tail -n 50 "$i" |
+-                        grep -e "Date: " -e "drop"
+-                echo
+-        done
+-else
+-        for i in /nsm/sensor_data/*/snort-*.stats; do
+-                if grep -q '^[^#]' "$i"; then
+-                        echo -n "$i last reported pkt_drop_percent as "
+-                        grep -v '^#' "$i" |tail -n 1 |cut -d\, -f2
+-                else
+-                        echo "ERROR: No stats found in $i"
+-                fi
+-        done
+-fi
+-
+-if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
+-        echo
+-        header_single "Netsniff-NG - Reported Packet Loss (per interval)"
+-        for i in /var/log/nsm/*/netsniff*; do egrep -v "^Executing|^RX|^Running" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
+-        if [ $? -gt 0 ]; then
+-                echo "0 Loss"
+-        fi
+-fi
+-next
+-
+-
+-header_top "Check for Failed ELSA Connections ..."
+-header_bot "For additional analysis on ELSA, please run ${normal}' sudo sostat '${red}"
+-echo "$data" | grep 'failed: Connection refused' && echo "${purple}Connections Failed!${normal}" || echo "No issues found"
+-next
+-
+-
+-header_top "Check UFW Status settings ${normal} '  sudo ufw status ' ${red}"
+-header_mid "The default firewall configuration tool for Ubuntu is ufw. By default UFW is enabled on security onion."
+-header_mid "You may want to restrict ports to only accepting connections from a subset of IP addresses."
+-header_mid "NOTE! Before attempting any firewall changes, you should always ensure you have a backup plan should you accidentally block your own connection."
+-header_mid "So make sure that you have DRAC/KVM/physical or some other form of access."
+-url_bot "https://code.google.com/p/security-onion/wiki/Firewall"
+-echo "First 28 lines of UFW are shown. If you have more than 28 lines in UFW, please run ${red}' sudo ufw status '${normal} after this report for a complete output."
+-sudo ufw status | head -n 28
+-next
+-
+-
+-header_top "The following log files are used in Security Onion"
+-header_mid "You can view a log with the ${normal}' cat '${red} command or the ${normal}' tail -100 '${red} (which will display the last 100 lines of the log file"
+-header_bot "There can be multiple Logs per log type. Filename ' appendixes ' are used depending on your installation configuration${normal}"
+-echo
+-echo "${red}MAIN LOG FILE LOCATIONS${normal}"
+-echo "SETUP          -   /var/log/nsm/sosetup.log"
+-echo "Daily Log      -   /nsm/sensor_data/{ HOSTNAME-INTERFACE }/dailylogs"
+-echo "SGUIL          -   /var/log/nsm/securityonion/sguild.log"
+-echo "Suricata       -   /var/log/nsm/{ HOSTNAME-INTERFACE }/suricata.log"
+-echo "BARNYARD2      -   /var/log/nsm/ { HOSTNAME-INTERFACE }/barnyard2.log"
+-echo "Netsniff-NG    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/netsniff-ng.log"
+-echo "ELSA Node      -   /nsm/elsa/data/elsa/log/node.log"
+-echo "BRO            -   /nsm/bro/logs/current"
+-echo
+-echo "${red}OTHER AGENT LOG FILES${normal}"
+-echo "SNORT agent    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/snort_agent.log"
+-echo "Argus          -   /var/log/nsm/{ HOSTNAME-INTERFACE }/argus.log"
+-echo "http Agent     -   /var/log/nsm/{ HOSTNAME-INTERFACE }/http_agent.log"
+-echo "pads Agent     -   /var/log/nsm/{ HOSTNAME-INTERFACE }/pads_agent.log"
+-echo "prads Agent    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/prads.log"
+-echo "sancp Agent    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/sancp_agent.log"
+-next
+-
+-
+-header_single "${red}Security Onion Compliance Test has completed. Please refer to the comments/recommendations."
+-echo
+-header_single "For a full SOSTAT report, please run ${normal}' sudo sostat '${red}, for easier reading ${normal}' sudo sostat | less '${red}"
+-echo
+-header_mid "If you are still requiring help, run ${normal}' sudo sostat-redacted '${red} which will redact IPv4/IPv6/MAC addresses,"
+-header_mid "but there may be other info that you need to manually redact. We'll need this from the Server and at least one of the Sensors."
+-header_mid "and submit your question(s) and attach the ${normal}sostat-redacted in a Plain TXT file format only${red} to the following Support Group below"
+-echo
+-header_mid " *** Please note that the Security Onion Group is moderated. And your first Request may not appear in the group immediately. *** "
+-echo
+-url_bot "                                   https://groups.google.com/forum/#!forum/security-onion"
++#!/bin/bash
++# Quick Compliance Check for Security Onion
++# Original sostat by Doug Burks (Security Onion)
++# sostat-quick - Written by BBcan177
++
++banner="=================================================================================================================================================="
++
++# Header Formats
++
++header_top() {
++     printf '%s\n' "PAGE-$page" "$banner" "${red} $* ${normal}"
++}
++
++header_mid() {
++     printf '%s\n' "${red} $* ${normal}"
++}
++
++header_bot() {
++     printf '%s\n' "${red} $* ${normal}" "$banner"
++}
++
++header_single() {
++     printf '%s\n' "$banner" "${red} $* ${normal}" "$banner"
++}
++
++url_top() {
++     echo ""
++     printf '%s\n' "${yellow} $* ${normal}"
++}
++
++url_bot() {
++     echo ""
++     printf '%s\n' "${yellow} $* ${normal}" "$banner"
++}
++
++
++# Color Definitions
++
++red=$(tput setaf 1)
++yellow=$(tput setaf 3)
++normal=$(tput sgr0)
++purple=$(tput setaf 5)
++
++
++# Functions
++next() {
++   echo
++   read -r -p "Press any key to continue..." -n 1
++   page=$((page+1))
++   clear
++}
++
++
++
++# Determine if we're running Snort or Suricata
++source /etc/nsm/securityonion.conf
++page=0
++clear
++
++# Collect data
++header_single "                        Security Onion Quick Compliance Check v1.1"
++
++echo "Collecting Security Onion Setup ...."
++echo -e "\nPlease be patient as this can take a few minutes to complete ...."
++echo "${yellow}The Security Onion Wiki can be referenced at https://code.google.com/p/security-onion/w/list${normal}"
++echo -e "\nNow that your Security Onion Installation has been completed, you will now need to fine tune its settings to your Network Requirements"
++echo "Fine Tuning will take several weeks of your time, however; in the end it will provide you with all of the tools to protect your network environment."
++echo -e "\nThis 'Quick' report will help to identify the ${red}' Most Common ' ${normal}issues and is not intended to be a ' Complete ' report of your installation. "
++echo "When updates are available, please use ${red}' sudo soup '${normal} instead of ' apt-get update '"
++echo -e "\nProcessing ..."
++data=$(/usr/bin/sostat)
++
++echo -e "\n${purple}Data Collection Completed....${normal}"
++echo -e "\nAnalysing Data for potential Issues/Improvements ...."
++next
++
++# Begin Output
++
++header_top "Checking for Failed Security Onion Services"
++echo
++header_mid "If failed Services are found, consider running ${normal}' sudo service nsm restart '${red} or try Rebooting your SO Installation."
++header_mid "Please note that there is a 60-second delay before the Security Onion processes are started after reboot or following restart of services"
++header_mid "Services may ${normal}' FAIL '${red} for several reasons. Follow all of the comments/recommendations listed in the Full report below."
++header_bot "If ' Bro ' has failed, try ${normal}' sudo broctl install '${red} followed by ${normal}' sudo broctl start '${red}"
++echo
++sudo service nsm status 2>&1 | sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
++next
++
++header_top "CPU usage check - Consider running the command ${normal}' top '${red} to see the LIVE CPU process activity."
++header_mid "The ${normal}' top '${red} command will provide a better representation of actual CPU load than a single snapshot report."
++header_mid "If you are seeing processes utilizing a significant amount of memory, this can be related to several issues."
++header_bot "Follow all of the comments/recommendations in this report to determine the root cause."
++echo
++echo "$data" | grep 'Cpu(s):'
++echo
++echo "$data" | grep -A 28 'PID USER'
++next
++
++
++header_top "The Server/Sensor memory is listed below. Please compare to the Wiki recommended specs."
++header_mid "If you are maxing out the SO Installations memory, this can cause significant issues with your installation."
++header_mid "Usage of SWAP memory can cause significant performance issues"
++url_bot "Help URL: https://code.google.com/p/security-onion/wiki/Hardware"
++echo
++echo "$data" | grep 'Mem:'
++echo "$data" | grep 'Swap:'
++next
++
++
++header_top "Check to see the you have sufficent Hard Drive Space"
++url_top "Help URL: https://code.google.com/p/security-onion/wiki/FAQ   ${normal}' Why is my disk filling up? '${yellow}"
++url_bot "Help URL: https://code.google.com/p/security-onion/wiki/Hardware"
++echo
++df -h
++next
++
++header_top "Check Link Statistics"
++header_mid "Look at the interfaces below to see if you are getting traffic on your monitoring interfaces"
++header_mid "You can also run ${normal}' tcpdump -nnvvAi {monitoring interface address} '${red}, To help diagnose network issues."
++url_bot "HELP URL: https://code.google.com/p/security-onion/wiki/NetworkConfiguration"
++echo
++ip -s -s link
++next
++
++
++header_top "If The number of enabled rules is over 12,000, You should consider disabling/thresholding/tuning."
++header_mid "Too many rules enabled and can lead to performance issues.  You should disable any rules you don't need."
++header_mid "If you do not see any ${normal}' Enabled Rules '${red}, you can run ${normal}' sudo rule-update '${red}"
++header_mid "If you receive a '504' error on sudo rule-update, it could be an issue with the SNORT website or an oinkcode issue."
++url_bot "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
++echo
++echo "$data" | grep -m 1 'Enabled Rules:'
++next
++
++
++header_top "* If the Uncategorized events in Sguil are more than 500 you need to keep that number at a more manageable level."
++header_mid "Each time SGUIL starts, it will load all of the uncategorized events into memory."
++echo
++header_mid "** Its important to categorize events on a daily basis! **"
++echo
++header_mid "Events can be tuned in the               ${normal}/etc/nsm/{ HOSTNAME-INTERFACE }/threshold.conf${red}  file."
++header_mid "Events can be disabled by editing        ${normal}/etc/nsm/{ HOSTNAME-INTERFACE }/disablesid.conf${red} file."
++header_mid "Events can be autocategorized in SGUIL.  ${normal}/etc/nsm/securityonion/autocat.conf${red}     file."
++header_mid "Any changes to the 'threshold.conf' and/or 'disablesid.conf' file(s) will require a${normal} sudo rule-update${red}"
++header_mid "Any changes to the 'autocat.conf' file will require a${normal} sudo nsm_server_ps-restart${red}"
++echo
++header_mid "If you allowed the uncategorized events to get out of control, you can do the following :"
++echo
++header_mid "* You can control the uncategorized events by editing ${normal}/etc/nsm/securityonion.conf${red} and set DAYSTOKEEP to a smaller number like 7."
++header_mid "* You can also delete anything in the database older than 7 days, which should dramatically"
++header_mid "  lower your uncategorized events in sguild with the following command ${normal}sudo sguil-db-purge."
++header_mid "* If you suppressed in threshold.conf correctly and restarted services but the events kept coming in, it's possible that barnyard2 was still"
++header_mid "  processing a backlog of events that would've stopped whenever barnyard2 was fully caught up."
++
++url_top "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
++url_bot "Help URL: http://taosecurity.blogspot.com/2013/02/recovering-from-suricata-gone-wild.html"
++echo
++echo "$data" | grep -A 1 COUNT
++next
++
++
++header_top "Here are the ${normal}' Top 20 '${red} All time Sguil Events"
++header_mid "Not only will the processing of these events slow our use of tools they will cost the analyst time"
++header_mid "which could be better used in responding to alerts of greater significance."
++echo
++header_mid "If we're going to take action an alert, it's best to ensure that these alerts are benign as part of our tuning process."
++header_bot "See which machines generated these alerts can be helpful in making that decision"
++echo -e "\nThis will take a moment to complete ..."
++sudo mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 group by event.signature order by Totals desc limit 20;"
++next
++
++
++header_top "Check to see if Snort/Suricata is dropping traffic"
++header_mid "If you are seeing packet drops, this can be related to several possibilities."
++header_mid "Underpowered Box (CPU and/or Memory), Failed Services, Too many Enabled Rules and several others..."
++header_mid "Follow all of the comments/recommendations in this report to determine the root cause."
++url_bot "Help URL: https://code.google.com/p/security-onion/wiki/ManagingAlerts"
++echo
++if [ "$ENGINE" = "suricata" ]; then
++        for i in /nsm/sensor_data/*/stats.log; do
++                echo "$i"
++                tail -n 50 "$i" |
++                        grep -e "Date: " -e "drop"
++                echo
++        done
++else
++        for i in /nsm/sensor_data/*/snort-*.stats; do
++                if grep -q '^[^#]' "$i"; then
++                        echo -n "$i last reported pkt_drop_percent as "
++                        grep -v '^#' "$i" |tail -n 1 |cut -d\, -f2
++                else
++                        echo "ERROR: No stats found in $i"
++                fi
++        done
++fi
++
++if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
++        echo
++        header_single "Netsniff-NG - Reported Packet Loss (per interval)"
++        for i in /var/log/nsm/*/netsniff*; do egrep -v "^Executing|^RX|^Running" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
++        if [ $? -gt 0 ]; then
++                echo "0 Loss"
++        fi
++fi
++next
++
++
++header_top "Check for Failed ELSA Connections ..."
++header_bot "For additional analysis on ELSA, please run ${normal}' sudo sostat '${red}"
++echo "$data" | grep 'failed: Connection refused' && echo "${purple}Connections Failed!${normal}" || echo "No issues found"
++next
++
++
++header_top "Check UFW Status settings ${normal} '  sudo ufw status ' ${red}"
++header_mid "The default firewall configuration tool for Ubuntu is ufw. By default UFW is enabled on security onion."
++header_mid "You may want to restrict ports to only accepting connections from a subset of IP addresses."
++header_mid "NOTE! Before attempting any firewall changes, you should always ensure you have a backup plan should you accidentally block your own connection."
++header_mid "So make sure that you have DRAC/KVM/physical or some other form of access."
++url_bot "https://code.google.com/p/security-onion/wiki/Firewall"
++echo "First 28 lines of UFW are shown. If you have more than 28 lines in UFW, please run ${red}' sudo ufw status '${normal} after this report for a complete output."
++sudo ufw status | head -n 28
++next
++
++
++header_top "The following log files are used in Security Onion"
++header_mid "You can view a log with the ${normal}' cat '${red} command or the ${normal}' tail -100 '${red} (which will display the last 100 lines of the log file"
++header_bot "There can be multiple Logs per log type. Filename ' appendixes ' are used depending on your installation configuration${normal}"
++echo
++echo "${red}MAIN LOG FILE LOCATIONS${normal}"
++echo "SETUP          -   /var/log/nsm/sosetup.log"
++echo "Daily Log      -   /nsm/sensor_data/{ HOSTNAME-INTERFACE }/dailylogs"
++echo "SGUIL          -   /var/log/nsm/securityonion/sguild.log"
++echo "Suricata       -   /var/log/nsm/{ HOSTNAME-INTERFACE }/suricata.log"
++echo "BARNYARD2      -   /var/log/nsm/ { HOSTNAME-INTERFACE }/barnyard2.log"
++echo "Netsniff-NG    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/netsniff-ng.log"
++echo "ELSA Node      -   /nsm/elsa/data/elsa/log/node.log"
++echo "BRO            -   /nsm/bro/logs/current"
++echo
++echo "${red}OTHER AGENT LOG FILES${normal}"
++echo "SNORT agent    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/snort_agent.log"
++echo "Argus          -   /var/log/nsm/{ HOSTNAME-INTERFACE }/argus.log"
++echo "http Agent     -   /var/log/nsm/{ HOSTNAME-INTERFACE }/http_agent.log"
++echo "pads Agent     -   /var/log/nsm/{ HOSTNAME-INTERFACE }/pads_agent.log"
++echo "prads Agent    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/prads.log"
++echo "sancp Agent    -   /var/log/nsm/{ HOSTNAME-INTERFACE }/sancp_agent.log"
++next
++
++
++header_single "${red}Security Onion Compliance Test has completed. Please refer to the comments/recommendations."
++echo
++header_single "For a full SOSTAT report, please run ${normal}' sudo sostat '${red}, for easier reading ${normal}' sudo sostat | less '${red}"
++echo
++header_mid "If you are still requiring help, run ${normal}' sudo sostat-redacted '${red} which will redact IPv4/IPv6/MAC addresses,"
++header_mid "but there may be other info that you need to manually redact. We'll need this from the Server and at least one of the Sensors."
++header_mid "and submit your question(s) and attach the ${normal}sostat-redacted in a Plain TXT file format only${red} to the following Support Group below"
++echo
++header_mid " *** Please note that the Security Onion Group is moderated. And your first Request may not appear in the group immediately. *** "
++echo
++url_bot "                                   https://groups.google.com/forum/#!forum/security-onion"
