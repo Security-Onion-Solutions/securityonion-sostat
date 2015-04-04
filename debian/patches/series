@@ -29,3 +29,4 @@ remove-sostat-interface-delta-from-sostat
 add-sostat-interface-delta-back-to-sostat
 Issue-666:-sostat:-run-Bro-as-non-root-user
 Move-from-Google-Code-to-Github-#703
+Issue-692:-sostat:-list-number-of-ELSA-buffers-in-queue-and-warn-if-higher-than-10

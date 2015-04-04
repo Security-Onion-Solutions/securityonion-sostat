@@ -1,0 +1,58 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion34) precise; urgency=low
+ .
+   * Issue 692: sostat: list number of ELSA buffers in queue and warn if higher than 10
+   * Issue 701: sostat: include number of CPU cores
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- /dev/null
++++ securityonion-sostat-20120722/README.md
+@@ -0,0 +1 @@
++# securityonion-sostat
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -56,7 +56,14 @@ if [ -f /var/log/nsm/pulledpork.log ]; t
+ fi
+ 
+ echo
++PROCS=`nproc --all`
+ header "CPU Usage"
++echo "Load average for the last 1, 5, and 15 minutes:"
++cat /proc/loadavg | awk '{print $1,$2,$3}'
++echo "Processing units: $PROCS"
++echo "If load average is higher than processing units,"
++echo "then tune until load average is lower than processing units."
++echo
+ # Get the first six lines of top output (summary)
+ top -b -n1 |head -6
+ # Use "ps" to get a process listing and sort it by cpu usage
+@@ -194,7 +201,9 @@ if [ -f /etc/nsm/securityonion.conf ] &&
+         nc -vz localhost 9306 2>&1
+         echo
+         echo "ELSA Buffers in Queue:"
+-        ls -alt /nsm/elsa/data/elsa/tmp/buffers/*
++        ls -alt /nsm/elsa/data/elsa/tmp/buffers/* | wc -l
++	echo "If this number is consistently higher than 20, please see:"
++	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/FAQ#why-does-sostat-show-a-high-number-of-elsa-buffers-in-queue"
+         echo
+         echo "ELSA Directory Sizes:"
+         du --max-depth=0 -h /nsm/elsa/data /var/lib/mysql/syslog /var/lib/mysql/syslog_data

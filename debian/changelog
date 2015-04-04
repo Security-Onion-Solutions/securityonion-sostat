@@ -1,3 +1,10 @@
+securityonion-sostat (20120722-0ubuntu0securityonion34) precise; urgency=low
+
+  * Issue 692: sostat: list number of ELSA buffers in queue and warn if higher than 10
+  * Issue 701: sostat: include number of CPU cores 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 04 Apr 2015 10:18:40 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion33) precise; urgency=low
 
   * Move from Google Code to Github #703 

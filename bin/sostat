@@ -56,7 +56,14 @@ if [ -f /var/log/nsm/pulledpork.log ]; then
 fi
 
 echo
+PROCS=`nproc --all`
 header "CPU Usage"
+echo "Load average for the last 1, 5, and 15 minutes:"
+cat /proc/loadavg | awk '{print $1,$2,$3}'
+echo "Processing units: $PROCS"
+echo "If load average is higher than processing units,"
+echo "then tune until load average is lower than processing units."
+echo
 # Get the first six lines of top output (summary)
 top -b -n1 |head -6
 # Use "ps" to get a process listing and sort it by cpu usage
@@ -194,7 +201,9 @@ if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [
         nc -vz localhost 9306 2>&1
         echo
         echo "ELSA Buffers in Queue:"
-        ls -alt /nsm/elsa/data/elsa/tmp/buffers/*
+        ls -alt /nsm/elsa/data/elsa/tmp/buffers/* | wc -l
+	echo "If this number is consistently higher than 20, please see:"
+	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/FAQ#why-does-sostat-show-a-high-number-of-elsa-buffers-in-queue"
         echo
         echo "ELSA Directory Sizes:"
         du --max-depth=0 -h /nsm/elsa/data /var/lib/mysql/syslog /var/lib/mysql/syslog_data
