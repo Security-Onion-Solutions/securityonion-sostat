@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion35) precise; urgency=low
+
+  * sostat: show last update #763 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 03 Jul 2015 15:41:57 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion34) precise; urgency=low
 
   * Issue 692: sostat: list number of ELSA buffers in queue and warn if higher than 10

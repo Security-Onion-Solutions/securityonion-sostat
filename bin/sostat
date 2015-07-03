@@ -179,6 +179,12 @@ if [ -d /var/lib/mysql/snorby ]; then
 	mysql -uroot -e "use snorby;  select count(*) as Total from event, signature where event.signature=signature.sig_id;"
 fi
 
+if [ -f /var/log/apt/history.log ]; then
+	echo
+	header "Last update"
+	tail /var/log/apt/history.log
+fi
+
 if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [ "$ELSA" = "YES" ]; then
         echo
         header "ELSA"
