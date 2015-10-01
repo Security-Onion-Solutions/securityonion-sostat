@@ -92,6 +92,9 @@ fi
 # Sync with mirrors
 apt-get update
 
+# Remove any old kernels
+apt-get autoremove -y
+
 # if mysql-server updates are available, we need to stop services and force reboot at end
 if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
 	echo $BANNER

@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion36) trusty; urgency=medium
+
+  * soup - remove old kernels using apt-get autoremove 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 01 Oct 2015 15:00:55 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion35) precise; urgency=low
 
   * sostat: show last update #763 
