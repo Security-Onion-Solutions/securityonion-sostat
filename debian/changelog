@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion37) trusty; urgency=medium
+
+  * Issue 790: sostat: remove snorby 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 19 Oct 2015 16:13:44 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion36) trusty; urgency=medium
 
   * soup - remove old kernels using apt-get autoremove 

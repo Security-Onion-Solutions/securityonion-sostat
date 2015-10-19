@@ -4,7 +4,6 @@
 #
 # Written by:
 # Doug Burks
-# Snorby stats contributed by Jason Baron
 # Fixes contributed by:
 # Stephane Chazelas
 # Shane Castle
@@ -166,17 +165,6 @@ if [ -d /var/lib/mysql/securityonion_db ]; then
 		mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, event.signature as Signature from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc limit 50;"
 		mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
 	fi
-fi
-
-if [ -d /var/lib/mysql/snorby ]; then
-	echo
-	header "Snorby Events Summary for yesterday"
-	mysql -uroot -e "use snorby;  select count(*) as Totals, concat(signature.sig_gid, ':', signature.sig_sid) as 'GenID:SigID', signature.sig_name as SignatureName from event, signature where event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) and event.signature=signature.sig_id group by event.signature order by Totals desc;"
-	mysql -uroot -e "use snorby;  select count(*) as Total from event, signature where event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) and event.signature=signature.sig_id;"
-	echo
-	header "Top 50 All Time Snorby Events"
-	mysql -uroot -e "use snorby;  select count(*) as Totals, concat(signature.sig_gid, ':', signature.sig_sid) as 'GenID:SigID', signature.sig_name as SignatureName from event, signature where event.signature=signature.sig_id group by event.signature order by Totals desc limit 50;"
-	mysql -uroot -e "use snorby;  select count(*) as Total from event, signature where event.signature=signature.sig_id;"
 fi
 
 if [ -f /var/log/apt/history.log ]; then
