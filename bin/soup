@@ -92,9 +92,6 @@ fi
 # Sync with mirrors
 apt-get update
 
-# Remove any old kernels
-apt-get autoremove -y
-
 # if mysql-server updates are available, we need to stop services and force reboot at end
 if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
 	echo $BANNER
@@ -120,6 +117,9 @@ apt-get install -y securityonion-pfring-module
 # If there is a kernel update available, we need to reboot at the end
 apt-get dist-upgrade --assume-no | grep linux-image >/dev/null && REBOOT=yes
 apt-get -y dist-upgrade
+
+# Remove any unnecessary packages (including old kernels)
+apt-get autoremove -y
 
 # Final output
 echo $BANNER

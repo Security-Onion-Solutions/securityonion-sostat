@@ -33,3 +33,4 @@ Issue-692:-sostat:-list-number-of-ELSA-buffers-in-queue-and-warn-if-higher-than-
 sostat:-show-last-update-#763
 soup---remove-old-kernels-using-apt-get-autoremove
 Issue-790:-sostat:-remove-snorby
+soup---autoremove-at-end
