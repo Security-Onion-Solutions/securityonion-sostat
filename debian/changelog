@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion39) trusty; urgency=medium
+
+  * postinst - prevent prompts for LTS upgrades 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 10 Nov 2015 14:30:31 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion38) trusty; urgency=medium
 
   * soup - autoremove at end 

@@ -7,6 +7,13 @@ case "$1" in
         
 	chmod +x /usr/bin/sostat*
 	chmod +x /usr/bin/soup
+	
+	FILE="/etc/update-manager/release-upgrades"
+	if [ -f $FILE ]; then
+		if grep "^Prompt=lts" $FILE >/dev/null 2>&1; then
+			echo "Updating $FILE to avoid prompting for next LTS release."
+			sed -i 's|Prompt=lts|Prompt=never|g' $FILE || echo "Error updating $FILE"
+	fi
         
     ;;
 
