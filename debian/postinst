@@ -10,9 +10,12 @@ case "$1" in
 	
 	FILE="/etc/update-manager/release-upgrades"
 	if [ -f $FILE ]; then
-		if grep "^Prompt=lts" $FILE >/dev/null 2>&1; then
+		if grep "^Prompt=never" $FILE >/dev/null 2>&1; then
+			echo "$FILE already configured to avoid prompting for next LTS release."
+		else
 			echo "Updating $FILE to avoid prompting for next LTS release."
-			sed -i 's|Prompt=lts|Prompt=never|g' $FILE || echo "Error updating $FILE"
+			sed -i 's|^Prompt=.*$|Prompt=never|g' $FILE || echo "Error updating $FILE"
+		fi
 	fi
         
     ;;
