@@ -76,7 +76,8 @@ fi
 if [ $SKIP -ne 1 ]; then
 	# Prompt user to continue
 	echo $BANNER
-	echo "This script will automatically install all available updates."
+	echo "This script will automatically install all available updates"
+	echo "and remove any old kernels (keeping at least two kernels)."
 	echo ""
 	echo "If mysql-server updates are available, it will stop sensor processes"
 	echo "to ensure a clean update."
@@ -88,6 +89,9 @@ if [ $SKIP -ne 1 ]; then
 	echo "Press Enter to continue or Ctrl-C to cancel."
 	read input
 fi
+
+# Remove old kernels
+/usr/bin/so-purge-old-kernels
 
 # Sync with mirrors
 apt-get update
