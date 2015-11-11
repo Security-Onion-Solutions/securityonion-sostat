@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion41) trusty; urgency=medium
+
+  * new version of netcat requires specifying -4 for IPv4 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 11 Nov 2015 13:07:57 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion40) trusty; urgency=medium
 
   * fix postinst check for LTS upgrades 

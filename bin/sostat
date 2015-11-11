@@ -180,19 +180,19 @@ if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [
         echo "Checking for process:"
 	pgrep -lf syslog-ng
         echo "Checking for connection:"
-	nc -vz localhost 514 2>&1
+	nc -4 -vz localhost 514 2>&1
 	echo
         echo "MySQL"
         echo "Checking for process:"
         pgrep -lf mysql
         echo "Checking for connection:"
-        [ -d /var/lib/mysql/securityonion_db ] && nc -vz localhost 3306 2>&1 || nc -vz localhost 50000 2>&1
+        [ -d /var/lib/mysql/securityonion_db ] && nc -4 -vz localhost 3306 2>&1 || nc -4 -vz localhost 50000 2>&1
         echo
         echo "Sphinx"
         echo "Checking for process:"
         pgrep -lf sphinx
         echo "Checking for connection:"
-        nc -vz localhost 9306 2>&1
+        nc -4 -vz localhost 9306 2>&1
         echo
         echo "ELSA Buffers in Queue:"
         ls -alt /nsm/elsa/data/elsa/tmp/buffers/* | wc -l
