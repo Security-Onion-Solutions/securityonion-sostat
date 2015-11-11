@@ -38,3 +38,4 @@ new-version-of-netcat-requires-specifying--4-for-IPv4
 change-pgrep--lf-to-pgrep--af
 replace-autoremove-with-purge-old-kernels
 so-purge-old-kernels--y
+improve-check-for-linux-kernel-updates

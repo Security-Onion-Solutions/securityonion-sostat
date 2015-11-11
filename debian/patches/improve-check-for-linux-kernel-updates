@@ -1,0 +1,38 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion45) trusty; urgency=medium
+ .
+   * improve check for linux kernel updates
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -119,7 +119,9 @@ fi
+ apt-get install -y securityonion-pfring-module
+ 
+ # If there is a kernel update available, we need to reboot at the end
+-apt-get dist-upgrade --assume-no | grep linux-image >/dev/null && REBOOT=yes
++apt-get dist-upgrade --assume-no | grep -A1000 "The following NEW packages will be installed:" | grep -B1000 "The following packages will be upgraded:" | grep linux-image >/dev/null && REBOOT=yes
++
++# Do the actual upgrade
+ apt-get -y dist-upgrade
+ 
+ # Final output

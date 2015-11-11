@@ -119,7 +119,9 @@ fi
 apt-get install -y securityonion-pfring-module
 
 # If there is a kernel update available, we need to reboot at the end
-apt-get dist-upgrade --assume-no | grep linux-image >/dev/null && REBOOT=yes
+apt-get dist-upgrade --assume-no | grep -A1000 "The following NEW packages will be installed:" | grep -B1000 "The following packages will be upgraded:" | grep linux-image >/dev/null && REBOOT=yes
+
+# Do the actual upgrade
 apt-get -y dist-upgrade
 
 # Final output

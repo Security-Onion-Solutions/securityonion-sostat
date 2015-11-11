@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion45) trusty; urgency=medium
+
+  * improve check for linux kernel updates 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 11 Nov 2015 15:57:28 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion44) trusty; urgency=medium
 
   * so-purge-old-kernels -y 
