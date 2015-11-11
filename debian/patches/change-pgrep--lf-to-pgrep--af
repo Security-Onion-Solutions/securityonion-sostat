@@ -1,0 +1,67 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion42) trusty; urgency=medium
+ .
+   * change pgrep -lf to pgrep -af
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -178,19 +178,19 @@ if [ -f /etc/nsm/securityonion.conf ] &&
+         header "ELSA"
+ 	echo "Syslog-ng"
+         echo "Checking for process:"
+-	pgrep -lf syslog-ng
++	pgrep -af syslog-ng
+         echo "Checking for connection:"
+ 	nc -4 -vz localhost 514 2>&1
+ 	echo
+         echo "MySQL"
+         echo "Checking for process:"
+-        pgrep -lf mysql
++        pgrep -af mysql
+         echo "Checking for connection:"
+         [ -d /var/lib/mysql/securityonion_db ] && nc -4 -vz localhost 3306 2>&1 || nc -4 -vz localhost 50000 2>&1
+         echo
+         echo "Sphinx"
+         echo "Checking for process:"
+-        pgrep -lf sphinx
++        pgrep -af sphinx
+         echo "Checking for connection:"
+         nc -4 -vz localhost 9306 2>&1
+         echo
+@@ -227,7 +227,7 @@ if [ -f /etc/nsm/securityonion.conf ] &&
+                 # ELSA Log Node
+                 echo "autossh"
+                 echo "Checking for process:"
+-                pgrep -lf autossh
++                pgrep -af autossh
+                 echo
+                 echo "Checking APIKEY:"
+                 APIKEY=`grep '"apikey": "' /etc/elsa_web.conf | awk '{print $2}' | sed 's|"||g'`
+@@ -237,6 +237,6 @@ if [ -f /etc/nsm/securityonion.conf ] &&
+                 echo
+                 echo "starman"
+                 echo "Checking for processes:"
+-                pgrep -lf starman
++                pgrep -af starman
+         fi
+ fi
