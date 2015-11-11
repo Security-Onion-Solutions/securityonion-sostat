@@ -91,7 +91,7 @@ if [ $SKIP -ne 1 ]; then
 fi
 
 # Remove old kernels
-/usr/bin/so-purge-old-kernels
+/usr/bin/so-purge-old-kernels -y
 
 # Sync with mirrors
 apt-get update
@@ -121,9 +121,6 @@ apt-get install -y securityonion-pfring-module
 # If there is a kernel update available, we need to reboot at the end
 apt-get dist-upgrade --assume-no | grep linux-image >/dev/null && REBOOT=yes
 apt-get -y dist-upgrade
-
-# Remove any unnecessary packages (including old kernels)
-apt-get autoremove -y
 
 # Final output
 echo $BANNER

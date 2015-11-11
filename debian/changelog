@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion44) trusty; urgency=medium
+
+  * so-purge-old-kernels -y 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 11 Nov 2015 14:43:13 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion43) trusty; urgency=medium
 
   * replace autoremove with purge-old-kernels 
