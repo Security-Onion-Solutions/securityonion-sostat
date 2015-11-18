@@ -91,10 +91,13 @@ if [ $SKIP -ne 1 ]; then
 fi
 
 # Remove old kernels
+echo "Checking for kernels that can be removed..."
 /usr/bin/so-purge-old-kernels -y
 
 # Sync with mirrors
-apt-get update
+echo
+echo "Checking for updates..."
+apt-get update -qq
 
 # if mysql-server updates are available, we need to stop services and force reboot at end
 if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then

@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion47) trusty; urgency=medium
+
+  * use apt-get's -qq switch to reduce output 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 18 Nov 2015 16:06:35 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion46) trusty; urgency=medium
 
   * sostat - update pgrep calls to use full path 

@@ -40,3 +40,4 @@ replace-autoremove-with-purge-old-kernels
 so-purge-old-kernels--y
 improve-check-for-linux-kernel-updates
 sostat---update-pgrep-calls-to-use-full-path
+use-apt-get's--qq-switch-to-reduce-output
