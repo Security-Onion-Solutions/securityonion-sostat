@@ -127,6 +127,9 @@ apt-get dist-upgrade --assume-no | grep -A1000 "The following NEW packages will 
 # Do the actual upgrade
 apt-get -y dist-upgrade
 
+# Check again if the system requires a reboot
+test -e /var/run/reboot-required && REBOOT=yes
+
 # Final output
 echo $BANNER
 echo "All updates have been installed."
