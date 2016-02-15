@@ -1,0 +1,57 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion50) trusty; urgency=medium
+ .
+   *  Issue 848: sostat: check timezone and warn if not UTC
+   *  Issue 858: sostat: check default_start_time_offset
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -202,9 +202,13 @@ if [ -f /etc/nsm/securityonion.conf ] &&
+         echo "ELSA Directory Sizes:"
+         du --max-depth=0 -h /nsm/elsa/data /var/lib/mysql/syslog /var/lib/mysql/syslog_data
+         echo
++	OFFSET="2"
++	if [ -f /etc/elsa_web.conf ] && grep default_start_time_offset /etc/elsa_web.conf >/dev/null 2>&1; then
++		OFFSET=`grep default_start_time_offset /etc/elsa_web.conf | awk '{print $2}' | cut -d, -f1`
++	fi
+ 	echo "ELSA Index Date Range"
+-	echo "If you don't have at least 48 hours (or whatever your default_start_time_offset is),"
+-	echo "then you'll need to adjust log_size_limit in /etc/elsa_node.conf."
++	echo "If you don't have at least $OFFSET full days of logs in the Index Date Range,"
++	echo "then you'll need to increase log_size_limit in /etc/elsa_node.conf."
+ 	mysql -uroot -Dsyslog -e "SELECT MIN(start), MAX(end) FROM syslog.v_indexes"
+ 	echo
+         if [ -d /var/lib/mysql/securityonion_db ]; then
+@@ -242,3 +246,12 @@ if [ -f /etc/nsm/securityonion.conf ] &&
+                 pgrep -af starman
+         fi
+ fi
++
++echo
++if [ -f /etc/timezone] && grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
++	echo "Timezone is set to UTC."
++else
++	echo "WARNING! Timezone is NOT set to UTC!"
++	echo "Please see:"
++	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/TimeZones"
++fi

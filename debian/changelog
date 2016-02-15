@@ -1,3 +1,10 @@
+securityonion-sostat (20120722-0ubuntu0securityonion50) trusty; urgency=medium
+
+  *  Issue 848: sostat: check timezone and warn if not UTC
+  *  Issue 858: sostat: check default_start_time_offset 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 15 Feb 2016 15:30:01 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion49) trusty; urgency=medium
 
   * soup: check for /var/run/reboot-required #2 
