@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion51) trusty; urgency=medium
+
+  * improve time zone check 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 15 Feb 2016 15:47:18 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion50) trusty; urgency=medium
 
   *  Issue 848: sostat: check timezone and warn if not UTC

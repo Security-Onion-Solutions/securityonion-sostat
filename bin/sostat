@@ -247,10 +247,9 @@ if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [
         fi
 fi
 
-echo
-if [ -f /etc/timezone] && grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
-	echo "Timezone is set to UTC."
-else
+if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
+	echo
+	header "Time Zone"
 	echo "WARNING! Timezone is NOT set to UTC!"
 	echo "Please see:"
 	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/TimeZones"
