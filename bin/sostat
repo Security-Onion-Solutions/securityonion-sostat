@@ -173,6 +173,14 @@ if [ -f /var/log/apt/history.log ]; then
 	tail /var/log/apt/history.log
 fi
 
+if (!(/usr/lib/update-notifier/apt-check --human-readable | grep -c '0') > 1); then
+        echo
+        header "Available updates"
+        /usr/lib/update-notifier/apt-check --human-readable
+        echo
+        echo "Run 'sudo soup' to install the latest updates."
+fi
+
 if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [ "$ELSA" = "YES" ]; then
         echo
         header "ELSA"
