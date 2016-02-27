@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion52) trusty; urgency=medium
+
+  * pull request #3 from Wes Lambert 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 27 Feb 2016 11:01:28 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion51) trusty; urgency=medium
 
   * improve time zone check 
