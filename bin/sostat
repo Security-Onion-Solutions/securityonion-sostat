@@ -164,6 +164,11 @@ if [ -d /var/lib/mysql/securityonion_db ]; then
 		header "Top 50 URLs for yesterday"
 		mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, event.signature as Signature from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc limit 50;"
 		mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
+	else
+		yesterday=$(date -d "yesterday 13:00 " '+%Y-%m-%d')
+		echo
+		header "Top 50 Sites for yesterday"
+		zcat /nsm/bro/logs/$yesterday/http* | bro-cut host | sort | uniq -c | sort -n | tail -n 50
 	fi
 fi
 
