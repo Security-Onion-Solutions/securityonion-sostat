@@ -169,7 +169,7 @@ echo
 header_mid "If we're going to take action an alert, it's best to ensure that these alerts are benign as part of our tuning process."
 header_bot "See which machines generated these alerts can be helpful in making that decision"
 echo -e "\nThis will take a moment to complete ..."
-sudo mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 group by event.signature order by Totals desc limit 20;"
+mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 group by event.signature order by Totals desc limit 20;"
 next
 
 

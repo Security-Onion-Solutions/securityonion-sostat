@@ -147,23 +147,23 @@ fi
 if [ -d /var/lib/mysql/securityonion_db ]; then
 	echo
 	header "Sguil Uncategorized Events"
-	mysql -uroot -Dsecurityonion_db -e "SELECT COUNT(*) FROM event WHERE status=0"
+	mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "SELECT COUNT(*) FROM event WHERE status=0"
 	echo
 	header "Sguil events summary for yesterday"
 	# List all sigs from yesterday that are not URLs captured by http_agent descending by count
-	mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc;"
-	mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen != 10001 and event.signature_id != 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
+	mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc;"
+	mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen != 10001 and event.signature_id != 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
 	echo
 	header "Top 50 All time Sguil Events"
-	mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 group by event.signature order by Totals desc limit 50;"
-	mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen != 10001 and event.signature_id != 420042;"
+	mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select count(*) as Totals, CONCAT(event.signature_gen, ':', event.signature_id) as 'GenID:SigID', event.signature as Signature from event where event.signature_gen != 10001 and event.signature_id != 420042 group by event.signature order by Totals desc limit 50;"
+	mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen != 10001 and event.signature_id != 420042;"
 	# check for active http_agent
-	num_http_agents=$(mysql -uroot -Dsecurityonion_db -e "select * from sensor where agent_type='http' and active='Y';" | wc -l)
+	num_http_agents=$(mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select * from sensor where agent_type='http' and active='Y';" | wc -l)
 	if [ $num_http_agents -gt 0 ]; then
 		echo
 		header "Top 50 URLs for yesterday"
-		mysql -uroot -Dsecurityonion_db -e "select count(*) as Totals, event.signature as Signature from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc limit 50;"
-		mysql -uroot -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
+		mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select count(*) as Totals, event.signature as Signature from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY) group by event.signature order by Totals desc limit 50;"
+		mysql --defaults-file=/etc/mysql/debian.cnf -Dsecurityonion_db -e "select count(*) as Total from event where event.signature_gen = 10001 and event.signature_id = 420042 and event.timestamp<curdate() and event.timestamp>DATE_ADD(CURDATE(), INTERVAL -1 DAY);"
 	fi
 fi
 
@@ -217,7 +217,7 @@ if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [
 	echo "ELSA Index Date Range"
 	echo "If you don't have at least $OFFSET full days of logs in the Index Date Range,"
 	echo "then you'll need to increase log_size_limit in /etc/elsa_node.conf."
-	mysql -uroot -Dsyslog -e "SELECT MIN(start), MAX(end) FROM syslog.v_indexes"
+	mysql --defaults-file=/etc/mysql/debian.cnf -Dsyslog -e "SELECT MIN(start), MAX(end) FROM syslog.v_indexes"
 	echo
         if [ -d /var/lib/mysql/securityonion_db ]; then
                 # Master server
