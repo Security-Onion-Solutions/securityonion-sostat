@@ -1,0 +1,196 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion54) trusty; urgency=medium
+ .
+   * Issue 951: sostat: group packet loss stats into one section
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -24,7 +24,12 @@ header() {
+ remove_ansi_escapes() {
+   sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
+ }
+-
++# Determine network interfaces for packet loss stats
++INTERFACES=`cat "/proc/net/dev" | egrep "(eth|bond|wlan|br|ath|bge|mon|fe|em|p[0-5]p)\w+" | awk '{print $1}' | cut -d':' -f1 | sort`
++# Text formatting
++underline=`tput smul`
++normal=`tput sgr0`
++#yellow=`tput setaf 3`
+ # Begin output
+ header "Service Status"
+ service nsm status 2>&1 | remove_ansi_escapes
+@@ -74,41 +79,38 @@ if [ -d /nsm/sensor_data ]; then
+ 	header "Packets received during last monitoring interval ($FREQUENCY seconds)"
+ 	/usr/bin/sostat-interface-delta
+ 	echo
+-	header "Log Archive"
+-	for i in /nsm/sensor_data/*; do 
+-		DAYS=`ls $i/dailylogs/ | wc -l`
+-		echo "$i/dailylogs/ - $DAYS days"
+-		cd $i/dailylogs
+-		du --max-depth=1 -h|sort -k2
+-		cd ->/dev/null
+-		echo
++	header "Packet Loss Stats"
++	echo
++	echo "${underline}NIC${normal}:"
++	echo
++	for IFACE in $INTERFACES;do
++		echo "$IFACE:" && echo && echo `ifconfig $IFACE |awk '/dropped:/ {print $1,$2,$4}'` && echo ""
+ 	done
+-	DAYS=`ls /nsm/bro/logs/ | grep -v current | grep -v stats | wc -l`
+-	echo "/nsm/bro/logs/ - $DAYS days"; cd /nsm/bro/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
++	echo "-------------------------------------------------------------------------"
+ 	echo
+-	TMP=`mktemp`
+-	su sguil -c '/opt/bro/bin/broctl netstats' > $TMP
+-	if [ -s $TMP ]; then
+-		header "Bro netstats"
+-		echo -n "Average packet loss as percent across all Bro workers: "
+-		cat $TMP | sed \
+-		's/[a-z]*=//g' | awk '{ drop += $4 ; link += $5 } \
+-		END { printf("%f\n", ((drop/NR) / (link/NR)) * 100) }'
+-		echo
+-		cat $TMP
+-		echo
+-		rm $TMP
+-	fi
+-	header "IDS Engine ($ENGINE) packet drops"
+-	if [ "$ENGINE" = "suricata" ]; then
+-		for i in /nsm/sensor_data/*/stats.log; do
+-			echo "$i"
+-			tail -n 50 "$i" |
+-				grep -e "Date: " -e "drop"
++	if [ -f /proc/net/pf_ring/info ]; then
++		echo "${underline}pf_ring${normal}:"
++		for i in /proc/net/pf_ring/*-* ; do
++			echo
++			#echo $i
++			grep "Appl. Name" $i
++			grep "Tot Packets" $i
++			grep "Tot Pkt Lost" $i
+ 			echo
+ 		done
+-	else
+-		for i in /nsm/sensor_data/*/snort-*.stats; do 
++	fi
++	echo "-------------------------------------------------------------------------"
++	echo
++	echo "${underline}IDS Engine ($ENGINE) packet drops${normal}:"
++	echo
++	if [ "$ENGINE" = "suricata" ]; then
++        for i in /nsm/sensor_data/*/stats.log; do
++                echo "$i"
++                tail -n 50 "$i" | grep -e "Date: " -e "drop"
++                echo
++        done
++        else
++		for i in /nsm/sensor_data/*/snort-*.stats; do
+ 			if grep -q '^[^#]' "$i"; then
+ 				echo -n "$i last reported pkt_drop_percent as "
+ 				grep -v '^#' "$i" |tail -n 1 |cut -d\, -f2
+@@ -118,32 +120,60 @@ if [ -d /nsm/sensor_data ]; then
+ 		done
+ 	fi
+ 	echo
+-        if [ -f /proc/net/pf_ring/info ]; then
+-                header "pf_ring stats"
+-                cat /proc/net/pf_ring/info
+-                ls /proc/net/pf_ring/*-* &>/dev/null && for i in /proc/net/pf_ring/*-* ; do
+-                        echo
+-                        echo $i
+-                        grep "Appl. Name" $i
+-                        grep "Tot Packets" $i
+-                        grep "Tot Pkt Lost" $i
+-                        grep "Errors" $i
+-                        grep "Min Num Slots" $i
+-                        grep "Num Free Slots" $i
+-                done
+-        fi
+-fi
+-
+-if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
+-        echo
+-        header "Netsniff-NG - Reported Packet Loss (per interval)"
+- 	#awk 'BEGIN { RS="."; FS="/"; ORS="\n" } { if( $0 !~ /netsniff/ && substr( $2,2,length($2)-2 ) > 0 ) print "File:",FILENAME,"Processed:",$1,"Lost:",$2 }' /var/log/nsm/*/netsniff-ng.log | sed -e 's/(//' -e 's/)//' | column -t | grep -v "Lost:  -0"
+-	for i in /var/log/nsm/*/netsniff*; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
+-	if [ $? -gt 0 ]; then
+-		echo "0 Loss"
++	echo "-------------------------------------------------------------------------"
++	echo
++        TMP=`mktemp`
++        su sguil -c '/opt/bro/bin/broctl netstats' > $TMP
++        if [ -s $TMP ]; then
++                echo "${underline}Bro${normal}:"
++                echo
++		echo -n "Average packet loss as percent across all Bro workers: "
++                cat $TMP | sed \
++                's/[a-z]*=//g' | awk '{ drop += $4 ; link += $5 } \
++                END { printf("%f\n", ((drop/NR) / (link/NR)) * 100) }'
++                echo
++                cat $TMP
++                echo
++                if [ -f /nsm/bro/logs/current/capture_loss.log ]; then
++			echo "Capture Loss:"
++			echo
++			echo "`bro-cut peer percent_lost < /nsm/bro/logs/current/capture_loss.log | sort -u`"
++			echo
++			echo "If you are seeing capture loss without dropped packets, this"
++			echo "may indicate that an upstream device is dropping packets (tap or SPAN port)."
++		else
++			echo "No capture loss reported."
++		fi
++		rm $TMP
+ 	fi
++	echo
++	echo "-------------------------------------------------------------------------"
++	if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
++		echo
++		echo "${underline}Netsniff-NG${normal}:"
++		#awk 'BEGIN { RS="."; FS="/"; ORS="\n" } { if( $0 !~ /netsniff/ && substr( $2,2,length($2)-2 ) > 0 ) print "File:",FILENAME,"Processed:",$1,"Lost:",$2 }' /var/log/nsm/*/netsniff-ng.log | sed -e 's/(//' -e 's/)//' | column -t | grep -v "Lost:  -0"
++		for i in /var/log/nsm/*/netsniff*; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
++		if [ $? -gt 0 ]; then
++			echo
++			echo "0 Loss"
++		fi
++	fi
++	echo
++	header "PF_RING"
++        cat /proc/net/pf_ring/info
++	echo
++	header "Log Archive"
++	for i in /nsm/sensor_data/*; do
++		DAYS=`ls $i/dailylogs/ | wc -l`
++		echo "$i/dailylogs/ - $DAYS days"
++		cd $i/dailylogs
++		du --max-depth=1 -h|sort -k2
++		cd ->/dev/null
++		echo
++	done
++	DAYS=`ls /nsm/bro/logs/ | grep -v current | grep -v stats | wc -l`
++	echo "/nsm/bro/logs/ - $DAYS days"; cd /nsm/bro/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
+ fi
+-
+ if [ -d /var/lib/mysql/securityonion_db ]; then
+ 	echo
+ 	header "Sguil Uncategorized Events"
