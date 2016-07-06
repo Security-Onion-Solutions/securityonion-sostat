@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion57) trusty; urgency=medium
+
+  * sostat: output when current monitoring interval has not completed #960 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 06 Jul 2016 14:09:15 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion56) trusty; urgency=medium
 
   * only show packet loss for active sniffing interfaces defined in /etc/nsm/sensortab 

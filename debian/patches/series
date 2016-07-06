@@ -50,3 +50,4 @@ mysql-calls-should-use---defaults-file
 Issue-951:-sostat:-group-packet-loss-stats-into-one-section
 sostat:-fix-tput-error-when-sending-sostat-email-#5
 only-show-packet-loss-for-active-sniffing-interfaces-defined-in-etcnsmsensortab
+sostat:-output-when-current-monitoring-interval-has-not-completed-#960
