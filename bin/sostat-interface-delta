@@ -7,5 +7,9 @@ grep -v "^#" /etc/nsm/sensortab |awk '{print $4}' |while read SENSOR; do
                 RX1=`head -1 $FILE`
                 RX2=`tail -1 $FILE`
                 expr $RX2 - $RX1
-        fi
+        else
+		echo "Stats not yet available."
+		echo
+		echo "Please wait until the current monitoring interval has completed."
+	fi
 done
