@@ -48,3 +48,4 @@ improve-time-zone-check
 pull-request-#3-from-Wes-Lambert
 mysql-calls-should-use---defaults-file
 Issue-951:-sostat:-group-packet-loss-stats-into-one-section
+sostat:-fix-tput-error-when-sending-sostat-email-#5
