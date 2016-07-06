@@ -24,8 +24,10 @@ header() {
 remove_ansi_escapes() {
   sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
 }
-# Determine network interfaces for packet loss stats
-INTERFACES=`cat "/proc/net/dev" | egrep "(eth|bond|wlan|br|ath|bge|mon|fe|em|p[0-5]p)\w+" | awk '{print $1}' | cut -d':' -f1 | sort`
+
+# Determine sensor interfaces for packet loss stats
+INTERFACES=`grep -v "#" /etc/nsm/sensortab | awk '{print $4}'`
+
 # Text formatting
 if [ -t 1 ];then
 	underline=`tput smul`
@@ -33,6 +35,7 @@ if [ -t 1 ];then
 else
 	:
 fi
+
 # Begin output
 header "Service Status"
 service nsm status 2>&1 | remove_ansi_escapes
