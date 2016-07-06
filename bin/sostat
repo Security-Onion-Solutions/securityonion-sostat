@@ -27,9 +27,12 @@ remove_ansi_escapes() {
 # Determine network interfaces for packet loss stats
 INTERFACES=`cat "/proc/net/dev" | egrep "(eth|bond|wlan|br|ath|bge|mon|fe|em|p[0-5]p)\w+" | awk '{print $1}' | cut -d':' -f1 | sort`
 # Text formatting
-underline=`tput smul`
-normal=`tput sgr0`
-#yellow=`tput setaf 3`
+if [ -t 1 ];then
+	underline=`tput smul`
+	normal=`tput sgr0`
+else
+	:
+fi
 # Begin output
 header "Service Status"
 service nsm status 2>&1 | remove_ansi_escapes
