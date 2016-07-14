@@ -3,13 +3,18 @@
 grep -v "^#" /etc/nsm/sensortab |awk '{print $4}' |while read SENSOR; do
         FILE="/var/log/nsm/$SENSOR-packets.log"
         if [ -f $FILE ]; then
-                echo -n "$SENSOR: "
+                echo
+		echo -n "$SENSOR: "
                 RX1=`head -1 $FILE`
                 RX2=`tail -1 $FILE`
                 expr $RX2 - $RX1
         else
-		echo "Stats not yet available."
+		echo
+		echo
+		echo "Stats not yet available for $SENSOR."
 		echo
 		echo "Please wait until the current monitoring interval has completed."
+		echo
+		echo
 	fi
 done
