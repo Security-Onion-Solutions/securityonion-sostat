@@ -112,8 +112,15 @@ if [ -d /nsm/sensor_data ]; then
 	if [ "$ENGINE" = "suricata" ]; then
         for i in /nsm/sensor_data/*/stats.log; do
                 echo "$i"
-                tail -n 50 "$i" | grep -e "Date: " -e "drop"
-                echo
+                if [ $( tail -n 50 $i | grep -c drop $i) -ne 0 ]; then
+			echo
+			tail -n 50 "$i" | grep -e "Date: " -e "drop"
+			echo
+		else
+			echo
+			echo "No packet drops reported."
+			echo
+		fi
         done
         else
 		for i in /nsm/sensor_data/*/snort-*.stats; do
@@ -125,7 +132,6 @@ if [ -d /nsm/sensor_data ]; then
 			fi
 		done
 	fi
-	echo
 	echo "-------------------------------------------------------------------------"
 	echo
         TMP=`mktemp`
