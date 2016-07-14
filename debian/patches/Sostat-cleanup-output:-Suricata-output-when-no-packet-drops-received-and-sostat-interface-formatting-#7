@@ -1,0 +1,76 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion58) trusty; urgency=medium
+ .
+   * Sostat cleanup output: Suricata output when no packet drops received and sostat-interface formatting #7
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -112,8 +112,15 @@ if [ -d /nsm/sensor_data ]; then
+ 	if [ "$ENGINE" = "suricata" ]; then
+         for i in /nsm/sensor_data/*/stats.log; do
+                 echo "$i"
+-                tail -n 50 "$i" | grep -e "Date: " -e "drop"
+-                echo
++                if [ $( tail -n 50 $i | grep -c drop $i) -ne 0 ]; then
++			echo
++			tail -n 50 "$i" | grep -e "Date: " -e "drop"
++			echo
++		else
++			echo
++			echo "No packet drops reported."
++			echo
++		fi
+         done
+         else
+ 		for i in /nsm/sensor_data/*/snort-*.stats; do
+@@ -125,7 +132,6 @@ if [ -d /nsm/sensor_data ]; then
+ 			fi
+ 		done
+ 	fi
+-	echo
+ 	echo "-------------------------------------------------------------------------"
+ 	echo
+         TMP=`mktemp`
+--- securityonion-sostat-20120722.orig/bin/sostat-interface-delta
++++ securityonion-sostat-20120722/bin/sostat-interface-delta
+@@ -3,13 +3,18 @@
+ grep -v "^#" /etc/nsm/sensortab |awk '{print $4}' |while read SENSOR; do
+         FILE="/var/log/nsm/$SENSOR-packets.log"
+         if [ -f $FILE ]; then
+-                echo -n "$SENSOR: "
++                echo
++		echo -n "$SENSOR: "
+                 RX1=`head -1 $FILE`
+                 RX2=`tail -1 $FILE`
+                 expr $RX2 - $RX1
+         else
+-		echo "Stats not yet available."
++		echo
++		echo
++		echo "Stats not yet available for $SENSOR."
+ 		echo
+ 		echo "Please wait until the current monitoring interval has completed."
++		echo
++		echo
+ 	fi
+ done

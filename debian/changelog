@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion58) trusty; urgency=medium
+
+  * Sostat cleanup output: Suricata output when no packet drops received and sostat-interface formatting #7 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 14 Jul 2016 05:15:18 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion57) trusty; urgency=medium
 
   * sostat: output when current monitoring interval has not completed #960 
