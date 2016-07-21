@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion59) trusty; urgency=medium
+
+  * merge fix from Wes Lambert 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 21 Jul 2016 06:16:05 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion58) trusty; urgency=medium
 
   * Sostat cleanup output: Suricata output when no packet drops received and sostat-interface formatting #7 

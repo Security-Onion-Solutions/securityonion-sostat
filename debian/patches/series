@@ -52,3 +52,4 @@ sostat:-fix-tput-error-when-sending-sostat-email-#5
 only-show-packet-loss-for-active-sniffing-interfaces-defined-in-etcnsmsensortab
 sostat:-output-when-current-monitoring-interval-has-not-completed-#960
 Sostat-cleanup-output:-Suricata-output-when-no-packet-drops-received-and-sostat-interface-formatting-#7
+merge-fix-from-Wes-Lambert
