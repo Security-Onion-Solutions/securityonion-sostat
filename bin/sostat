@@ -112,7 +112,7 @@ if [ -d /nsm/sensor_data ]; then
 	if [ "$ENGINE" = "suricata" ]; then
         for i in /nsm/sensor_data/*/stats.log; do
                 echo "$i"
-                if [ $( tail -n 50 $i | grep -c drop $i) -ne 0 ]; then
+                if [ $( tail -n 50 $i | grep -c drop ) -ne 0 ]; then
 			echo
 			tail -n 50 "$i" | grep -e "Date: " -e "drop"
 			echo
