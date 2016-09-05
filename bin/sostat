@@ -11,6 +11,9 @@
 # Determine if we're running Snort or Suricata
 source /etc/nsm/securityonion.conf
 
+#enable nullglobs to prevent file globs from becomming string literals
+shopt -s nullglob
+
 # Define a banner to separate sections
 banner="========================================================================="
 
