@@ -8,8 +8,12 @@
 # Stephane Chazelas
 # Shane Castle
 
-# Determine if we're running Snort or Suricata
-source /etc/nsm/securityonion.conf
+# Import settings file
+if [ -f /etc/nsm/securityonion.conf ]; then
+   source /etc/nsm/securityonion.conf
+else
+   echo "Missing /etc/nsm/securityonion.conf file!" && exit 1
+fi
 
 # make sure if statements using wildcards for filenames don't equal true when no files exist
 shopt -s nullglob
@@ -226,7 +230,7 @@ if [ $(/usr/lib/update-notifier/apt-check --human-readable | grep -c '0') -ne 2 
         echo "Run 'sudo soup' to install the latest updates."
 fi
 
-if [ -f /etc/nsm/securityonion.conf ] && source /etc/nsm/securityonion.conf && [ "$ELSA" = "YES" ]; then
+if [ "$ELSA" = "YES" ]; then
         echo
         header "ELSA"
 	echo "Syslog-ng"
