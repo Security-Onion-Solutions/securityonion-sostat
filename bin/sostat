@@ -18,6 +18,9 @@ fi
 # make sure if statements using wildcards for filenames don't equal true when no files exist
 shopt -s nullglob
 
+#enable nullglobs to prevent file globs from becomming string literals
+shopt -s nullglob
+
 # Define a banner to separate sections
 banner="========================================================================="
 
