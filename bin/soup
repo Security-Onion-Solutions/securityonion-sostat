@@ -135,11 +135,18 @@ test -e /var/run/reboot-required && REBOOT=yes
 
 # Final output
 echo $BANNER
-echo "All updates have been installed."
+hwe-support-status > /dev/null 2>1
+if [ $? -eq 0 ]; then
+	echo "All updates have been installed."
+else
+	echo "Please upgrade your Hardware Enablement Stack (HWE):"
+	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/HWE"
+fi
 
 # If we need to reboot, give the user a chance to cancel.
 if [ $REBOOT == "yes" ]; then
 	if [ $SKIP -ne 1 ]; then
+		echo
 		echo "Press Enter to reboot or Ctrl-C to cancel."
 		read input
 	fi

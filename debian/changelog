@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion60) trusty; urgency=medium
+
+  * Issues 990 991 992 996 962 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 21 Sep 2016 14:41:38 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion59) trusty; urgency=medium
 
   * merge fix from Wes Lambert 

@@ -18,9 +18,6 @@ fi
 # make sure if statements using wildcards for filenames don't equal true when no files exist
 shopt -s nullglob
 
-#enable nullglobs to prevent file globs from becomming string literals
-shopt -s nullglob
-
 # Define a banner to separate sections
 banner="========================================================================="
 
@@ -313,4 +310,13 @@ if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	echo "WARNING! Timezone is NOT set to UTC!"
 	echo "Please see:"
 	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/TimeZones"
+fi
+
+FILE="/etc/os-release"
+if [ -f $FILE ]; then
+	echo
+	header "Version Information"
+	source $FILE
+	echo $PRETTY_NAME
+	dpkg -l |grep sostat | awk '{print $2,$3}'
 fi
