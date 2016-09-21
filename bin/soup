@@ -122,13 +122,17 @@ if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
 fi
 
 # Force pfring-module to install before any kernel updates
-apt-get install -y securityonion-pfring-module
+apt-get install -y securityonion-pfring-module | while read; do 
+	echo "$REPLY" | grep -v "^Use 'apt-get autoremove' to remove them.$"
+done
 
 # If there is a kernel update available, we need to reboot at the end
 apt-get dist-upgrade --assume-no | grep -A1000 "The following NEW packages will be installed:" | grep -B1000 "The following packages will be upgraded:" | grep linux-image >/dev/null && REBOOT=yes
 
 # Do the actual upgrade
-apt-get -y dist-upgrade
+apt-get -y dist-upgrade | while read; do 
+	echo "$REPLY" | grep -v "^Use 'apt-get autoremove' to remove them.$"
+done
 
 # Check again if the system requires a reboot
 test -e /var/run/reboot-required && REBOOT=yes
