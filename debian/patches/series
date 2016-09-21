@@ -54,3 +54,4 @@ sostat:-output-when-current-monitoring-interval-has-not-completed-#960
 Sostat-cleanup-output:-Suricata-output-when-no-packet-drops-received-and-sostat-interface-formatting-#7
 merge-fix-from-Wes-Lambert
 Merge-pull-request-#9-from-zestysoftpull-request-bugfixes
+Merge-pull-request-#10-from-zestysoftpull-request-nullglob
