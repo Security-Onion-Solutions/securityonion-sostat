@@ -55,3 +55,4 @@ Sostat-cleanup-output:-Suricata-output-when-no-packet-drops-received-and-sostat-
 merge-fix-from-Wes-Lambert
 Merge-pull-request-#9-from-zestysoftpull-request-bugfixes
 Merge-pull-request-#10-from-zestysoftpull-request-nullglob
+Merge-pull-request-#11-from-zestysoftpull-request-glob
