@@ -67,7 +67,9 @@ if [ -f /var/log/nsm/pulledpork.log ]; then
 	echo
 	header "IDS Rules Update"
 	date=$(date +'%a %b %_d')
-	tail -n 1000 /var/log/nsm/pulledpork.log |
+	tac /var/log/nsm/pulledpork.log |
+	  grep 'UTC' -m1 -B 1000 |
+	  tac |
 	  sed "/^$date/,\$!d;/./!d;/An error occurred: WARNING: /d" |
 	  remove_ansi_escapes
 fi
