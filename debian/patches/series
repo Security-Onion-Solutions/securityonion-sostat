@@ -59,3 +59,4 @@ Merge-pull-request-#11-from-zestysoftpull-request-glob
 sostat:-report-OS-version-and-sostat-version-#996
 soup:-recommend-upgrading-to-16.04-HWE-stack-#962
 soup:-remove-any-autoremove-recommendations-#961
+merge-pull-request-from-Wes-Lambert-for-sostat-to-only-display-last-run-of-rule-update

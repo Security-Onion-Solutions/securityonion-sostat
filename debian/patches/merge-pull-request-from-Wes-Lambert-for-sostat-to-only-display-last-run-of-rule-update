@@ -1,0 +1,38 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion62) trusty; urgency=medium
+ .
+   * merge pull request from Wes Lambert for sostat to only display last run of rule-update
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -67,7 +67,9 @@ if [ -f /var/log/nsm/pulledpork.log ]; t
+ 	echo
+ 	header "IDS Rules Update"
+ 	date=$(date +'%a %b %_d')
+-	tail -n 1000 /var/log/nsm/pulledpork.log |
++	tac /var/log/nsm/pulledpork.log |
++	  grep 'UTC' -m1 -B 1000 |
++	  tac |
+ 	  sed "/^$date/,\$!d;/./!d;/An error occurred: WARNING: /d" |
+ 	  remove_ansi_escapes
+ fi
