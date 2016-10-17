@@ -139,7 +139,7 @@ test -e /var/run/reboot-required && REBOOT=yes
 
 # Final output
 echo $BANNER
-hwe-support-status > /dev/null 2>1
+hwe-support-status > /dev/null 2>&1
 if [ $? -eq 0 ]; then
 	echo "All updates have been installed."
 else
