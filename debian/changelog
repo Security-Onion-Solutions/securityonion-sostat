@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion64) trusty; urgency=medium
+
+  * soup: when running on sensor, check to make sure master server has been updated first #1024 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 25 Nov 2016 15:55:33 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion63) trusty; urgency=medium
 
   * Issue 1009: soup: change "2>1" to "2>&1" 

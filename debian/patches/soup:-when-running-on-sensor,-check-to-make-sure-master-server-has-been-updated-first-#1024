@@ -1,0 +1,58 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion64) trusty; urgency=medium
+ .
+   * soup: when running on sensor, check to make sure master server has been updated first #1024
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -18,6 +18,10 @@ SKIP=0
+ # Log to file
+ LOG=0
+ 
++# Grab SSH info so we can check the server for updates.
++SSH_CONF="/root/.ssh/securityonion_ssh.conf"
++KEY="/root/.ssh/securityonion"
++
+ #########################################
+ # Got r00t?
+ #########################################
+@@ -73,6 +77,19 @@ fi
+ # UPDATE!
+ #########################################
+ 
++# If running a server-sensor deployment, check to see if the server needs updates -- if so, we will not update the sensor.
++if [ -f $SSH_CONF ]; then
++                source $SSH_CONF
++                SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/lib/update-notifier/apt-check --human-readable | grep -c '0'")
++                if [ "$SERVER_PKG" -ne 2 ]; then
++                        echo ""
++                        echo "Please update the master server before updating this sensor!"
++                        echo ""
++                        exit 1
++                fi
++fi
++
++
+ if [ $SKIP -ne 1 ]; then
+ 	# Prompt user to continue
+ 	echo $BANNER
