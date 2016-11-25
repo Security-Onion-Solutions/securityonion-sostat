@@ -18,6 +18,10 @@ SKIP=0
 # Log to file
 LOG=0
 
+# Grab SSH info so we can check the server for updates.
+SSH_CONF="/root/.ssh/securityonion_ssh.conf"
+KEY="/root/.ssh/securityonion"
+
 #########################################
 # Got r00t?
 #########################################
@@ -72,6 +76,19 @@ fi
 #########################################
 # UPDATE!
 #########################################
+
+# If running a server-sensor deployment, check to see if the server needs updates -- if so, we will not update the sensor.
+if [ -f $SSH_CONF ]; then
+                source $SSH_CONF
+                SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/lib/update-notifier/apt-check --human-readable | grep -c '0'")
+                if [ "$SERVER_PKG" -ne 2 ]; then
+                        echo ""
+                        echo "Please update the master server before updating this sensor!"
+                        echo ""
+                        exit 1
+                fi
+fi
+
 
 if [ $SKIP -ne 1 ]; then
 	# Prompt user to continue
