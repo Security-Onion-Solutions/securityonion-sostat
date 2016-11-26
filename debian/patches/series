@@ -62,3 +62,4 @@ soup:-remove-any-autoremove-recommendations-#961
 merge-pull-request-from-Wes-Lambert-for-sostat-to-only-display-last-run-of-rule-update
 -Issue-1009:-soup:-change-"2>1"-to-"2>&1"
 soup:-when-running-on-sensor,-check-to-make-sure-master-server-has-been-updated-first-#1024
+allow-master-server-check-to-be-bypassed
