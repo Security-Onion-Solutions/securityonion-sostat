@@ -1,0 +1,77 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion67) trusty; urgency=medium
+ .
+   * change paths from /usr/bin/ to /usr/sbin/
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# /usr/bin/sostat
++# /usr/sbin/sostat
+ #
+ # Written by:
+ # Doug Burks
+@@ -92,7 +92,7 @@ if [ -d /nsm/sensor_data ]; then
+ 	echo
+ 	FREQUENCY=`grep -A1 packets_received /var/ossec/etc/ossec.conf | tail -1 | cut -d\> -f2 | cut -d\< -f1`
+ 	header "Packets received during last monitoring interval ($FREQUENCY seconds)"
+-	/usr/bin/sostat-interface-delta
++	/usr/sbin/sostat-interface-delta
+ 	echo
+ 	header "Packet Loss Stats"
+ 	echo
+--- securityonion-sostat-20120722.orig/bin/sostat-quick
++++ securityonion-sostat-20120722/bin/sostat-quick
+@@ -71,7 +71,7 @@ echo "Fine Tuning will take several week
+ echo -e "\nThis 'Quick' report will help to identify the ${red}' Most Common ' ${normal}issues and is not intended to be a ' Complete ' report of your installation. "
+ echo "When updates are available, please use ${red}' sudo soup '${normal} instead of ' apt-get update '"
+ echo -e "\nProcessing ..."
+-data=$(/usr/bin/sostat)
++data=$(/usr/sbin/sostat)
+ 
+ echo -e "\n${purple}Data Collection Completed....${normal}"
+ echo -e "\nAnalysing Data for potential Issues/Improvements ...."
+--- securityonion-sostat-20120722.orig/bin/sostat-redacted
++++ securityonion-sostat-20120722/bin/sostat-redacted
+@@ -15,7 +15,7 @@ if grep "http://127.0.0.1:5" /etc/elsa_w
+ 	for x in ${ELSA_ARRAY[@]}; do [ -z ${ELSAVAR} ] && ELSAVAR=${x} || ELSAVAR="${ELSAVAR}|${x}"; done
+ fi
+ 
+-     /usr/bin/sostat |
++     /usr/sbin/sostat |
+      sed -r 's/(\b[0-9]{1,3}\.){3}[0-9]{1,3}\b'/X.X.X.X/g |
+      sed -r 's/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/MM:MM:MM:MM:MM:MM/g' |
+      sed -r 's/(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\b'/X.X.X.X/g |
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -116,7 +116,7 @@ fi
+ 
+ # Remove old kernels
+ echo "Checking for kernels that can be removed..."
+-/usr/bin/so-purge-old-kernels -y
++/usr/sbin/so-purge-old-kernels -y
+ 
+ # Sync with mirrors
+ echo

@@ -116,7 +116,7 @@ fi
 
 # Remove old kernels
 echo "Checking for kernels that can be removed..."
-/usr/bin/so-purge-old-kernels -y
+/usr/sbin/so-purge-old-kernels -y
 
 # Sync with mirrors
 echo

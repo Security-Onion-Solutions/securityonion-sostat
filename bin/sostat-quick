@@ -71,7 +71,7 @@ echo "Fine Tuning will take several weeks of your time, however; in the end it w
 echo -e "\nThis 'Quick' report will help to identify the ${red}' Most Common ' ${normal}issues and is not intended to be a ' Complete ' report of your installation. "
 echo "When updates are available, please use ${red}' sudo soup '${normal} instead of ' apt-get update '"
 echo -e "\nProcessing ..."
-data=$(/usr/bin/sostat)
+data=$(/usr/sbin/sostat)
 
 echo -e "\n${purple}Data Collection Completed....${normal}"
 echo -e "\nAnalysing Data for potential Issues/Improvements ...."

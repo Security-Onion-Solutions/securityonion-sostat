@@ -64,3 +64,4 @@ merge-pull-request-from-Wes-Lambert-for-sostat-to-only-display-last-run-of-rule-
 soup:-when-running-on-sensor,-check-to-make-sure-master-server-has-been-updated-first-#1024
 allow-master-server-check-to-be-bypassed
 issues-1042-and-1044
+change-paths-from-usrbin-to-usrsbin

@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion67) trusty; urgency=medium
+
+  * change paths from /usr/bin/ to /usr/sbin/ 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 22 Dec 2016 07:44:04 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion66) trusty; urgency=medium
 
   * issues 1042 and 1044 
