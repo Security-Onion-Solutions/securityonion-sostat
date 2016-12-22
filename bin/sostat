@@ -158,7 +158,7 @@ if [ -d /nsm/sensor_data ]; then
                 if [ -f /nsm/bro/logs/current/capture_loss.log ]; then
 			echo "Capture Loss:"
 			echo
-			echo "`bro-cut peer percent_lost < /nsm/bro/logs/current/capture_loss.log | sort -u`"
+			echo "`/opt/bro/bin/bro-cut peer percent_lost < /nsm/bro/logs/current/capture_loss.log | sort -u`"
 			echo
 			echo "If you are seeing capture loss without dropped packets, this"
 			echo "may indicate that an upstream device is dropping packets (tap or SPAN port)."
