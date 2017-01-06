@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion68) trusty; urgency=medium
+
+  * sostat: update location of sostat-interface in /var/ossec/etc/ossec.conf #1056 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 06 Jan 2017 05:37:00 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion67) trusty; urgency=medium
 
   * change paths from /usr/bin/ to /usr/sbin/ 

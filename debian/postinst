@@ -16,6 +16,12 @@ case "$1" in
 			sed -i 's|^Prompt=.*$|Prompt=never|g' $FILE || echo "Error updating $FILE"
 		fi
 	fi
+
+	FILE="/var/ossec/etc/ossec.conf"
+	if grep "/usr/bin/sostat-interface" $FILE >/dev/null 2>&1; then
+		echo "Updating sostat-interface path in $FILE."
+		sed -i 's|/usr/bin/sostat-interface|/usr/sbin/sostat-interface|g' $FILE || echo "Error updating $FILE."
+	fi
         
     ;;
 
