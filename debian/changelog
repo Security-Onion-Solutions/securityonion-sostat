@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion69) trusty; urgency=medium
+
+  * sostat: sostat-redacted - change "Port" to "Port " #1057 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 06 Jan 2017 08:53:07 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion68) trusty; urgency=medium
 
   * sostat: update location of sostat-interface in /var/ossec/etc/ossec.conf #1056 

@@ -4,7 +4,7 @@
 # MAC Address, SSH_PORT, HOSTNAME and SSH_USERNAME redact.
 #
 
-SSH_PORT=$(grep "Port" /etc/ssh/sshd_config | awk '{print $2}')
+SSH_PORT=$(grep "Port " /etc/ssh/sshd_config | awk '{print $2}')
 
 SSH_ARRAY=$(ls /home/)
 for x in ${SSH_ARRAY[@]}; do [ -z ${SSHVAR} ] && SSHVAR=${x} || SSHVAR="${SSHVAR}|${x}"; done
