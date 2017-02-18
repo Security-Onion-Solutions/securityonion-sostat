@@ -4,6 +4,42 @@
 # MAC Address, SSH_PORT, HOSTNAME and SSH_USERNAME redact.
 #
 
+#Options
+usage()
+{
+cat <<EOF
+
+Security Onion Statistics
+
+     Options:
+
+        -h              This message
+        -a              All packages
+
+Usage: $0
+EOF
+}
+# Check flags
+ALL_PKGS=0
+while getopts ":ha" OPTION
+do
+     case $OPTION in
+         h)
+                usage
+                exit 0
+                ;;
+         a)
+                ALL_PKGS=1
+             ;;
+     esac
+done
+
+SOSTAT=$(/usr/sbin/sostat)
+
+if [[ $ALL_PKGS == 1 ]];then
+	SOSTAT=$(/usr/sbin/sostat -a)
+fi
+
 SSH_PORT=$(grep "Port " /etc/ssh/sshd_config | awk '{print $2}')
 
 SSH_ARRAY=$(ls /home/)
@@ -15,7 +51,7 @@ if grep "http://127.0.0.1:5" /etc/elsa_web.conf >/dev/null 2>&1; then
 	for x in ${ELSA_ARRAY[@]}; do [ -z ${ELSAVAR} ] && ELSAVAR=${x} || ELSAVAR="${ELSAVAR}|${x}"; done
 fi
 
-     /usr/sbin/sostat |
+     echo "$SOSTAT" |
      sed -r 's/(\b[0-9]{1,3}\.){3}[0-9]{1,3}\b'/X.X.X.X/g |
      sed -r 's/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/MM:MM:MM:MM:MM:MM/g' |
      sed -r 's/(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\b'/X.X.X.X/g |
