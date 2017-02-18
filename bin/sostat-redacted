@@ -14,7 +14,7 @@ Security Onion Statistics
      Options:
 
         -h              This message
-        -a              All packages
+        -a              Show all installed Security Onion packages
 
 Usage: $0
 EOF
