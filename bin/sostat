@@ -204,7 +204,7 @@ if [ -d /nsm/sensor_data ]; then
 		echo
 		echo "${underline}Netsniff-NG${normal}:"
 		#awk 'BEGIN { RS="."; FS="/"; ORS="\n" } { if( $0 !~ /netsniff/ && substr( $2,2,length($2)-2 ) > 0 ) print "File:",FILENAME,"Processed:",$1,"Lost:",$2 }' /var/log/nsm/*/netsniff-ng.log | sed -e 's/(//' -e 's/)//' | column -t | grep -v "Lost:  -0"
-		for i in /var/log/nsm/*/netsniff*; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
+		for i in /var/log/nsm/*/netsniff.log; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
 		if [ $? -gt 0 ]; then
 			echo
 			echo "0 Loss"
