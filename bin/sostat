@@ -32,6 +32,37 @@ remove_ansi_escapes() {
   sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
 }
 
+# Options
+usage()
+{
+cat <<EOF
+
+Security Onion Statistics
+
+     Options:
+
+        -h              This message
+        -a              Show all installed Security Onion packages
+
+Usage: $0
+EOF
+}
+
+# Check flags
+ALL_PKGS=0
+while getopts ":ha" OPTION
+do
+     case $OPTION in
+         h)
+                usage
+                exit 0
+                ;;
+         a)
+                ALL_PKGS=1
+             ;;
+     esac
+done
+
 # Determine sensor interfaces for packet loss stats
 INTERFACES=`grep -v "#" /etc/nsm/sensortab | awk '{print $4}'`
 
@@ -173,7 +204,7 @@ if [ -d /nsm/sensor_data ]; then
 		echo
 		echo "${underline}Netsniff-NG${normal}:"
 		#awk 'BEGIN { RS="."; FS="/"; ORS="\n" } { if( $0 !~ /netsniff/ && substr( $2,2,length($2)-2 ) > 0 ) print "File:",FILENAME,"Processed:",$1,"Lost:",$2 }' /var/log/nsm/*/netsniff-ng.log | sed -e 's/(//' -e 's/)//' | column -t | grep -v "Lost:  -0"
-		for i in /var/log/nsm/*/netsniff*; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
+		for i in /var/log/nsm/*/netsniff.log; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
 		if [ $? -gt 0 ]; then
 			echo
 			echo "0 Loss"
@@ -304,8 +335,37 @@ if [ "$ELSA" = "YES" ]; then
                 echo "Checking for processes:"
                 pgrep -af starman
         fi
+	err_arr=($(ps -ax | grep -i cron.pl | grep -v grep | awk '{print $1}'))
+	if [[ ${#err_arr[@]} -gt 1 ]];then
+		echo "*** WARNING: Multiple cron.pl processes detected! ***"
+		echo
+		for i in "${err_arr[@]}"
+		do
+			PS_START=$(ps -p $i -o lstart=)
+			PS_DURATION=$(ps -p $i -o etime=)
+			echo "PID: " $i " --- " "Start time: " $PS_START " --- " "Duration:" $PS_DURATION
+		done
+		echo
+		echo "Potentially related errors in /nsm/elsa/data/elsa/web.log:"
+		echo
+		GREP_ERROR=$(grep -E 'failed|* ERROR' /nsm/elsa/data/elsa/log/web.log)
+		if [[ ! -z "$GREP_ERROR" ]]; then
+			echo "$GREP_ERROR"
+			echo
+		fi
+		GREP_QID=$(grep -E 'Duplicate entry' /nsm/elsa/data/elsa/log/web.log)
+		if [[ ! -z "$GREP_QID" ]]; then
+			echo $GREP_QID
+			echo
+			echo "There may be a duplicate qid issue with one of the entries in the saved_results table of the elsa_web database:"
+			echo
+			mysql --defaults-file=/etc/mysql/debian.cnf -Delsa_web -e 'select * from saved_results'
+			echo
+			echo "Try troubleshooting, using the steps provided here:"
+                        echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/FAQ#why-does-sostat-show-high-loadcpu-usage-and-large-number-of-perl-processes"
+		fi
+	fi
 fi
-
 if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	echo
 	header "Time Zone"
@@ -316,9 +376,15 @@ fi
 
 FILE="/etc/os-release"
 if [ -f $FILE ]; then
+	source $FILE
 	echo
 	header "Version Information"
-	source $FILE
 	echo $PRETTY_NAME
-	dpkg -l |grep sostat | awk '{print $2,$3}'
+	if [[ $ALL_PKGS == 1 ]]; then
+		echo
+		header "All Installed Security Onion Packages"
+		dpkg -l | grep securityonion | awk '{print $2,$3}'
+	else
+		dpkg -l |grep sostat | awk '{print $2,$3}'
+	fi
 fi
