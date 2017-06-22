@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion70) trusty; urgency=medium
+
+  * check for stuck ELSA cron.pl and limit netsniff-ng log section to current log 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 22 Jun 2017 08:47:20 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion69) trusty; urgency=medium
 
   * sostat: sostat-redacted - change "Port" to "Port " #1057 
