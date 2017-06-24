@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion71) trusty; urgency=medium
+
+  * netsniff-ng: calculate packets drops as percentage 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 23 Jun 2017 20:29:30 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion70) trusty; urgency=medium
 
   * check for stuck ELSA cron.pl and limit netsniff-ng log section to current log 

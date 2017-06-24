@@ -1,0 +1,93 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion71) trusty; urgency=medium
+ .
+   * netsniff-ng: calculate packets drops as percentage
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -200,16 +200,55 @@ if [ -d /nsm/sensor_data ]; then
+ 	fi
+ 	echo
+ 	echo "-------------------------------------------------------------------------"
+-	if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
+-		echo
+-		echo "${underline}Netsniff-NG${normal}:"
+-		#awk 'BEGIN { RS="."; FS="/"; ORS="\n" } { if( $0 !~ /netsniff/ && substr( $2,2,length($2)-2 ) > 0 ) print "File:",FILENAME,"Processed:",$1,"Lost:",$2 }' /var/log/nsm/*/netsniff-ng.log | sed -e 's/(//' -e 's/)//' | column -t | grep -v "Lost:  -0"
+-		for i in /var/log/nsm/*/netsniff.log; do egrep -v "^Executing|^RX|^Running|^Cannot set NIC flags" $i | sed 's|\.|\n|g' | sed 's|(||g' | sed 's|)||g' | sed 's|/| |g' | while read PROCESSED LOST; do echo "File: $i Processed: $PROCESSED Lost: $LOST"; done; done | column -t | grep -v "Processed:  Lost:" | grep -v "Lost:  -0"
+-		if [ $? -gt 0 ]; then
+-			echo
+-			echo "0 Loss"
+-		fi
+-	fi
++        if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
++            echo
++            echo "${underline}Netsniff-NG${normal}:"
++            for i in /var/log/nsm/*/netsniff-ng.log;
++            do
++                if grep -q -e "-[1-9]*)" "$i"; then
++                    echo
++                    RCVD=()
++                    DRPD=()
++                    IFS=".(+"
++                    while read -ra line;
++                    do
++                        for word in "${line[@]}";
++                        do
++                            if [[ $word =~ ')' ]]; then
++                                RCVD+=(`echo "$word" | cut -d '/' -f1`);
++                            fi
++                        done;
++                    done < "$i"
++
++                    IFS='+' rcvd_sum=$(echo "scale=1;${RCVD[*]}"|bc)
++                    TOT_RCVD=`echo $rcvd_sum`
++
++                    IFS="-"
++                    while read -ra line;
++                    do
++                        for word in "${line[@]}";
++                        do
++                            if [[ $word =~ ')' ]]; then
++                                DRPD+=(`echo "$word" | cut -d ')' -f1`);
++                            fi
++                        done;
++                    done < "$i"
++
++                    IFS='+' drpd_sum=$(echo "scale=1;${DRPD[*]}"|bc)
++                    TOT_DRPD=`echo $drpd_sum`
++		    TOT_PKTS=`echo 'scale=2; '$TOT_DRPD'+'$TOT_RCVD''|bc`
++                    DRPD_PCT=`echo 'scale=2; '$TOT_DRPD'*100/'$TOT_PKTS''|bc`
++                    echo
++                    echo Percentage of packets dropped:
++                    echo
++		    echo $i " -- " $DRPD_PCT
++		    echo
++                else
++                    echo
++                    echo "0 Loss"
++                fi
++            done
++        fi
+ 	echo
+ 	header "PF_RING"
+         cat /proc/net/pf_ring/info
