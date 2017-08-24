@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion72) trusty; urgency=medium
+
+  * issues 928, 1072, and 1108 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 24 Aug 2017 15:41:43 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion71) trusty; urgency=medium
 
   * netsniff-ng: calculate packets drops as percentage 

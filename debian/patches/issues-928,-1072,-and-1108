@@ -1,0 +1,259 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion72) trusty; urgency=medium
+ .
+   * issues 928, 1072, and 1108
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -22,6 +22,18 @@ LOG=0
+ SSH_CONF="/root/.ssh/securityonion_ssh.conf"
+ KEY="/root/.ssh/securityonion"
+ 
++# Should we restart Docker containers at the end?
++RESTART_CONTAINERS=no
++
++# If Snort, Suricata, or Bro are updated, remind user to verify config at end
++SNORT=no
++SURICATA=no
++BRO=no
++
++# no apt options by default
++# this is set later if the user passed the -y option to skip interactive mode
++APT_OPTIONS=''
++
+ #########################################
+ # Got r00t?
+ #########################################
+@@ -52,19 +64,20 @@ EOF
+ 
+ while getopts "hl:y" OPTION
+ do
+-     case $OPTION in
+-         h)
+-	     usage
+-             exit 0
+-             ;;
+-	 l)
+-	     LOG=1
+-             LOGFILE="$OPTARG"
+-             ;;
+-         y)
+-             SKIP=1
+-             ;;
+-     esac
++	case $OPTION in
++	h)
++		usage
++		exit 0
++		;;
++	l)
++		LOG=1
++		LOGFILE="$OPTARG"
++		;;
++	y)
++		SKIP=1
++		APT_OPTIONS='-o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confnew"'
++		;;
++	esac
+ done
+ 
+ if [ $LOG -eq 1 ]; then
+@@ -73,6 +86,14 @@ if [ $LOG -eq 1 ]; then
+ 	exec > "$LOGFILE" 2>&1
+ fi
+ 
++if [ $SKIP -eq 1 ]; then
++	echo "You ran soup with the -y option, so we're setting APT_OPTIONS to:"
++	echo $APT_OPTIONS
++	echo "For more information, please see:"
++	echo "https://debian-handbook.info/browse/stable/sect.package-meta-information.html#sidebar.questions-conffiles"
++	echo
++fi
++
+ #########################################
+ # UPDATE!
+ #########################################
+@@ -82,17 +103,22 @@ if [ $SKIP -ne 1 ]; then
+ 	echo $BANNER
+ 	echo "This script will automatically install all available updates"
+ 	echo "and remove any old kernels (keeping at least two kernels)."
+-	echo ""
++	echo
++	echo "Please review the following for more information"
++	echo "about the update process and recent updates:"
++	echo "https://securityonion.net/wiki/Upgrade"
++	echo "http://blog.securityonion.net"
++	echo
+ 	echo "For distributed deployments, please ensure this script is"
+ 	echo "run on the master server before updating sensors."
+-	echo ""
++	echo
+ 	echo "If mysql-server updates are available, it will stop sensor processes"
+ 	echo "to ensure a clean update."
+-	echo ""
++	echo
+ 	echo "At the end of the script, if mysql-server and/or kernel updates"
+ 	echo "were installed, you will be prompted to reboot."
+ 	echo $BANNER
+-	echo ""
++	echo
+ 	echo "Press Enter to continue or Ctrl-C to cancel."
+ 	read input
+ 
+@@ -102,12 +128,12 @@ if [ $SKIP -ne 1 ]; then
+ 		echo "Checking to see if the master server has already been updated, please wait..."
+ 		SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/lib/update-notifier/apt-check --human-readable | grep 'packages can be updated' | awk '{print \$1}'")
+ 		if [ "$SERVER_PKG" -ne 0 ]; then
+-			echo ""
++			echo
+ 			echo "The master server reports that it has $SERVER_PKG updates that need to be installed."
+ 			echo "We highly recommend updating the master server before updating this sensor."
+-			echo ""
++			echo
+ 			echo "Recommendation: Press Ctrl-c now and then update your master server."
+-			echo ""
++			echo
+ 			echo "If you really want to continue updating this sensor (may cause issues), press Enter."
+ 			read input
+ 		fi	
+@@ -123,6 +149,45 @@ echo
+ echo "Checking for updates..."
+ apt-get update -qq
+ 
++# If our docker config is present, check for updates for docker-ce and individual docker images
++if [ -f /etc/apt/preferences.d/securityonion-docker ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ]; then
++
++	echo
++	# if a new version of docker-ce is available, stop containers, upgrade docker-ce, and then set a flag to restart containers
++	if apt-get dist-upgrade --assume-no |grep docker-ce >/dev/null; then
++        	echo $BANNER
++	        echo "New docker-ce package available."
++		echo "Stopping Docker containers..."
++		/usr/sbin/so-elastic-stop > /dev/null 2>&1
++		echo "Installing Docker updates..."
++		apt-get $APT_OPTIONS install -y docker-ce
++		echo "Starting Docker service..."
++		service docker start > /dev/null 2>&1
++		RESTART_CONTAINERS=yes
++	fi
++
++	# check if updates are available for Security Onion Docker images
++	echo "Checking Security Onion Docker image status..."
++	. /usr/sbin/so-elastic-common
++	for i in so-curator so-domainstats so-elastalert so-elasticsearch so-freqserver so-kibana so-logstash; do
++		OUTPUT=`docker pull --disable-content-trust=false $DOCKERHUB/$i`
++		#echo $OUTPUT
++		if echo $OUTPUT | grep -q "up to date"; then
++			echo "$i image is up to date."
++		else
++			echo "$i has been updated."
++			RESTART_CONTAINERS=yes
++			#APPLY_CONFIG=yes
++		fi
++	done
++	if [ "$RESTART_CONTAINERS" == "yes" ]; then
++		echo "One or more docker images have been updated."
++		echo "Stopping Docker containers..."
++		/usr/sbin/so-elastic-stop > /dev/null 2>&1
++	fi
++	echo
++fi
++
+ # if mysql-server updates are available, we need to stop services and force reboot at end
+ if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
+ 	echo $BANNER
+@@ -138,20 +203,32 @@ if apt-get dist-upgrade --assume-no |gre
+ 	pkill perl > /dev/null 2>&1
+ 	echo "done."
+ 	echo $BANNER
+-	apt-get install -y mysql-server mysql-server-core-5.5 mysql-server-5.5
++	apt-get $APT_OPTIONS install -y mysql-server mysql-server-core-5.5 mysql-server-5.5
+ 	REBOOT=yes
+ fi
+ 
+ # Force pfring-module to install before any kernel updates
+-apt-get install -y securityonion-pfring-module | while read; do 
++apt-get $APT_OPTIONS install -y securityonion-pfring-module | while read; do 
+ 	echo "$REPLY" | grep -v "^Use 'apt-get autoremove' to remove them.$"
+ done
+ 
++# Get list of updates
++UPDATES=`apt-get dist-upgrade --assume-no`
++
++# Is there a snort update available?
++echo $UPDATES | grep securityonion-snort >/dev/null && SNORT=yes
++
++# Is there a Suricata update available?
++echo $UPDATES | grep securityonion-suricata >/dev/null && SURICATA=yes
++
++# Is there a Bro update available?
++echo $UPDATES | grep securityonion-bro >/dev/null && BRO=yes
++
+ # If there is a kernel update available, we need to reboot at the end
+-apt-get dist-upgrade --assume-no | grep -A1000 "The following NEW packages will be installed:" | grep -B1000 "The following packages will be upgraded:" | grep linux-image >/dev/null && REBOOT=yes
++echo $UPDATES | grep -A1000 "The following NEW packages will be installed:" | grep -B1000 "The following packages will be upgraded:" | grep linux-image >/dev/null && REBOOT=yes
+ 
+ # Do the actual upgrade
+-apt-get -y dist-upgrade | while read; do 
++apt-get $APT_OPTIONS -y dist-upgrade | while read; do 
+ 	echo "$REPLY" | grep -v "^Use 'apt-get autoremove' to remove them.$"
+ done
+ 
+@@ -168,6 +245,37 @@ else
+ 	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/HWE"
+ fi
+ 
++# Do we need to restart Docker containers?
++if [ "$RESTART_CONTAINERS" == "yes" ]; then
++	#if [ "$APPLY_CONFIG" == "yes" ]; then
++	#	echo
++	#	echo -n "Restarting Docker containers and applying configuration..."
++	#	/usr/sbin/so-elastic-start > /dev/null 2>&1
++	#	echo
++	#fi
++#else
++	echo "Restarting Docker containers..."
++	/usr/sbin/so-elastic-start > /dev/null 2>&1
++fi
++
++# If Snort updated, remind user to verify snort.conf
++if [ $SNORT == "yes" ]; then
++	echo
++	echo "Snort has been updated.  Please review snort.conf and manually re-apply any local customizations."
++fi
++
++# If Suricata updated, remind user to verify suricata.yaml
++if [ $SURICATA == "yes" ]; then
++	echo
++	echo "Suricata has been updated.  Please review suricata.yaml and manually re-apply any local customizations."
++fi
++
++# If Bro updated, remind user to verify Bro config
++if [ $BRO == "yes" ]; then
++	echo
++	echo "Bro has been updated.  Please review Bro configuration and manually re-apply any local customizations."
++fi
++
+ # If we need to reboot, give the user a chance to cancel.
+ if [ $REBOOT == "yes" ]; then
+ 	if [ $SKIP -ne 1 ]; then
