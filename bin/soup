@@ -32,7 +32,7 @@ BRO=no
 
 # no apt options by default
 # this is set later if the user passed the -y option to skip interactive mode
-APT_OPTIONS=''
+APT_OPTIONS=""
 
 #########################################
 # Got r00t?
@@ -75,7 +75,7 @@ do
 		;;
 	y)
 		SKIP=1
-		APT_OPTIONS='-o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confnew"'
+		APT_OPTIONS="-o DPkg::options::=--force-confdef -o DPkg::options::=--force-confnew"
 		;;
 	esac
 done

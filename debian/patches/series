@@ -69,3 +69,4 @@ sostat:-sostat-redacted---change-"Port"-to-"Port-"-#1057
 check-for-stuck-ELSA-cron.pl-and-limit-netsniff-ng-log-section-to-current-log
 netsniff-ng:-calculate-packets-drops-as-percentage
 issues-928,-1072,-and-1108
+fix-quote-issue
