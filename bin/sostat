@@ -7,6 +7,8 @@
 # Fixes contributed by:
 # Stephane Chazelas
 # Shane Castle
+# Freq_server and Domain_stats components written by:
+# Justin Henderson
 
 # Import settings file
 if [ -f /etc/nsm/securityonion.conf ]; then
@@ -405,6 +407,136 @@ if [ "$ELSA" = "YES" ]; then
 		fi
 	fi
 fi
+
+if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
+	
+	TOT_NODES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq ._nodes.total)
+	#SUCCESS_NODES=curl localhost:9200/_cluster/stats?pretty | jq ._nodes.successful` 
+	FAIL_NODES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq ._nodes.failed)
+	CLUST_NAME=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .cluster_name)
+	TOT_INDICES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.count)
+	TOT_SHARDS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.shards.total)
+	CLUST_STATUS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .status)
+	FREE_MEM=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .nodes.os.mem.free_percent)
+	TOT_DOCS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.docs.count)
+	TOT_SIZE=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.store.size_in_bytes)
+	ES_RUNNING=$(docker ps | grep so-elasticsearch)
+	LS_RUNNING=$(docker ps | grep so-logstash)
+	KIB_RUNNING=$(docker ps | grep so-kibana)
+	ELAST_RUNNING=$(docker ps | grep so-elastalert)
+	CURAT_RUNNING=$(docker ps | grep so-curator)
+	FREQ_RUNNING=$(docker ps | grep so-freqserver)
+	DOMAINSTATS_RUNNING=$(docker ps | grep so-domainstats)
+	
+	echo
+        header "Elasticsearch"
+	if [ "$ES_RUNNING" ]; then
+                echo
+                echo "Elasticsearch is running."        
+                echo
+                echo Cluster Name: $CLUST_NAME
+                echo Cluster Status: $CLUST_STATUS
+                echo Total Nodes: $TOT_NODES
+                echo Failed Nodes: $FAIL_NODES
+                echo Total Indices: $TOT_INDICES
+                echo Total Shards: $TOT_SHARDS
+                echo Total Documents: $TOT_DOCS
+                echo Total Size '(in bytes)': $(($TOT_SIZE/10**6))MB
+                echo Free Memory: $FREE_MEM%
+                echo
+		docker stats --no-stream so-elasticsearch
+        else
+                echo
+                CLUST_NAME=$(grep cluster.name /etc/elasticsearch/elasticsearch.yml | awk '{print $2}'|sed -e 's/^"//' -e 's/"$//')
+                echo && echo -e "Elasticsearch is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-elasticsearch'\n\n\nIf that does not work, try checking /var/log/elasticsearch/"$CLUST_NAME".log for clues."
+        fi
+
+	echo
+	header "Logstash"
+	if [ "$LOGSTASH_ENABLED" = "yes" ]; then
+        	if [ "$LS_RUNNING" ];then
+                	echo && echo "Logstash is running." && echo
+			docker stats --no-stream so-logstash
+		else
+			echo && echo -e "Logstash is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-logstash'\n\n\nIf that does not work, try checking /var/log/logstash/logstash.log for clues."
+        	fi
+	fi
+
+	echo
+        header "Kibana"
+	if [ "$KIBANA_ENABLED" = "yes" ]; then
+        	if [ "$KIB_RUNNING" ]; then
+			echo && echo "Kibana is running."
+		echo
+			docker stats --no-stream so-kibana
+		else
+			echo && echo -e "Kibana is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-kibana'\n\n\nIf that does not work, try checking /var/log/kibana/kibana.log for clues."
+        	fi
+	fi
+
+	echo
+	header "ElastAlert"
+        if [ "$ELASTALERT_ENABLED" = "yes" ]; then
+                if [ "$ELAST_RUNNING" ]; then
+			echo && echo "ElastAlert is running."
+			echo
+                        docker stats --no-stream so-elastalert
+                else
+			echo && echo -e "ElastAlert is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-elastalert'\n\n\nIf that does not work, try checking /var/log/elastalert/elastalert_stderr.log for clues."
+                fi
+        fi
+
+	echo
+	header "Curator"
+	if [ "$CURATOR_ENABLED" = "yes" ]; then
+                if [ "$CURAT_RUNNING" ]; then
+                        echo && echo "Curator is running."
+                        echo
+                        docker stats --no-stream so-curator
+                else
+                        echo && echo -e "Curator is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-curator'\n\n\nIf that does not work, try checking /var/log/curator/curator.log for clues."
+                fi
+        fi
+	
+	echo
+	header "Freq Server"
+	if [ "$FREQ_SERVER_ENABLED" = "yes" ]; then
+                if [ "$FREQ_RUNNING" ]; then
+                        echo && echo "Freq_server is running."
+                        echo
+                        docker stats --no-stream so-freqserver
+			echo "Testing freq_server now..."
+			FREQ_SERVER_RESPONSE=`curl http://127.0.0.1:10004/measure/google.com`
+			FREQ_RESULT=$(awk -vx=$FREQ_SERVER_RESPONSE 'BEGIN{ print x>=y?1:0}')
+			if [ $FREQ_RESULT -eq 1 ]; then
+				echo "Freq Server is working"
+			else
+				echo "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-freqserver'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
+			fi
+                else
+                        echo && echo -e "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-freqserver'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
+                fi
+	fi
+	echo
+	header "Domain Stats"
+	if [ "$DOMAIN_STATS_ENABLED" = "yes" ]; then
+                if [ "$DOMAINSTATS_RUNNING" ]; then
+                        echo && echo "Domain_stats is running."
+                        echo
+                        docker stats --no-stream so-domainstats
+			echo "Testing domain_stats now..."
+			DOMAIN_STATS_RESPONSE=`curl http://127.0.0.1:20000/alexa/google.com`
+			DOMAIN_STATS_RESULT=$(awk -vx=$DOMAIN_STATS_RESPONSE 'BEGIN{ print x>=y?1:0}')
+			if [ $DOMAIN_STATS_RESULT -eq 1 ]; then
+				echo "Domain_stats is working"
+			else
+				echo "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-domainstats'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
+			fi
+                else
+                        echo && echo -e "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-domainstats'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
+                fi
+        fi
+fi
 if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	echo
 	header "Time Zone"
@@ -427,3 +559,4 @@ if [ -f $FILE ]; then
 		dpkg -l |grep sostat | awk '{print $2,$3}'
 	fi
 fi
+echo

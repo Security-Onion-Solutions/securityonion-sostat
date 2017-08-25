@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion74) trusty; urgency=medium
+
+  * add elastic checks to sostat 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 25 Aug 2017 08:40:16 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion73) trusty; urgency=medium
 
   * fix quote issue 
