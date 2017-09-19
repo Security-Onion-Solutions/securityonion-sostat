@@ -410,16 +410,16 @@ fi
 
 if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 	
-	TOT_NODES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq ._nodes.total)
-	#SUCCESS_NODES=curl localhost:9200/_cluster/stats?pretty | jq ._nodes.successful` 
-	FAIL_NODES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq ._nodes.failed)
-	CLUST_NAME=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .cluster_name)
-	TOT_INDICES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.count)
-	TOT_SHARDS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.shards.total)
-	CLUST_STATUS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .status)
-	FREE_MEM=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .nodes.os.mem.free_percent)
-	TOT_DOCS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.docs.count)
-	TOT_SIZE=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.store.size_in_bytes)
+	TOT_NODES=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq ._nodes.total)
+	#SUCCESS_NODES=curl "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq ._nodes.successful`
+	FAIL_NODES=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq ._nodes.failed)
+	CLUST_NAME=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .cluster_name)
+	TOT_INDICES=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.count)
+	TOT_SHARDS=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.shards.total)
+	CLUST_STATUS=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .status)
+	FREE_MEM=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .nodes.os.mem.free_percent)
+	TOT_DOCS=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.docs.count)
+	TOT_SIZE=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.store.size_in_bytes)
 	ES_RUNNING=$(docker ps | grep so-elasticsearch)
 	LS_RUNNING=$(docker ps | grep so-logstash)
 	KIB_RUNNING=$(docker ps | grep so-kibana)
