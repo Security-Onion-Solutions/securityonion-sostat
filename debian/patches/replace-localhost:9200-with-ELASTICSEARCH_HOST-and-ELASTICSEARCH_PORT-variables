@@ -1,0 +1,72 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion75) trusty; urgency=medium
+ .
+   * replace localhost:9200 with ELASTICSEARCH_HOST and ELASTICSEARCH_PORT variables
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -410,16 +410,16 @@ fi
+ 
+ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
+ 	
+-	TOT_NODES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq ._nodes.total)
+-	#SUCCESS_NODES=curl localhost:9200/_cluster/stats?pretty | jq ._nodes.successful` 
+-	FAIL_NODES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq ._nodes.failed)
+-	CLUST_NAME=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .cluster_name)
+-	TOT_INDICES=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.count)
+-	TOT_SHARDS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.shards.total)
+-	CLUST_STATUS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .status)
+-	FREE_MEM=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .nodes.os.mem.free_percent)
+-	TOT_DOCS=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.docs.count)
+-	TOT_SIZE=$(curl -s 'localhost:9200/_cluster/stats?pretty' | jq .indices.store.size_in_bytes)
++	TOT_NODES=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq ._nodes.total)
++	#SUCCESS_NODES=curl "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq ._nodes.successful`
++	FAIL_NODES=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq ._nodes.failed)
++	CLUST_NAME=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .cluster_name)
++	TOT_INDICES=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.count)
++	TOT_SHARDS=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.shards.total)
++	CLUST_STATUS=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .status)
++	FREE_MEM=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .nodes.os.mem.free_percent)
++	TOT_DOCS=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.docs.count)
++	TOT_SIZE=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/stats?pretty" | jq .indices.store.size_in_bytes)
+ 	ES_RUNNING=$(docker ps | grep so-elasticsearch)
+ 	LS_RUNNING=$(docker ps | grep so-logstash)
+ 	KIB_RUNNING=$(docker ps | grep so-kibana)
+@@ -506,7 +506,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+                         echo
+                         docker stats --no-stream so-freqserver
+ 			echo "Testing freq_server now..."
+-			FREQ_SERVER_RESPONSE=`curl http://127.0.0.1:10004/measure/google.com`
++			FREQ_SERVER_RESPONSE=`curl -s http://127.0.0.1:10004/measure/google.com`
+ 			FREQ_RESULT=$(awk -vx=$FREQ_SERVER_RESPONSE 'BEGIN{ print x>=y?1:0}')
+ 			if [ $FREQ_RESULT -eq 1 ]; then
+ 				echo "Freq Server is working"
+@@ -525,7 +525,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+                         echo
+                         docker stats --no-stream so-domainstats
+ 			echo "Testing domain_stats now..."
+-			DOMAIN_STATS_RESPONSE=`curl http://127.0.0.1:20000/alexa/google.com`
++			DOMAIN_STATS_RESPONSE=`curl -s http://127.0.0.1:20000/alexa/google.com`
+ 			DOMAIN_STATS_RESULT=$(awk -vx=$DOMAIN_STATS_RESPONSE 'BEGIN{ print x>=y?1:0}')
+ 			if [ $DOMAIN_STATS_RESULT -eq 1 ]; then
+ 				echo "Domain_stats is working"

@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion75) trusty; urgency=medium
+
+  * replace localhost:9200 with ELASTICSEARCH_HOST and ELASTICSEARCH_PORT variables 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 20 Sep 2017 15:56:45 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion74) trusty; urgency=medium
 
   * add elastic checks to sostat 

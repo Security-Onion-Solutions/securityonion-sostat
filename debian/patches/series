@@ -71,3 +71,4 @@ netsniff-ng:-calculate-packets-drops-as-percentage
 issues-928,-1072,-and-1108
 fix-quote-issue
 add-elastic-checks-to-sostat
+replace-localhost:9200-with-ELASTICSEARCH_HOST-and-ELASTICSEARCH_PORT-variables
