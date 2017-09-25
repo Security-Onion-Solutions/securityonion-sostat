@@ -82,7 +82,29 @@ service nsm status 2>&1 | remove_ansi_escapes
 
 echo
 header "Interface Status"
-ifconfig
+if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
+        NOT_VETH=`ls -A /sys/class/net | grep -v veth`
+        for i in $NOT_VETH; do
+                ifconfig $i
+        done
+        CONTAINERS=`docker ps --format '{{.Names}}'`
+        ETH_LIST=`docker exec so-elasticsearch ls /sys/class/net/eth*/iflink`
+        for i in $CONTAINERS; do
+                echo
+                echo $i
+                echo '-------------------------------------------------------------------------'
+                for interface in $ETH_LIST; do
+                        ETH_SHORT=`echo $interface | cut -d'/' -f5`
+                        INT_INT=`docker exec $i cat $interface`
+                        EXT_INT=`grep -w "$INT_INT" /sys/class/net/veth*/ifindex | cut -d'/' -f5`
+                        echo "("$ETH_SHORT")"
+                        ifconfig $EXT_INT
+                done
+        done
+
+else
+        ifconfig
+fi
 
 echo
 header "Link Statistics"
