@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion76) trusty; urgency=medium
+
+  * sostat: provide Docker container interface correlation #1136 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 25 Sep 2017 11:39:15 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion75) trusty; urgency=medium
 
   * replace localhost:9200 with ELASTICSEARCH_HOST and ELASTICSEARCH_PORT variables 
