@@ -73,3 +73,4 @@ fix-quote-issue
 add-elastic-checks-to-sostat
 replace-localhost:9200-with-ELASTICSEARCH_HOST-and-ELASTICSEARCH_PORT-variables
 sostat:-provide-Docker-container-interface-correlation-#1136
+soup:-remove-"One-or-more-docker-images-have-been-updated."-#1137

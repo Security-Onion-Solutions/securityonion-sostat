@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion77) trusty; urgency=medium
+
+  * soup: remove "One or more docker images have been updated." #1137 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 27 Sep 2017 10:22:30 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion76) trusty; urgency=medium
 
   * sostat: provide Docker container interface correlation #1136 

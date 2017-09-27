@@ -181,7 +181,6 @@ if [ -f /etc/apt/preferences.d/securityonion-docker ] && [ -f /usr/sbin/so-elast
 		fi
 	done
 	if [ "$RESTART_CONTAINERS" == "yes" ]; then
-		echo "One or more docker images have been updated."
 		echo "Stopping Docker containers..."
 		/usr/sbin/so-elastic-stop > /dev/null 2>&1
 	fi
