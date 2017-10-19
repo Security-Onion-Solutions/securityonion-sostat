@@ -473,10 +473,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                 echo && echo -e "Elasticsearch is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-elasticsearch'\n\n\nIf that does not work, try checking /var/log/elasticsearch/"$CLUST_NAME".log for clues."
         fi
 
-	echo
-	header "Logstash"
 	if [ "$LOGSTASH_ENABLED" = "yes" ]; then
-        	if [ "$LS_RUNNING" ];then
+        echo
+        header "Logstash"
+		if [ "$LS_RUNNING" ];then
                 	echo && echo "Logstash is running." && echo
 			docker stats --no-stream so-logstash
 		else
@@ -484,10 +484,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
         	fi
 	fi
 
-	echo
-        header "Kibana"
 	if [ "$KIBANA_ENABLED" = "yes" ]; then
-        	if [ "$KIB_RUNNING" ]; then
+        echo
+	header "Kibana"
+		if [ "$KIB_RUNNING" ]; then
 			echo && echo "Kibana is running."
 		echo
 			docker stats --no-stream so-kibana
@@ -496,10 +496,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
         	fi
 	fi
 
-	echo
-	header "ElastAlert"
         if [ "$ELASTALERT_ENABLED" = "yes" ]; then
-                if [ "$ELAST_RUNNING" ]; then
+        echo
+        header "ElastAlert"
+	        if [ "$ELAST_RUNNING" ]; then
 			echo && echo "ElastAlert is running."
 			echo
                         docker stats --no-stream so-elastalert
@@ -508,10 +508,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                 fi
         fi
 
-	echo
-	header "Curator"
 	if [ "$CURATOR_ENABLED" = "yes" ]; then
-                if [ "$CURAT_RUNNING" ]; then
+	echo
+        header "Curator"
+		if [ "$CURAT_RUNNING" ]; then
                         echo && echo "Curator is running."
                         echo
                         docker stats --no-stream so-curator
@@ -520,38 +520,45 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                 fi
         fi
 	
-	echo
-	header "Freq Server"
 	if [ "$FREQ_SERVER_ENABLED" = "yes" ]; then
-                if [ "$FREQ_RUNNING" ]; then
+        echo
+        header "Freq Server"
+	        if [ "$FREQ_RUNNING" ]; then
                         echo && echo "Freq_server is running."
                         echo
                         docker stats --no-stream so-freqserver
+			echo
 			echo "Testing freq_server now..."
-			FREQ_SERVER_RESPONSE=`curl -s http://127.0.0.1:10004/measure/google.com`
+			FREQ_SERVER_RESPONSE=`docker exec -it so-logstash curl -s http://so-freqserver:10004/measure/google.com`
 			FREQ_RESULT=$(awk -vx=$FREQ_SERVER_RESPONSE 'BEGIN{ print x>=y?1:0}')
 			if [ $FREQ_RESULT -eq 1 ]; then
-				echo "Freq Server is working"
+				echo
+				echo "Freq Server is working."
 			else
+				echo
 				echo "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-freqserver'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
 			fi
                 else
                         echo && echo -e "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-freqserver'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
                 fi
 	fi
-	echo
-	header "Domain Stats"
+	
 	if [ "$DOMAIN_STATS_ENABLED" = "yes" ]; then
-                if [ "$DOMAINSTATS_RUNNING" ]; then
+        echo
+        header "Domain Stats"
+	        if [ "$DOMAINSTATS_RUNNING" ]; then
                         echo && echo "Domain_stats is running."
                         echo
                         docker stats --no-stream so-domainstats
+			echo
 			echo "Testing domain_stats now..."
-			DOMAIN_STATS_RESPONSE=`curl -s http://127.0.0.1:20000/alexa/google.com`
+			DOMAIN_STATS_RESPONSE=`docker exec so-logstash curl -s http://so-domainstats:20000/alexa/google.com`
 			DOMAIN_STATS_RESULT=$(awk -vx=$DOMAIN_STATS_RESPONSE 'BEGIN{ print x>=y?1:0}')
 			if [ $DOMAIN_STATS_RESULT -eq 1 ]; then
-				echo "Domain_stats is working"
+				echo
+				echo "Domain_stats is working."
 			else
+				echo
 				echo "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-domainstats'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
 			fi
                 else
