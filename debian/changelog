@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion78) trusty; urgency=medium
+
+  * issues 1146 and 1147 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 19 Oct 2017 13:48:12 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion77) trusty; urgency=medium
 
   * soup: remove "One or more docker images have been updated." #1137 
