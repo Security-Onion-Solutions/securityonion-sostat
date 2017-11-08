@@ -249,12 +249,12 @@ if [ "$RESTART_CONTAINERS" == "yes" ]; then
 	#if [ "$APPLY_CONFIG" == "yes" ]; then
 	#	echo
 	#	echo -n "Restarting Docker containers and applying configuration..."
-	#	/usr/sbin/so-elastic-start > /dev/null 2>&1
+	#	/usr/sbin/so-docker-start > /dev/null 2>&1
 	#	echo
 	#fi
 #else
 	echo "Restarting Docker containers..."
-	/usr/sbin/so-elastic-start > /dev/null 2>&1
+	/usr/sbin/so-docker-start > /dev/null 2>&1
 fi
 
 # If Snort updated, remind user to verify snort.conf
