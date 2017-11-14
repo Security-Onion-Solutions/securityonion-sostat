@@ -1,0 +1,132 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion79) trusty; urgency=medium
+ .
+   * issues 1166 and 1149
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -101,7 +101,10 @@ fi
+ if [ $SKIP -ne 1 ]; then
+ 	# Prompt user to continue
+ 	echo $BANNER
+-	echo "This script will automatically install all available updates"
++	echo
++	echo "SOUP - Security Onion UPdater"
++	echo
++	echo "soup will automatically install all available updates"
+ 	echo "and remove any old kernels (keeping at least two kernels)."
+ 	echo
+ 	echo "Please review the following for more information"
+@@ -109,14 +112,14 @@ if [ $SKIP -ne 1 ]; then
+ 	echo "https://securityonion.net/wiki/Upgrade"
+ 	echo "http://blog.securityonion.net"
+ 	echo
+-	echo "For distributed deployments, please ensure this script is"
+-	echo "run on the master server before updating sensors."
++	echo "If you're running a distributed deployment, please run soup"
++	echo "on the master server before updating sensors."
+ 	echo
+-	echo "If mysql-server updates are available, it will stop sensor processes"
++	echo "If mysql-server updates are available, soup will stop sensor processes"
+ 	echo "to ensure a clean update."
+ 	echo
+-	echo "At the end of the script, if mysql-server and/or kernel updates"
+-	echo "were installed, you will be prompted to reboot."
++	echo "If soup installs mysql-server and/or kernel updates,"
++	echo "it will prompt you to reboot at the end."
+ 	echo $BANNER
+ 	echo
+ 	echo "Press Enter to continue or Ctrl-C to cancel."
+@@ -144,13 +147,20 @@ fi
+ echo "Checking for kernels that can be removed..."
+ /usr/sbin/so-purge-old-kernels -y
+ 
++# Before running apt-get, we need to check for missing /etc/apt/preferences.d/securityonion-docker and restore if necessary
++if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /opt/elastic/src/etc/apt/preferences.d/securityonion-docker ]; then
++	if ! [ -f /etc/apt/preferences.d/securityonion-docker ]; then
++		cp /opt/elastic/src/etc/apt/preferences.d/securityonion-docker /etc/apt/preferences.d/securityonion-docker
++	fi
++fi
++
+ # Sync with mirrors
+ echo
+ echo "Checking for updates..."
+ apt-get update -qq
+ 
+ # If our docker config is present, check for updates for docker-ce and individual docker images
+-if [ -f /etc/apt/preferences.d/securityonion-docker ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ]; then
++if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ]; then
+ 
+ 	echo
+ 	# if a new version of docker-ce is available, stop containers, upgrade docker-ce, and then set a flag to restart containers
+@@ -246,33 +256,29 @@ fi
+ 
+ # Do we need to restart Docker containers?
+ if [ "$RESTART_CONTAINERS" == "yes" ]; then
+-	#if [ "$APPLY_CONFIG" == "yes" ]; then
+-	#	echo
+-	#	echo -n "Restarting Docker containers and applying configuration..."
+-	#	/usr/sbin/so-elastic-start > /dev/null 2>&1
+-	#	echo
+-	#fi
+-#else
+ 	echo "Restarting Docker containers..."
+ 	/usr/sbin/so-elastic-start > /dev/null 2>&1
+ fi
+ 
+-# If Snort updated, remind user to verify snort.conf
+-if [ $SNORT == "yes" ]; then
+-	echo
+-	echo "Snort has been updated.  Please review snort.conf and manually re-apply any local customizations."
+-fi
++# If sniffing interfaces, then output notifications about any sniffing process updates
++if [ -f /etc/nsm/sensortab ] && [ $(grep -v "^#" /etc/nsm/sensortab | wc -l) -gt 0 ]; then
++	# If Snort updated, remind user to review snort.conf
++	if [ $SNORT == "yes" ]; then
++		echo
++		echo "Snort has been updated.  Please review snort.conf and manually re-apply any local customizations."
++	fi
+ 
+-# If Suricata updated, remind user to verify suricata.yaml
+-if [ $SURICATA == "yes" ]; then
+-	echo
+-	echo "Suricata has been updated.  Please review suricata.yaml and manually re-apply any local customizations."
+-fi
++	# If Suricata updated, remind user to review suricata.yaml
++	if [ $SURICATA == "yes" ]; then
++		echo
++		echo "Suricata has been updated.  Please review suricata.yaml and manually re-apply any local customizations."
++	fi
+ 
+-# If Bro updated, remind user to verify Bro config
+-if [ $BRO == "yes" ]; then
+-	echo
+-	echo "Bro has been updated.  Please review Bro configuration and manually re-apply any local customizations."
++	# If Bro updated, remind user to review Bro config
++	if [ $BRO == "yes" ]; then
++		echo
++		echo "Bro has been updated.  Please review Bro configuration and manually re-apply any local customizations."
++	fi
+ fi
+ 
+ # If we need to reboot, give the user a chance to cancel.
