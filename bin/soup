@@ -101,7 +101,10 @@ fi
 if [ $SKIP -ne 1 ]; then
 	# Prompt user to continue
 	echo $BANNER
-	echo "This script will automatically install all available updates"
+	echo
+	echo "SOUP - Security Onion UPdater"
+	echo
+	echo "soup will automatically install all available updates"
 	echo "and remove any old kernels (keeping at least two kernels)."
 	echo
 	echo "Please review the following for more information"
@@ -109,14 +112,14 @@ if [ $SKIP -ne 1 ]; then
 	echo "https://securityonion.net/wiki/Upgrade"
 	echo "http://blog.securityonion.net"
 	echo
-	echo "For distributed deployments, please ensure this script is"
-	echo "run on the master server before updating sensors."
+	echo "If you're running a distributed deployment, please run soup"
+	echo "on the master server before updating sensors."
 	echo
-	echo "If mysql-server updates are available, it will stop sensor processes"
+	echo "If mysql-server updates are available, soup will stop sensor processes"
 	echo "to ensure a clean update."
 	echo
-	echo "At the end of the script, if mysql-server and/or kernel updates"
-	echo "were installed, you will be prompted to reboot."
+	echo "If soup installs mysql-server and/or kernel updates,"
+	echo "it will prompt you to reboot at the end."
 	echo $BANNER
 	echo
 	echo "Press Enter to continue or Ctrl-C to cancel."
@@ -144,13 +147,20 @@ fi
 echo "Checking for kernels that can be removed..."
 /usr/sbin/so-purge-old-kernels -y
 
+# Before running apt-get, we need to check for missing /etc/apt/preferences.d/securityonion-docker and restore if necessary
+if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /opt/elastic/src/etc/apt/preferences.d/securityonion-docker ]; then
+	if ! [ -f /etc/apt/preferences.d/securityonion-docker ]; then
+		cp /opt/elastic/src/etc/apt/preferences.d/securityonion-docker /etc/apt/preferences.d/securityonion-docker
+	fi
+fi
+
 # Sync with mirrors
 echo
 echo "Checking for updates..."
 apt-get update -qq
 
 # If our docker config is present, check for updates for docker-ce and individual docker images
-if [ -f /etc/apt/preferences.d/securityonion-docker ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ]; then
+if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ]; then
 
 	echo
 	# if a new version of docker-ce is available, stop containers, upgrade docker-ce, and then set a flag to restart containers
