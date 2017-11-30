@@ -463,7 +463,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                 echo Total Indices: $TOT_INDICES
                 echo Total Shards: $TOT_SHARDS
                 echo Total Documents: $TOT_DOCS
-                echo Total Size '(in bytes)': $(($TOT_SIZE/10**6))MB
+                echo Total Size: $(($TOT_SIZE/10**6))MB
                 echo Free Memory: $FREE_MEM%
                 echo
 		docker stats --no-stream so-elasticsearch
@@ -474,11 +474,34 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
         fi
 
 	if [ "$LOGSTASH_ENABLED" = "yes" ]; then
-        echo
+        QUEUE_STORAGE_TYPE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.data.storage_type)
+	QUEUE_FREE_SPACE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.data.free_space_in_bytes)
+	QUEUE_PATH="/nsm/logstash/queue/main"
+	QUEUE_MAX_UNREAD=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.max_unread_events)
+	QUEUE_MAX_SIZE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.max_queue_size_in_bytes)
+	PAGE_CAPACITY=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.page_capacity_in_bytes)
+	QUEUE_SIZE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.queue_size_in_bytes)
+	QUEUE_TYPE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.type)
+	QUEUE_EVENTS=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.events)
+	echo
         header "Logstash"
 		if [ "$LS_RUNNING" ];then
                 	echo && echo "Logstash is running." && echo
 			docker stats --no-stream so-logstash
+			echo
+			echo "Logstash Queue Stats:"
+			echo
+			#echo Storage Type: $QUEUE_STORAGE_TYPE
+			#echo Free Space: $(($QUEUE_FREE_SPACE/10**6))MB
+                        echo Queue Type: $QUEUE_TYPE
+			echo Queue Path: $QUEUE_PATH
+			echo Queue Size: $(($QUEUE_SIZE/10**6))MB
+			echo Max Queue Size: $(($QUEUE_MAX_SIZE/10**6))MB
+			echo Events in Queue: $QUEUE_EVENTS
+			#echo Maximum Unread Events: $QUEUE_MAX_UNREAD
+                        #echo Page Capacity: $(($PAGE_CAPACITY/10**6))MB
+			echo
+			echo "Queue settings can be modified in /etc/logstash/logstash.yml."
 		else
 			echo && echo -e "Logstash is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-logstash'\n\n\nIf that does not work, try checking /var/log/logstash/logstash.log for clues."
         	fi
