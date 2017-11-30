@@ -76,3 +76,4 @@ sostat:-provide-Docker-container-interface-correlation-#1136
 soup:-remove-"One-or-more-docker-images-have-been-updated."-#1137
 issues-1146-and-1147
 issues-1166-and-1149
+Issue-1156:-soup:-delete-old-Docker-images

@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion80) trusty; urgency=medium
+
+  * Issue 1156: soup: delete old Docker images 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 30 Nov 2017 14:30:18 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion79) trusty; urgency=medium
 
   * issues 1166 and 1149 

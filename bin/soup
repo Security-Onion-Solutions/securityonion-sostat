@@ -261,19 +261,17 @@ if [ "$RESTART_CONTAINERS" == "yes" ]; then
 fi
 
 # Remove old Docker images
-if docker images | grep so-* | grep -v latest; then
+if docker images | grep "${DOCKERHUB}/so-" | grep -v latest; then
         echo
-        echo "We are now removing old Security Onion Docker images..."
+        echo "Removing old Security Onion Docker images..."
         echo
-        for i in $( docker images | grep so-* | grep -v latest | awk '{print $3}');
-        do
-                echo "Removing $i ..."
-                docker rmi $i -f
+        for i in $( docker images | grep "${DOCKERHUB}/so-" | grep -v latest | awk '{print $3}'); do
+                echo "Removing ${i} ..."
+                docker rmi ${i} -f
         done
         echo
         echo "Old Security Onion Docker images have been removed."
 fi
-echo
 
 # If sniffing interfaces, then output notifications about any sniffing process updates
 if [ -f /etc/nsm/sensortab ] && [ $(grep -v "^#" /etc/nsm/sensortab | wc -l) -gt 0 ]; then
