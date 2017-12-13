@@ -77,3 +77,6 @@ soup:-remove-"One-or-more-docker-images-have-been-updated."-#1137
 issues-1146-and-1147
 issues-1166-and-1149
 Issue-1156:-soup:-delete-old-Docker-images
+restrict-docker-image-deletion-to-DOCKERHUB
+sostat:-provide-statistics-on-logstash-queue-#1157
+Issue-1181:-soup:-don't-check-for-docker-images-if-docker-is-not-installed

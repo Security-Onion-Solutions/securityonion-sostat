@@ -180,7 +180,7 @@ if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [
 	echo "Checking Security Onion Docker image status..."
 	. /usr/sbin/so-elastic-common
 	for i in so-curator so-domainstats so-elastalert so-elasticsearch so-freqserver so-kibana so-logstash; do
-		OUTPUT=`docker pull --disable-content-trust=false $DOCKERHUB/$i`
+		OUTPUT=`/usr/bin/docker pull --disable-content-trust=false $DOCKERHUB/$i`
 		#echo $OUTPUT
 		if echo $OUTPUT | grep -q "up to date"; then
 			echo "$i image is up to date."
@@ -261,16 +261,18 @@ if [ "$RESTART_CONTAINERS" == "yes" ]; then
 fi
 
 # Remove old Docker images
-if docker images | grep "${DOCKERHUB}/so-" | grep -v latest; then
-        echo
-        echo "Removing old Security Onion Docker images..."
-        echo
-        for i in $( docker images | grep "${DOCKERHUB}/so-" | grep -v latest | awk '{print $3}'); do
-                echo "Removing ${i} ..."
-                docker rmi ${i} -f
-        done
-        echo
-        echo "Old Security Onion Docker images have been removed."
+if [ -f /etc/nsm/elasticdownload.conf ] && [ -x /usr/bin/docker ] ; then
+	if /usr/bin/docker images | grep "${DOCKERHUB}/so-" | grep -v latest; then
+        	echo
+	        echo "Removing old Security Onion Docker images..."
+        	echo
+	        for i in $( /usr/bin/docker images | grep "${DOCKERHUB}/so-" | grep -v latest | awk '{print $3}'); do
+        	        echo "Removing ${i} ..."
+                	/usr/bin/docker rmi ${i} -f
+	        done
+        	echo
+	        echo "Old Security Onion Docker images have been removed."
+	fi
 fi
 
 # If sniffing interfaces, then output notifications about any sniffing process updates
