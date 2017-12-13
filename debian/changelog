@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion84) trusty; urgency=medium
+
+  * additional check for /usr/bin/docker 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 13 Dec 2017 08:42:37 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion83) trusty; urgency=medium
 
   * Issue 1181: soup: don't check for docker images if docker is not installed 

@@ -80,3 +80,4 @@ Issue-1156:-soup:-delete-old-Docker-images
 restrict-docker-image-deletion-to-DOCKERHUB
 sostat:-provide-statistics-on-logstash-queue-#1157
 Issue-1181:-soup:-don't-check-for-docker-images-if-docker-is-not-installed
+additional-check-for-usrbindocker
