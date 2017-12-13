@@ -160,8 +160,7 @@ echo "Checking for updates..."
 apt-get update -qq
 
 # If our docker config is present, check for updates for docker-ce and individual docker images
-if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ]; then
-
+if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ] && [ -x /usr/bin/docker ]; then
 	echo
 	# if a new version of docker-ce is available, stop containers, upgrade docker-ce, and then set a flag to restart containers
 	if apt-get dist-upgrade --assume-no |grep docker-ce >/dev/null; then
