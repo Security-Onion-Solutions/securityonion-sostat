@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion85) trusty; urgency=medium
+
+  * sostat: clean up error/output when performing Docker interface correlation #1175 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sun, 17 Dec 2017 06:15:06 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion84) trusty; urgency=medium
 
   * additional check for /usr/bin/docker 

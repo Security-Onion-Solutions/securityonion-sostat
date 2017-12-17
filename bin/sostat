@@ -92,7 +92,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 		echo
                 echo $i
                 echo '-------------------------------------------------------------------------'
-                ETH_LIST=`docker exec $i ls /sys/class/net/eth*/iflink`
+                ETH_LIST=`docker exec $i sh -c 'ls /sys/class/net/eth*/iflink'`
 		for interface in $ETH_LIST; do
                         ETH_SHORT=`echo $interface | cut -d'/' -f5`
                         INT_INT=`docker exec $i cat $interface`

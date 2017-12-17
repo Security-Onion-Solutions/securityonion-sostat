@@ -1,0 +1,36 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion85) trusty; urgency=medium
+ .
+   * sostat: clean up error/output when performing Docker interface correlation #1175
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -92,7 +92,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+ 		echo
+                 echo $i
+                 echo '-------------------------------------------------------------------------'
+-                ETH_LIST=`docker exec $i ls /sys/class/net/eth*/iflink`
++                ETH_LIST=`docker exec $i sh -c 'ls /sys/class/net/eth*/iflink'`
+ 		for interface in $ETH_LIST; do
+                         ETH_SHORT=`echo $interface | cut -d'/' -f5`
+                         INT_INT=`docker exec $i cat $interface`
