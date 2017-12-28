@@ -143,7 +143,7 @@ top -b -n1 |head -6
 # Use "ps" to get a process listing and sort it by cpu usage
 ps -eo pcpu,pmem,args --sort -pcpu
 
-if [ -d /nsm/sensor_data ]; then
+if [ -d /nsm/sensor_data ] && [ -s /etc/nsm/sensortab ]; then
 	echo
 	FREQUENCY=`grep -A1 packets_received /var/ossec/etc/ossec.conf | tail -1 | cut -d\> -f2 | cut -d\< -f1`
 	header "Packets received during last monitoring interval ($FREQUENCY seconds)"
