@@ -82,3 +82,4 @@ sostat:-provide-statistics-on-logstash-queue-#1157
 Issue-1181:-soup:-don't-check-for-docker-images-if-docker-is-not-installed
 additional-check-for-usrbindocker
 sostat:-clean-up-erroroutput-when-performing-Docker-interface-correlation-#1175
+issues-1190-and-1191

@@ -147,10 +147,20 @@ fi
 echo "Checking for kernels that can be removed..."
 /usr/sbin/so-purge-old-kernels -y
 
-# Before running apt-get, we need to check for missing /etc/apt/preferences.d/securityonion-docker and restore if necessary
-if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /opt/elastic/src/etc/apt/preferences.d/securityonion-docker ]; then
-	if ! [ -f /etc/apt/preferences.d/securityonion-docker ]; then
-		cp /opt/elastic/src/etc/apt/preferences.d/securityonion-docker /etc/apt/preferences.d/securityonion-docker
+# Before running apt-get, we need to ensure that the docker repo config is in place
+if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /opt/elastic/src/etc/apt/preferences.d/securityonion-docker ] && [ -f /etc/apt/sources.list ]; then
+	# check for missing /etc/apt/preferences.d/securityonion-docker and restore if necessary
+	FILE="/etc/apt/preferences.d/securityonion-docker"
+	if ! [ -f $FILE ]; then
+		echo "Copying $FILE into place"
+		cp /opt/elastic/src/etc/apt/preferences.d/securityonion-docker $FILE
+	fi
+
+	# check for commented out docker line in /etc/apt/sources.list
+	FILE="/etc/apt/sources.list"
+	if grep -q "^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu trusty stable$" $FILE 2>/dev/null; then
+		echo "Re-enabling Docker repo in $FILE"
+		sed -i 's|^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu trusty stable$|deb [arch=amd64] https://download.docker.com/linux/ubuntu trusty stable|g' $FILE
 	fi
 fi
 

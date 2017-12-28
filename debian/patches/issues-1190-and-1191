@@ -1,0 +1,78 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion86) trusty; urgency=medium
+ .
+   * issues 1190 and 1191
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -66,7 +66,13 @@ do
+ done
+ 
+ # Determine sensor interfaces for packet loss stats
+-INTERFACES=`grep -v "#" /etc/nsm/sensortab | awk '{print $4}'`
++INTERFACES=""
++NUM_INTERFACES=0
++SENSORTAB="/etc/nsm/sensortab"
++if [ -s $SENSORTAB ]; then
++	INTERFACES=$(grep -v "#" $SENSORTAB | awk '{print $4}')
++	NUM_INTERFACES=$(grep -v "#" $SENSORTAB | wc -l)
++fi
+ 
+ # Text formatting
+ if [ -t 1 ];then
+@@ -143,7 +149,7 @@ top -b -n1 |head -6
+ # Use "ps" to get a process listing and sort it by cpu usage
+ ps -eo pcpu,pmem,args --sort -pcpu
+ 
+-if [ -d /nsm/sensor_data ]; then
++if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
+ 	echo
+ 	FREQUENCY=`grep -A1 packets_received /var/ossec/etc/ossec.conf | tail -1 | cut -d\> -f2 | cut -d\< -f1`
+ 	header "Packets received during last monitoring interval ($FREQUENCY seconds)"
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -147,10 +147,20 @@ fi
+ echo "Checking for kernels that can be removed..."
+ /usr/sbin/so-purge-old-kernels -y
+ 
+-# Before running apt-get, we need to check for missing /etc/apt/preferences.d/securityonion-docker and restore if necessary
+-if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /opt/elastic/src/etc/apt/preferences.d/securityonion-docker ]; then
+-	if ! [ -f /etc/apt/preferences.d/securityonion-docker ]; then
+-		cp /opt/elastic/src/etc/apt/preferences.d/securityonion-docker /etc/apt/preferences.d/securityonion-docker
++# Before running apt-get, we need to ensure that the docker repo config is in place
++if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /opt/elastic/src/etc/apt/preferences.d/securityonion-docker ] && [ -f /etc/apt/sources.list ]; then
++	# check for missing /etc/apt/preferences.d/securityonion-docker and restore if necessary
++	FILE="/etc/apt/preferences.d/securityonion-docker"
++	if ! [ -f $FILE ]; then
++		echo "Copying $FILE into place"
++		cp /opt/elastic/src/etc/apt/preferences.d/securityonion-docker $FILE
++	fi
++
++	# check for commented out docker line in /etc/apt/sources.list
++	FILE="/etc/apt/sources.list"
++	if grep -q "^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu trusty stable$" $FILE 2>/dev/null; then
++		echo "Re-enabling Docker repo in $FILE"
++		sed -i 's|^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu trusty stable$|deb [arch=amd64] https://download.docker.com/linux/ubuntu trusty stable|g' $FILE
+ 	fi
+ fi
+ 
