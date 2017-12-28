@@ -66,7 +66,13 @@ do
 done
 
 # Determine sensor interfaces for packet loss stats
-INTERFACES=`grep -v "#" /etc/nsm/sensortab | awk '{print $4}'`
+INTERFACES=""
+NUM_INTERFACES=0
+SENSORTAB="/etc/nsm/sensortab"
+if [ -s $SENSORTAB ]; then
+	INTERFACES=$(grep -v "#" $SENSORTAB | awk '{print $4}')
+	NUM_INTERFACES=$(grep -v "#" $SENSORTAB | wc -l)
+fi
 
 # Text formatting
 if [ -t 1 ];then
@@ -143,7 +149,7 @@ top -b -n1 |head -6
 # Use "ps" to get a process listing and sort it by cpu usage
 ps -eo pcpu,pmem,args --sort -pcpu
 
-if [ -d /nsm/sensor_data ] && [ -s /etc/nsm/sensortab ]; then
+if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	echo
 	FREQUENCY=`grep -A1 packets_received /var/ossec/etc/ossec.conf | tail -1 | cut -d\> -f2 | cut -d\< -f1`
 	header "Packets received during last monitoring interval ($FREQUENCY seconds)"
