@@ -594,6 +594,23 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                         echo && echo -e "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-domainstats'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
                 fi
         fi
+        if [ -f /etc/nsm/crossclustertab ] && [ -s /etc/nsm/crossclustertab ]; then
+                echo
+                header "Cross Cluster Search"
+                while read i; do
+                        SEED_NAME=`echo $i | awk '{print $1}'`
+                        SEED_PAIR=`echo $i | awk '{print $2}'`
+                        SEED_IP=`echo $i | awk '{print $2}' | cut -d: -f1`
+                        SEED_PORT=`echo $i | awk '{print $2}' | cut -d: -f2`
+                        if nc -vz $SEED_IP $SEED_PORT > /dev/null 2>&1; then
+                                STATUS="CONNECTED"
+                        else
+                                STATUS="NOT CONNECTED"
+                        fi
+                        echo $SEED_NAME - $SEED_PAIR  - $STATUS
+                        echo
+                done </etc/nsm/crossclustertab
+        fi
 fi
 if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	echo
