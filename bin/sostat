@@ -354,7 +354,7 @@ if [ "$ELSA" = "YES" ]; then
         nc -4 -vz localhost 9306 2>&1
         echo
         echo "ELSA Buffers in Queue:"
-        ls -alt /nsm/elsa/data/elsa/tmp/buffers/* | wc -l
+        ls -al /nsm/elsa/data/elsa/tmp/buffers/ | wc -l
 	echo "If this number is consistently higher than 20, please see:"
 	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/FAQ#why-does-sostat-show-a-high-number-of-elsa-buffers-in-queue"
         echo
