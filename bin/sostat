@@ -480,15 +480,17 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
         fi
 
 	if [ "$LOGSTASH_ENABLED" = "yes" ]; then
-        QUEUE_STORAGE_TYPE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.data.storage_type)
-	QUEUE_FREE_SPACE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.data.free_space_in_bytes)
+        QUEUE_STORAGE_TYPE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.data.storage_type)
+	QUEUE_FREE_SPACE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.data.free_space_in_bytes)
 	QUEUE_PATH="/nsm/logstash/queue/main"
-	QUEUE_MAX_UNREAD=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.max_unread_events)
-	QUEUE_MAX_SIZE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.max_queue_size_in_bytes)
-	PAGE_CAPACITY=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.page_capacity_in_bytes)
-	QUEUE_SIZE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.capacity.queue_size_in_bytes)
-	QUEUE_TYPE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.type)
-	QUEUE_EVENTS=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipeline.queue.events)
+	QUEUE_MAX_UNREAD=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.capacity.max_unread_events)
+	QUEUE_MAX_SIZE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.capacity.max_queue_size_in_bytes)
+	PAGE_CAPACITY=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.capacity.page_capacity_in_bytes)
+	QUEUE_SIZE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.capacity.queue_size_in_bytes)
+	QUEUE_TYPE=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.type | sed s/\"//g)
+	QUEUE_EVENTS=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .pipelines.main.queue.events)
+        EVENTS_IN=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .events.in)
+	EVENTS_OUT=$(curl -s "$LOGSTASH_HOST:$LOGSTASH_PORT/_node/stats" | jq .events.out)
 	echo
         header "Logstash"
 		if [ "$LS_RUNNING" ];then
@@ -499,15 +501,23 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 			echo
 			#echo Storage Type: $QUEUE_STORAGE_TYPE
 			#echo Free Space: $(($QUEUE_FREE_SPACE/10**6))MB
-                        echo Queue Type: $QUEUE_TYPE
-			echo Queue Path: $QUEUE_PATH
-			echo Queue Size: $(($QUEUE_SIZE/10**6))MB
-			echo Max Queue Size: $(($QUEUE_MAX_SIZE/10**6))MB
-			echo Events in Queue: $QUEUE_EVENTS
-			#echo Maximum Unread Events: $QUEUE_MAX_UNREAD
-                        #echo Page Capacity: $(($PAGE_CAPACITY/10**6))MB
+			echo Queue Type: $QUEUE_TYPE
+			if [ "$QUEUE_TYPE" == "persisted" ]; then
+				echo Queue Path: $QUEUE_PATH
+				echo Queue Size: $(($QUEUE_SIZE/10**6))MB
+				echo Max Queue Size: $(($QUEUE_MAX_SIZE/10**6))
+				echo Events in Queue: $QUEUE_EVENTS
+				#echo Maximum Unread Events: $QUEUE_MAX_UNREAD
+                        	#echo Page Capacity: $(($PAGE_CAPACITY/10**6))MB
+			fi
+			echo "Queue settings can be modified in /etc/logstash/logstash.yml." 	
+			
 			echo
-			echo "Queue settings can be modified in /etc/logstash/logstash.yml."
+			echo "Event Summary (since restart):"
+			echo
+			echo "Events In: $EVENTS_IN"
+			echo "Events Out: $EVENTS_OUT"
+			echo
 		else
 			echo && echo -e "Logstash is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-logstash'\n\n\nIf that does not work, try checking /var/log/logstash/logstash.log for clues."
         	fi
