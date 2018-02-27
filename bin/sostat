@@ -501,23 +501,28 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 			echo
 			#echo Storage Type: $QUEUE_STORAGE_TYPE
 			#echo Free Space: $(($QUEUE_FREE_SPACE/10**6))MB
-			echo Queue Type: $QUEUE_TYPE
-			if [ "$QUEUE_TYPE" == "persisted" ]; then
-				echo Queue Path: $QUEUE_PATH
-				echo Queue Size: $(($QUEUE_SIZE/10**6))MB
-				echo Max Queue Size: $(($QUEUE_MAX_SIZE/10**6))
-				echo Events in Queue: $QUEUE_EVENTS
-				#echo Maximum Unread Events: $QUEUE_MAX_UNREAD
-                        	#echo Page Capacity: $(($PAGE_CAPACITY/10**6))MB
-			fi
-			echo "Queue settings can be modified in /etc/logstash/logstash.yml." 	
+			if [ "$QUEUE_TYPE" != "null" ]; then
+				echo Queue Type: $QUEUE_TYPE
+				if [ "$QUEUE_TYPE" == "persisted" ]; then
+					echo Queue Path: $QUEUE_PATH
+					echo Queue Size: $(($QUEUE_SIZE/10**6))MB
+					echo Max Queue Size: $(($QUEUE_MAX_SIZE/10**6))
+					echo Events in Queue: $QUEUE_EVENTS
+					#echo Maximum Unread Events: $QUEUE_MAX_UNREAD
+                        		#echo Page Capacity: $(($PAGE_CAPACITY/10**6))MB
+				fi
+				echo "Queue settings can be modified in /etc/logstash/logstash.yml." 	
 			
-			echo
-			echo "Event Summary (since restart):"
-			echo
-			echo "Events In: $EVENTS_IN"
-			echo "Events Out: $EVENTS_OUT"
-			echo
+				echo
+				echo "Event Summary (since restart):"
+				echo
+				echo "Events In: $EVENTS_IN"
+				echo "Events Out: $EVENTS_OUT"
+				echo
+			else
+				echo "Logstash has started, but has not completed initialization."
+				echo "To obtain queue stats, try running sostat again in a few minutes."
+			fi
 		else
 			echo && echo -e "Logstash is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-logstash'\n\n\nIf that does not work, try checking /var/log/logstash/logstash.log for clues."
         	fi
