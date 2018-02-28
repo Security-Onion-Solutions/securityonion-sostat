@@ -455,6 +455,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 	CURAT_RUNNING=$(docker ps | grep so-curator)
 	FREQ_RUNNING=$(docker ps | grep so-freqserver)
 	DOMAINSTATS_RUNNING=$(docker ps | grep so-domainstats)
+	EVENT_COUNT=$(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/*/_stats" | jq ._all.total.docs.count)
+	AVG_EVENT_SIZE=$(echo $(($(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/*/_stats" | jq ._all.total.store.size_in_bytes) / $(curl -s "$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/*/_stats" | jq ._all.total.docs.count)))
+)
+	
 	
 	echo
         header "Elasticsearch"
@@ -471,7 +475,9 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                 echo Total Documents: $TOT_DOCS
                 echo Total Size: $(($TOT_SIZE/10**6))MB
                 echo Free Memory: $FREE_MEM%
-                echo
+                echo Total Number of Events:  $EVENT_COUNT
+		echo "Avg. Event Size (In Bytes): $AVG_EVENT_SIZE"
+		echo
 		docker stats --no-stream so-elasticsearch
         else
                 echo
