@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion91) trusty; urgency=medium
+
+  * merge pr 27 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 28 Feb 2018 14:29:16 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion90) trusty; urgency=medium
 
   * merge pr 26 
