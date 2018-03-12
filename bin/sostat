@@ -534,6 +534,18 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
         	fi
 	fi
 
+	if [ "$LOGSTASH_OUTPUT_REDIS" = "yes" ]; then
+	echo
+	header "Redis"
+		if pgrep redis-server >/dev/null 2>&1; then
+			echo -n "Logs in redis: "
+			redis-cli LLEN logstash:redis
+		else
+			echo "Redis is NOT running.  You can try starting it with:"
+			echo "sudo service redis-server start"
+		fi
+	fi
+
 	if [ "$KIBANA_ENABLED" = "yes" ]; then
         echo
 	header "Kibana"
