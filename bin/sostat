@@ -644,7 +644,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 	if [ "$ES_RUNNING" ]; then
                 echo
                 header "Cross Cluster Search"
-		/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | paste -d " " - - | while read i; do
+		/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | grep -v "^--" | paste -d " " - - | while read i; do
                         SEED_NAME=`echo $i | cut -d\" -f2`
                         SEED_PAIR=`echo $i | cut -d\" -f4`
                         SEED_IP=`echo $i | cut -d\" -f4  | cut -d: -f1`
