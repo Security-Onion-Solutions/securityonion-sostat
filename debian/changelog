@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion93) trusty; urgency=medium
+
+  * no longer using crossclustertab 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 23 Mar 2018 15:48:41 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion92) trusty; urgency=medium
 
   * sostat: if redis enabled, show number of events in queue 

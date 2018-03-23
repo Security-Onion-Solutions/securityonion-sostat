@@ -1,0 +1,85 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion93) trusty; urgency=medium
+ .
+   * no longer using crossclustertab
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -1,12 +1,26 @@
+ #!/bin/bash
+ #
+-# /usr/sbin/sostat
++# Copyright 2014,2015,2016,2017,2018 Security Onion Solutions, LLC
+ #
++# This program is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
+ # Written by:
+ # Doug Burks
+ # Fixes contributed by:
+ # Stephane Chazelas
+ # Shane Castle
++# Wes Lambert
+ # Freq_server and Domain_stats components written by:
+ # Justin Henderson
+ 
+@@ -627,14 +641,14 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+                         echo && echo -e "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-domainstats'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
+                 fi
+         fi
+-        if [ -f /etc/nsm/crossclustertab ] && [ -s /etc/nsm/crossclustertab ]; then
++	if [ "$ES_RUNNING" ]; then
+                 echo
+                 header "Cross Cluster Search"
+-                while read i; do
+-                        SEED_NAME=`echo $i | awk '{print $1}'`
+-                        SEED_PAIR=`echo $i | awk '{print $2}'`
+-                        SEED_IP=`echo $i | awk '{print $2}' | cut -d: -f1`
+-                        SEED_PORT=`echo $i | awk '{print $2}' | cut -d: -f2`
++		/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | paste -d " " - - | while read i; do
++                        SEED_NAME=`echo $i | cut -d\" -f2`
++                        SEED_PAIR=`echo $i | cut -d\" -f4`
++                        SEED_IP=`echo $i | cut -d\" -f4  | cut -d: -f1`
++                        SEED_PORT=`echo $i | cut -d\" -f4 | cut -d: -f2`
+                         if nc -vz $SEED_IP $SEED_PORT > /dev/null 2>&1; then
+                                 STATUS="CONNECTED"
+                         else
+@@ -642,7 +656,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+                         fi
+                         echo $SEED_NAME - $SEED_PAIR  - $STATUS
+                         echo
+-                done </etc/nsm/crossclustertab
++                done
+         fi
+ fi
+ if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
