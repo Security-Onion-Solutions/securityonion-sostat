@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion95) trusty; urgency=medium
+
+  * improve formatting 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 24 Mar 2018 07:53:32 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion94) trusty; urgency=medium
 
   * iterate over multiple sensors properly 

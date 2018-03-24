@@ -551,6 +551,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 	if [ "$LOGSTASH_OUTPUT_REDIS" = "yes" ]; then
 	echo
 	header "Redis"
+		echo
 		if pgrep redis-server >/dev/null 2>&1; then
 			echo -n "Logs in redis: "
 			redis-cli LLEN logstash:redis
@@ -642,22 +643,24 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                 fi
         fi
 	if [ "$ES_RUNNING" ]; then
-                echo
-                header "Cross Cluster Search"
-		/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | grep -v "^--" | paste -d " " - - | while read i; do
-                        SEED_NAME=`echo $i | cut -d\" -f2`
-                        SEED_PAIR=`echo $i | cut -d\" -f4`
-                        SEED_IP=`echo $i | cut -d\" -f4  | cut -d: -f1`
-                        SEED_PORT=`echo $i | cut -d\" -f4 | cut -d: -f2`
-                        if nc -vz $SEED_IP $SEED_PORT > /dev/null 2>&1; then
-                                STATUS="CONNECTED"
-                        else
-                                STATUS="NOT CONNECTED"
-                        fi
-                        echo $SEED_NAME - $SEED_PAIR  - $STATUS
-                        echo
-                done
-        fi
+		if [ $(/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | grep -v "^--" | paste -d " " - - | wc -l) -gt 0 ]; then
+	                echo
+        	        header "Cross Cluster Search"
+			/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | grep -v "^--" | paste -d " " - - | while read i; do
+                        	SEED_NAME=`echo $i | cut -d\" -f2`
+	                        SEED_PAIR=`echo $i | cut -d\" -f4`
+        	                SEED_IP=`echo $i | cut -d\" -f4  | cut -d: -f1`
+                	        SEED_PORT=`echo $i | cut -d\" -f4 | cut -d: -f2`
+                        	if nc -vz $SEED_IP $SEED_PORT > /dev/null 2>&1; then
+                                	STATUS="CONNECTED"
+	                        else
+        	                        STATUS="NOT CONNECTED"
+                	        fi
+				echo
+                        	echo $SEED_NAME - $SEED_PAIR  - $STATUS
+        	        done
+	        fi
+	fi
 fi
 if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	echo
@@ -672,6 +675,7 @@ if [ -f $FILE ]; then
 	source $FILE
 	echo
 	header "Version Information"
+	echo
 	echo $PRETTY_NAME
 	if [[ $ALL_PKGS == 1 ]]; then
 		echo

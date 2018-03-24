@@ -91,3 +91,4 @@ merge-pr-27
 sostat:-if-redis-enabled,-show-number-of-events-in-queue
 no-longer-using-crossclustertab
 iterate-over-multiple-sensors-properly
+improve-formatting
