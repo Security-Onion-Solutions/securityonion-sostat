@@ -233,7 +233,7 @@ done
 
 # 16.04.4.1 ISO image was built without HWE metapackages
 # So if a 4.13 kernel is installed, try to install the HWE metapackages
-if dpkg -l |grep "linux-headers-4.13" >dev/null 2>&1; then
+if dpkg -l |grep "linux-headers-4.13" >/dev/null 2>&1; then
 	XSERVER=""
 	if dpkg -l |grep xserver >/dev/null 2>&1; then
 		XSERVER="xserver-xorg-hwe-16.04"
