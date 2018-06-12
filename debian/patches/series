@@ -92,3 +92,9 @@ sostat:-if-redis-enabled,-show-number-of-events-in-queue
 no-longer-using-crossclustertab
 iterate-over-multiple-sensors-properly
 improve-formatting
+remove-HWE-check
+change-http-to-https
+change-service-nsm-status-to-so-status
+add-so-apt-check
+update-sostat-to-account-for-skip_unavailable
+remove-references-to-service-nsm

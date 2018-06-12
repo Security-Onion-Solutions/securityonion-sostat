@@ -1,0 +1,54 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion102) xenial; urgency=medium
+ .
+   * remove references to service nsm
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat-quick
++++ securityonion-sostat-20120722/bin/sostat-quick
+@@ -81,12 +81,12 @@ next
+ 
+ header_top "Checking for Failed Security Onion Services"
+ echo
+-header_mid "If failed Services are found, consider running ${normal}' sudo service nsm restart '${red} or try Rebooting your SO Installation."
++header_mid "If failed Services are found, consider running ${normal}' sudo so-restart '${red} or try Rebooting your SO Installation."
+ header_mid "Please note that there is a 60-second delay before the Security Onion processes are started after reboot or following restart of services"
+ header_mid "Services may ${normal}' FAIL '${red} for several reasons. Follow all of the comments/recommendations listed in the Full report below."
+ header_bot "If ' Bro ' has failed, try ${normal}' sudo nsm_sensor_ps-restart --only-bro '"
+ echo
+-sudo service nsm status 2>&1 | sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
++sudo so-status 2>&1 | sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
+ next
+ 
+ header_top "CPU usage check - Consider running the command ${normal}' top '${red} to see the LIVE CPU process activity."
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -210,7 +210,8 @@ fi
+ if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
+ 	echo $BANNER
+ 	echo -n "New mysql-server packages available. Stopping services for clean update."
+-	service nsm stop > /dev/null 2>&1
++	so-sguild-stop > /dev/null 2>&1
++	so-sensor-stop > /dev/null 2>&1
+ 	echo -n "."
+ 	service syslog-ng stop > /dev/null 2>&1
+ 	echo -n "."

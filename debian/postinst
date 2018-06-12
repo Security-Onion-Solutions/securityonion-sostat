@@ -5,7 +5,7 @@ set -e
 case "$1" in
     configure)
         
-	chmod +x /usr/sbin/sostat* /usr/sbin/soup /usr/sbin/so-purge-old-kernels || echo "Unable to set sostat utilities executable."
+	chmod +x /usr/sbin/so-apt-check /usr/sbin/sostat* /usr/sbin/soup /usr/sbin/so-purge-old-kernels || echo "Unable to set sostat utilities executable."
 	
 	FILE="/etc/update-manager/release-upgrades"
 	if [ -f $FILE ]; then

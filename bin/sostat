@@ -98,7 +98,7 @@ fi
 
 # Begin output
 header "Service Status"
-service nsm status 2>&1 | remove_ansi_escapes
+so-status 2>&1 | remove_ansi_escapes
 
 echo
 header "Interface Status"
@@ -338,10 +338,10 @@ if [ -f /var/log/apt/history.log ]; then
 	tail /var/log/apt/history.log
 fi
 
-if [ $(/usr/lib/update-notifier/apt-check --human-readable | grep -c '0') -ne 2 ]; then
+if [ $(/usr/sbin/so-apt-check --human-readable | grep -c '0') -ne 2 ]; then
         echo
         header "Available updates"
-        /usr/lib/update-notifier/apt-check --human-readable
+        /usr/sbin/so-apt-check --human-readable
         echo
         echo "Run 'sudo soup' to install the latest updates."
 fi
@@ -643,10 +643,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                 fi
         fi
 	if [ "$ES_RUNNING" ]; then
-		if [ $(/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | grep -v "^--" | paste -d " " - - | wc -l) -gt 0 ]; then
+		if [ $(/usr/sbin/so-crossclustercheck | jq "." | grep -B3 ":5" |grep -v "\"seeds\"" | grep -v "skip_unavailable" | grep -v "^--" | paste -d " " - - | wc -l) -gt 0 ]; then
 	                echo
         	        header "Cross Cluster Search"
-			/usr/sbin/so-crossclustercheck | jq "." | grep -B2 ":5" |grep -v "\"seeds\"" | grep -v "^--" | paste -d " " - - | while read i; do
+			/usr/sbin/so-crossclustercheck | jq "." | grep -B3 ":5" |grep -v "\"seeds\"" | grep -v "skip_unavailable" | grep -v "^--" | paste -d " " - - | while read i; do
                         	SEED_NAME=`echo $i | cut -d\" -f2`
 	                        SEED_PAIR=`echo $i | cut -d\" -f4`
         	                SEED_IP=`echo $i | cut -d\" -f4  | cut -d: -f1`

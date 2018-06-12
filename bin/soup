@@ -110,7 +110,7 @@ if [ $SKIP -ne 1 ]; then
 	echo "Please review the following for more information"
 	echo "about the update process and recent updates:"
 	echo "https://securityonion.net/wiki/Upgrade"
-	echo "http://blog.securityonion.net"
+	echo "https://blog.securityonion.net"
 	echo
 	echo "If you're running a distributed deployment, please run soup"
 	echo "on the master server before updating sensors."
@@ -129,7 +129,7 @@ if [ $SKIP -ne 1 ]; then
 	if [ -f $SSH_CONF ]; then
 		source $SSH_CONF
 		echo "Checking to see if the master server has already been updated, please wait..."
-		SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/lib/update-notifier/apt-check --human-readable | grep 'packages can be updated' | awk '{print \$1}'")
+		SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/sbin/so-apt-check --human-readable | grep 'packages can be updated' | awk '{print \$1}'")
 		if [ "$SERVER_PKG" -ne 0 ]; then
 			echo
 			echo "The master server reports that it has $SERVER_PKG updates that need to be installed."
@@ -210,7 +210,8 @@ fi
 if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
 	echo $BANNER
 	echo -n "New mysql-server packages available. Stopping services for clean update."
-	service nsm stop > /dev/null 2>&1
+	so-sguild-stop > /dev/null 2>&1
+	so-sensor-stop > /dev/null 2>&1
 	echo -n "."
 	service syslog-ng stop > /dev/null 2>&1
 	echo -n "."
@@ -255,13 +256,7 @@ test -e /var/run/reboot-required && REBOOT=yes
 
 # Final output
 echo $BANNER
-hwe-support-status > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-	echo "All updates have been installed."
-else
-	echo "Please upgrade your Hardware Enablement Stack (HWE):"
-	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/HWE"
-fi
+echo "All updates have been installed."
 
 # Do we need to restart Docker containers?
 if [ "$RESTART_CONTAINERS" == "yes" ]; then

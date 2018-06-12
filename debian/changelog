@@ -1,3 +1,45 @@
+securityonion-sostat (20120722-0ubuntu0securityonion102) xenial; urgency=medium
+
+  * remove references to service nsm 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 18 May 2018 11:08:09 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion101) xenial; urgency=medium
+
+  * update sostat to account for skip_unavailable 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 16 May 2018 10:04:21 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion100) xenial; urgency=medium
+
+  * add so-apt-check 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 16 May 2018 06:58:29 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion99) xenial; urgency=medium
+
+  * change service nsm status to so-status 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 15 May 2018 15:08:25 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion98) xenial; urgency=medium
+
+  * add bc dependency 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 05 May 2018 09:22:23 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion97) xenial; urgency=medium
+
+  * change http to https 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 02 May 2018 10:11:32 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion96) xenial; urgency=medium
+
+  * remove HWE check 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 02 May 2018 10:07:22 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion95) trusty; urgency=medium
 
   * improve formatting 

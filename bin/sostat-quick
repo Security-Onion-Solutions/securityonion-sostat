@@ -81,12 +81,12 @@ next
 
 header_top "Checking for Failed Security Onion Services"
 echo
-header_mid "If failed Services are found, consider running ${normal}' sudo service nsm restart '${red} or try Rebooting your SO Installation."
+header_mid "If failed Services are found, consider running ${normal}' sudo so-restart '${red} or try Rebooting your SO Installation."
 header_mid "Please note that there is a 60-second delay before the Security Onion processes are started after reboot or following restart of services"
 header_mid "Services may ${normal}' FAIL '${red} for several reasons. Follow all of the comments/recommendations listed in the Full report below."
 header_bot "If ' Bro ' has failed, try ${normal}' sudo nsm_sensor_ps-restart --only-bro '"
 echo
-sudo service nsm status 2>&1 | sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
+sudo so-status 2>&1 | sed $'s/\e[^mk]*[mk]//g;s/[\e\r]//g'
 next
 
 header_top "CPU usage check - Consider running the command ${normal}' top '${red} to see the LIVE CPU process activity."
