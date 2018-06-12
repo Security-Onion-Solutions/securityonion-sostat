@@ -231,13 +231,21 @@ apt-get $APT_OPTIONS install -y securityonion-pfring-module | while read; do
 	echo "$REPLY" | grep -v "^Use 'apt-get autoremove' to remove them.$"
 done
 
-# 16.04.4.1 ISO image was built without HWE metapackages
+# 16.04.4.1 installations are missing HWE metapackages
 # So if a 4.13 kernel is installed, try to install the HWE metapackages
 if dpkg -l |grep "linux-headers-4.13" >/dev/null 2>&1; then
+
+	# If update-grub-legacy-ec2 installed, it may prompt later to generate menu.lst
+	# Avoid the prompt by preemptively running it here
+	[ -x /usr/sbin/update-grub-legacy-ec2 ] && /usr/sbin/update-grub-legacy-ec2 -y
+
+	# Don't install xserver if it wasn't already installed
 	XSERVER=""
 	if dpkg -l |grep xserver >/dev/null 2>&1; then
 		XSERVER="xserver-xorg-hwe-16.04"
 	fi
+
+	# Try to install kernel HWE package and (optionally) XSERVER HWE package
 	apt-get -y install --install-recommends linux-generic-hwe-16.04 $XSERVER
 fi
 
