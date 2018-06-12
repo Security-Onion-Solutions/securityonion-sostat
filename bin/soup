@@ -232,12 +232,15 @@ apt-get $APT_OPTIONS install -y securityonion-pfring-module | while read; do
 done
 
 # 16.04.4.1 installations are missing HWE metapackages
-# So if a 4.13 kernel is installed, try to install the HWE metapackages
+# so if a 4.13 kernel is installed, try to install the HWE metapackages
 if dpkg -l |grep "linux-headers-4.13" >/dev/null 2>&1; then
 
-	# If update-grub-legacy-ec2 installed, it may prompt later to generate menu.lst
-	# Avoid the prompt by preemptively running it here
-	[ -x /usr/sbin/update-grub-legacy-ec2 ] && /usr/sbin/update-grub-legacy-ec2 -y
+	# If update-grub-legacy-ec2 is installed and /boot/grub/menu.lst is missing, avoid prompting user later
+	if [ -x /usr/sbin/update-grub-legacy-ec2 ]; then
+		if ! [ -f /boot/grub/menu.lst ]; then
+			/usr/sbin/update-grub-legacy-ec2 -y
+		fi
+	fi
 
 	# Don't install xserver if it wasn't already installed
 	XSERVER=""

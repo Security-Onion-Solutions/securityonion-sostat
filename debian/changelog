@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion106) xenial; urgency=medium
+
+  * avoid running grub multiple times 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 12 Jun 2018 15:49:58 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion105) xenial; urgency=medium
 
   * generate menu.lst to avoid prompt 

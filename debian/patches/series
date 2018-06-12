@@ -101,3 +101,4 @@ remove-references-to-service-nsm
 16.04.4.1-ISO-image:-HWE-metapackages-missing-#1258
 fix-typo
 generate-menu.lst-to-avoid-prompt
+avoid-running-grub-multiple-times
