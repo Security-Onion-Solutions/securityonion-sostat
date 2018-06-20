@@ -253,18 +253,21 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	fi
 	echo
 	echo "-------------------------------------------------------------------------"
-        if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
+	if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
             echo
             echo "${underline}Netsniff-NG${normal}:"
             for i in /var/log/nsm/*/netsniff-ng.log;
             do
                 if grep -q -e "-[1-9]*)" "$i"; then
                     echo
+                    echo "This may take a second..."
+                    echo
                     RCVD=()
                     DRPD=()
                     IFS=".(+"
-                    while read -ra line;
+                    for line in `cat "$i"`;
                     do
+                        #echo $line
                         for word in "${line[@]}";
                         do
                             if [[ $word =~ ')' ]]; then
@@ -277,7 +280,7 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
                     TOT_RCVD=`echo $rcvd_sum`
 
                     IFS="-"
-                    while read -ra line;
+                    for line in `cat "$i"`
                     do
                         for word in "${line[@]}";
                         do
@@ -289,18 +292,18 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 
                     IFS='+' drpd_sum=$(echo "scale=1;${DRPD[*]}"|bc)
                     TOT_DRPD=`echo $drpd_sum`
-		    TOT_PKTS=`echo 'scale=2; '$TOT_DRPD'+'$TOT_RCVD''|bc`
+                    TOT_PKTS=`echo 'scale=2; '$TOT_DRPD'+'$TOT_RCVD''|bc`
                     DRPD_PCT=`echo 'scale=2; '$TOT_DRPD'*100/'$TOT_PKTS''|bc`
                     echo
                     echo Percentage of packets dropped:
                     echo
-		    echo $i " -- " $DRPD_PCT
-		    echo
+                    echo $i " -- " $DRPD_PCT
+                    echo
                 else
                     echo
                     echo "0 Loss"
                 fi
-            done
+		done
         fi
 	echo
 	header "PF_RING"
