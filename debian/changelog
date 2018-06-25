@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion107) xenial; urgency=medium
+
+  * issues 1263 and 1264 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 25 Jun 2018 15:17:53 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion106) xenial; urgency=medium
 
   * avoid running grub multiple times 

@@ -102,3 +102,4 @@ remove-references-to-service-nsm
 fix-typo
 generate-menu.lst-to-avoid-prompt
 avoid-running-grub-multiple-times
+issues-1263-and-1264
