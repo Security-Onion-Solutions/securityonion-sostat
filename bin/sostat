@@ -233,7 +233,16 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
                 if [ -f /nsm/bro/logs/current/capture_loss.log ]; then
 			echo "Capture Loss:"
 			echo
-			echo "`/opt/bro/bin/bro-cut peer percent_lost < /nsm/bro/logs/current/capture_loss.log | sort -u`"
+			if grep -q '#@load json-logs' /opt/bro/share/bro/site/local.bro; then
+                                echo "`/opt/bro/bin/bro-cut peer percent_lost < /nsm/bro/logs/current/capture_loss.log | sort -u`"
+                        else
+                                CL_LOG="/nsm/bro/logs/current/capture_loss.log"
+                                PERCENT_LOST=$(cat $CL_LOG | jq .percent_lost | sort -u)
+                                for i in $(cat $CL_LOG | jq .peer | sort -u); do
+                                        PEER=$(echo $i | sed s'/"//g')
+                                        echo "$PEER: $PERCENT_LOST"
+                                done
+                        fi
 			echo
 			echo "If you are seeing capture loss without dropped packets, this"
 			echo "may indicate that an upstream device is dropping packets (tap or SPAN port)."
@@ -244,18 +253,21 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	fi
 	echo
 	echo "-------------------------------------------------------------------------"
-        if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
+	if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
             echo
             echo "${underline}Netsniff-NG${normal}:"
             for i in /var/log/nsm/*/netsniff-ng.log;
             do
                 if grep -q -e "-[1-9]*)" "$i"; then
                     echo
+                    echo "This may take a second..."
+                    echo
                     RCVD=()
                     DRPD=()
                     IFS=".(+"
-                    while read -ra line;
+                    for line in `cat "$i"`;
                     do
+                        #echo $line
                         for word in "${line[@]}";
                         do
                             if [[ $word =~ ')' ]]; then
@@ -268,7 +280,7 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
                     TOT_RCVD=`echo $rcvd_sum`
 
                     IFS="-"
-                    while read -ra line;
+                    for line in `cat "$i"`
                     do
                         for word in "${line[@]}";
                         do
@@ -280,18 +292,18 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 
                     IFS='+' drpd_sum=$(echo "scale=1;${DRPD[*]}"|bc)
                     TOT_DRPD=`echo $drpd_sum`
-		    TOT_PKTS=`echo 'scale=2; '$TOT_DRPD'+'$TOT_RCVD''|bc`
+                    TOT_PKTS=`echo 'scale=2; '$TOT_DRPD'+'$TOT_RCVD''|bc`
                     DRPD_PCT=`echo 'scale=2; '$TOT_DRPD'*100/'$TOT_PKTS''|bc`
                     echo
                     echo Percentage of packets dropped:
                     echo
-		    echo $i " -- " $DRPD_PCT
-		    echo
+                    echo $i " -- " $DRPD_PCT
+                    echo
                 else
                     echo
                     echo "0 Loss"
                 fi
-            done
+		done
         fi
 	echo
 	header "PF_RING"
