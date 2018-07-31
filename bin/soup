@@ -222,7 +222,17 @@ if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
 	pkill perl > /dev/null 2>&1
 	echo "done."
 	echo $BANNER
-	apt-get $APT_OPTIONS install -y mysql-server mysql-server-core-5.5 mysql-server-5.5
+	# Check to see if mysql is disabled
+	systemctl is-enabled --quiet mysql.service || MYSQL_DISABLED="yes"
+	# Enable mysql so that upgrade will succeed
+	systemctl enable mysql.service
+	# Upgrade
+	apt-get $APT_OPTIONS install -y mysql-server mysql-server-core-5.7 mysql-server-5.7
+	# If previously disabled, then stop and disable it now
+	if [ ${MYSQL_DISABLED} == "yes" ]; then
+		systemctl stop mysql.service
+		systemctl disable mysql.service
+	fi
 	REBOOT=yes
 fi
 
