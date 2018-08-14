@@ -262,6 +262,20 @@ if dpkg -l |grep "linux-headers-4.13" >/dev/null 2>&1; then
 	apt-get -y install --install-recommends linux-generic-hwe-16.04 $XSERVER
 fi
 
+# so-desktop-gnome previously didn't install gnome-screensaver
+if [ -f /usr/sbin/so-desktop-gnome ]; then
+	# If so-desktop-gnome has been executed, then it should have installed lightdm
+	if dpkg -l |grep -q "lightdm" ; then
+		# If so-desktop-gnome has been executed, then it should have removed gdm3
+		if ! dpkg -l |grep -q "gdm3" ; then
+			# If gnome-screensaver is not installed, install it
+			if ! dpkg -l |grep -q "gnome-screensaver" ; then
+				apt -y install gnome-screensaver
+			fi
+		fi
+	fi
+fi
+
 # Get list of updates
 UPDATES=`apt-get dist-upgrade --assume-no`
 

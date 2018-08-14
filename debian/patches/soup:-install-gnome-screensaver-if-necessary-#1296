@@ -1,0 +1,48 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion109) xenial; urgency=medium
+ .
+   * soup: install gnome-screensaver if necessary #1296
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -262,6 +262,20 @@ if dpkg -l |grep "linux-headers-4.13" >/
+ 	apt-get -y install --install-recommends linux-generic-hwe-16.04 $XSERVER
+ fi
+ 
++# so-desktop-gnome previously didn't install gnome-screensaver
++if [ -f /usr/sbin/so-desktop-gnome ]; then
++	# If so-desktop-gnome has been executed, then it should have installed lightdm
++	if dpkg -l |grep -q "lightdm" ; then
++		# If so-desktop-gnome has been executed, then it should have removed gdm3
++		if ! dpkg -l |grep -q "gdm3" ; then
++			# If gnome-screensaver is not installed, install it
++			if ! dpkg -l |grep -q "gnome-screensaver" ; then
++				apt -y install gnome-screensaver
++			fi
++		fi
++	fi
++fi
++
+ # Get list of updates
+ UPDATES=`apt-get dist-upgrade --assume-no`
+ 

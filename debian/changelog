@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion109) xenial; urgency=medium
+
+  * soup: install gnome-screensaver if necessary #1296 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 14 Aug 2018 12:24:15 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion108) xenial; urgency=medium
 
   * soup: avoid issues with mysql 5.7 and systemd #1283 
