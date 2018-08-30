@@ -182,10 +182,14 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 		echo "${underline}pf_ring${normal}:"
 		for i in /proc/net/pf_ring/*-* ; do
 			echo
-			#echo $i
-			grep "Appl. Name" $i
-			grep "Tot Packets" $i
-			grep "Tot Pkt Lost" $i
+			APP_NAME=`grep "Appl. Name" $i | awk '{print $4}'`
+                        PF_TOT_IN=`grep "Tot Packets" $i | awk '{print $4}'`
+                        PF_TOT_LOST=`grep "Tot Pkt Lost" $i | awk '{print $5}'`
+			PF_PERCENT_LOST=$(echo "scale=2 ; $PF_TOT_LOST * 10/$PF_TOT_IN * 10" | bc)
+                        echo "Appl. Name: $APP_NAME"
+			echo "Tot Packets: $PF_TOT_IN"
+			echo "Tot Pkt Lost: $PF_TOT_LOST"
+			echo "Loss as a percentage: $PF_PERCENT_LOST"
 			echo
 		done
 	fi
