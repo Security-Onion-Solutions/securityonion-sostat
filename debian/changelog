@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion110) xenial; urgency=medium
+
+  * merge pr 29 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 10 Sep 2018 09:40:34 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion109) xenial; urgency=medium
 
   * soup: install gnome-screensaver if necessary #1296 
