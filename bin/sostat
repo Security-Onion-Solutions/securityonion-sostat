@@ -624,9 +624,9 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
                         docker stats --no-stream so-freqserver
 			echo
 			echo "Testing freq_server now..."
-			FREQ_SERVER_RESPONSE=`docker exec -it so-logstash curl -s http://so-freqserver:10004/measure/google.com`
-			FREQ_RESULT=$(awk -vx=$FREQ_SERVER_RESPONSE 'BEGIN{ print x>=y?1:0}')
-			if [ $FREQ_RESULT -eq 1 ]; then
+			FREQ_SERVER_RESPONSE=`docker exec -it so-logstash curl -s http://so-freqserver:10004/measure/google.com` | awk '{print $2}'| cut -d ')' -f1
+                        FREQ_RESULT=$(awk -vx=$FREQ_SERVER_RESPONSE 'BEGIN{ print x>=y?1:0}')
+                        if [[ "$FREQ_RESULT" -eq 1 ]]; then
 				echo
 				echo "Freq Server is working."
 			else
@@ -649,7 +649,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 			echo "Testing domain_stats now..."
 			DOMAIN_STATS_RESPONSE=`docker exec so-logstash curl -s http://so-domainstats:20000/alexa/google.com`
 			DOMAIN_STATS_RESULT=$(awk -vx=$DOMAIN_STATS_RESPONSE 'BEGIN{ print x>=y?1:0}')
-			if [ $DOMAIN_STATS_RESULT -eq 1 ]; then
+			if [[ "$DOMAIN_STATS_RESULT" -eq 1 ]]; then
 				echo
 				echo "Domain_stats is working."
 			else
