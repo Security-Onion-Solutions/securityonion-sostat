@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion111) xenial; urgency=medium
+
+  * merge pr 30 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 18 Sep 2018 12:48:40 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion110) xenial; urgency=medium
 
   * merge pr 29 
