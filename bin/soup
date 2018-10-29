@@ -190,13 +190,13 @@ if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [
 	. /usr/sbin/so-elastic-common
 	for i in so-curator so-domainstats so-elastalert so-elasticsearch so-freqserver so-kibana so-logstash; do
 		OUTPUT=`/usr/bin/docker pull --disable-content-trust=false $DOCKERHUB/$i`
-		#echo $OUTPUT
 		if echo $OUTPUT | grep -q "up to date"; then
 			echo "$i image is up to date."
-		else
+		elif echo $OUTPUT | grep -q "Downloaded newer image for "; then
 			echo "$i has been updated."
 			RESTART_CONTAINERS=yes
-			#APPLY_CONFIG=yes
+		else
+			echo "Error checking for $i update."
 		fi
 	done
 	if [ "$RESTART_CONTAINERS" == "yes" ]; then
