@@ -223,6 +223,7 @@ if apt-get dist-upgrade --assume-no |grep mysql-server >/dev/null; then
 	echo "done."
 	echo $BANNER
 	# Check to see if mysql is disabled
+	MYSQL_DISABLED=""
 	systemctl is-enabled --quiet mysql.service || MYSQL_DISABLED="yes"
 	# Enable mysql so that upgrade will succeed
 	systemctl enable mysql.service
