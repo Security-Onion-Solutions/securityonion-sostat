@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion113) xenial; urgency=medium
+
+  * initialize MYSQL_DISABLED to no 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 01 Nov 2018 16:03:19 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion112) xenial; urgency=medium
 
   * issues 1342 and 1358 
