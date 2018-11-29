@@ -23,6 +23,17 @@ case "$1" in
 		sed -i 's|/usr/bin/sostat-interface|/usr/sbin/sostat-interface|g' $FILE || echo "Error updating $FILE."
 	fi
         
+	# Emergency patch for redis-server issue
+	# https://github.com/Security-Onion-Solutions/security-onion/issues/1386
+	if grep "LOGSTASH_OUTPUT_REDIS=yes" /etc/nsm/securityonion.conf >/dev/null 2>&1; then
+		if ! pgrep redis-server >/dev/null 2>&1; then
+			echo "LOGSTASH_OUTPUT_REDIS=yes but redis-server doesn't appear to be running."
+			echo "Enabling and starting redis-server."
+			update-rc.d -f redis-server enable || echo "Error enabling redis-server."
+			service redis-server start || echo "Error starting redis-server."
+		fi
+	fi
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
