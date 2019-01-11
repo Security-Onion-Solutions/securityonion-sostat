@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion115) xenial; urgency=medium
+
+  * soup: fix docker updates Security-Onion-Solutions/security-onion#1419 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 11 Jan 2019 08:58:10 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion114) xenial; urgency=medium
 
   * postinst should detect stopped redis and enable/start if necessary #1386 

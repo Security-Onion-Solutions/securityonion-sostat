@@ -1,0 +1,56 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion115) xenial; urgency=medium
+ .
+   * soup: fix docker updates Security-Onion-Solutions/security-onion#1419
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -158,9 +158,9 @@ if [ -f /etc/nsm/elasticdownload.conf ]
+ 
+ 	# check for commented out docker line in /etc/apt/sources.list
+ 	FILE="/etc/apt/sources.list"
+-	if grep -q "^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu trusty stable$" $FILE 2>/dev/null; then
++	if grep -q "^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu xenial stable" $FILE 2>/dev/null; then
+ 		echo "Re-enabling Docker repo in $FILE"
+-		sed -i 's|^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu trusty stable$|deb [arch=amd64] https://download.docker.com/linux/ubuntu trusty stable|g' $FILE
++		sed -i 's|^# deb \[arch=amd64\] https://download.docker.com/linux/ubuntu xenial stable.*$|deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable|g' $FILE
+ 	fi
+ fi
+ 
+@@ -172,14 +172,14 @@ apt-get update -qq
+ # If our docker config is present, check for updates for docker-ce and individual docker images
+ if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ] && [ -x /usr/bin/docker ]; then
+ 	echo
+-	# if a new version of docker-ce is available, stop containers, upgrade docker-ce, and then set a flag to restart containers
++	# if a new version of docker-ce is available, stop containers, upgrade docker packages, and then set a flag to restart containers
+ 	if apt-get dist-upgrade --assume-no |grep docker-ce >/dev/null; then
+         	echo $BANNER
+ 	        echo "New docker-ce package available."
+ 		echo "Stopping Docker containers..."
+ 		/usr/sbin/so-elastic-stop > /dev/null 2>&1
+ 		echo "Installing Docker updates..."
+-		apt-get $APT_OPTIONS install -y docker-ce
++		apt-get $APT_OPTIONS install -y docker-ce docker-ce-cli containerd.io
+ 		echo "Starting Docker service..."
+ 		service docker start > /dev/null 2>&1
+ 		RESTART_CONTAINERS=yes
