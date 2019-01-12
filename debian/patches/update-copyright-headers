@@ -1,0 +1,101 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion116) xenial; urgency=medium
+ .
+   * update copyright headers
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# Copyright 2014,2015,2016,2017,2018 Security Onion Solutions, LLC
++# Copyright 2014,2015,2016,2017,2018,2019 Security Onion Solutions, LLC
+ #
+ # This program is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+--- securityonion-sostat-20120722.orig/bin/sostat-interface
++++ securityonion-sostat-20120722/bin/sostat-interface
+@@ -1,4 +1,19 @@
+ #!/bin/sh
++#
++# Copyright 2014,2015,2016,2017,2018,2019 Security Onion Solutions, LLC
++#
++# This program is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ grep -v "^#" /etc/nsm/sensortab | awk '{print $4}' | while read SENSOR; do 
+ 	# we're going to store packet counts in a per-interface log
+--- securityonion-sostat-20120722.orig/bin/sostat-interface-delta
++++ securityonion-sostat-20120722/bin/sostat-interface-delta
+@@ -1,4 +1,19 @@
+ #!/bin/sh
++#
++# Copyright 2014,2015,2016,2017,2018,2019 Security Onion Solutions, LLC
++#
++# This program is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ grep -v "^#" /etc/nsm/sensortab |awk '{print $4}' |while read SENSOR; do
+         FILE="/var/log/nsm/$SENSOR-packets.log"
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -1,4 +1,19 @@
+ #!/bin/bash
++#
++# Copyright 2014,2015,2016,2017,2018,2019 Security Onion Solutions, LLC
++#
++# This program is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ #########################################
+ # Variables
