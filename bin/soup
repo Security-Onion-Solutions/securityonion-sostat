@@ -179,6 +179,16 @@ if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /opt/elastic/src/etc/apt/prefere
 	fi
 fi
 
+# soup: create /etc/apt/apt.conf.d/10periodic #1423
+# https://github.com/Security-Onion-Solutions/security-onion/issues/1423
+FILE="/etc/apt/apt.conf.d/10periodic"
+if ! [ -f ${FILE} ]; then
+	echo "Creating ${FILE} to configure apt for a daily package list update."
+	echo "This won't actually download or install any updates."
+	echo "It simply updates the list of available updates."
+	echo 'APT::Periodic::Update-Package-Lists "1";' >> ${FILE}
+fi
+
 # Sync with mirrors
 echo
 echo "Checking for updates..."

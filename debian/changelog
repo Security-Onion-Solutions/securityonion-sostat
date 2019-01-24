@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion117) xenial; urgency=medium
+
+  * soup: create /etc/apt/apt.conf.d/10periodic Security-Onion-Solutions/security-onion#1423 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 24 Jan 2019 16:19:59 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion116) xenial; urgency=medium
 
   * update copyright headers 

@@ -1,0 +1,44 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion117) xenial; urgency=medium
+ .
+   * soup: create /etc/apt/apt.conf.d/10periodic Security-Onion-Solutions/security-onion#1423
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -179,6 +179,16 @@ if [ -f /etc/nsm/elasticdownload.conf ]
+ 	fi
+ fi
+ 
++# soup: create /etc/apt/apt.conf.d/10periodic #1423
++# https://github.com/Security-Onion-Solutions/security-onion/issues/1423
++FILE="/etc/apt/apt.conf.d/10periodic"
++if ! [ -f ${FILE} ]; then
++	echo "Creating ${FILE} to configure apt for a daily package list update."
++	echo "This won't actually download or install any updates."
++	echo "It simply updates the list of available updates."
++	echo 'APT::Periodic::Update-Package-Lists "1";' >> ${FILE}
++fi
++
+ # Sync with mirrors
+ echo
+ echo "Checking for updates..."
