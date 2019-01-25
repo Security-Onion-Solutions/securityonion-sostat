@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion117ubuntu1) xenial; urgency=medium
+
+  * soup: output reminder to update remaining boxes in deployment Security-Onion-Solutions/security-onion#1424 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 25 Jan 2019 14:34:05 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion117) xenial; urgency=medium
 
   * soup: create /etc/apt/apt.conf.d/10periodic Security-Onion-Solutions/security-onion#1423 

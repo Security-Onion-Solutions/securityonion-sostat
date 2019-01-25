@@ -371,6 +371,9 @@ if [ -f /etc/nsm/sensortab ] && [ $(grep -v "^#" /etc/nsm/sensortab | wc -l) -gt
 	fi
 fi
 
+echo
+echo "If this is a distributed deployment, please update the remaining boxes in your deployment to ensure all boxes are running the same updates."
+
 # If we need to reboot, give the user a chance to cancel.
 if [ $REBOOT == "yes" ]; then
 	if [ $SKIP -ne 1 ]; then
