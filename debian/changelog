@@ -1,4 +1,10 @@
-securityonion-sostat (20120722-0ubuntu0securityonion117ubuntu1) xenial; urgency=medium
+securityonion-sostat (20120722-0ubuntu0securityonion119) xenial; urgency=medium
+
+  * soup: check for lock Security-Onion-Solutions/security-onion#1428 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 26 Jan 2019 07:31:02 -0500
+
+securityonion-sostat (20120722-0ubuntu0securityonion118) xenial; urgency=medium
 
   * soup: output reminder to update remaining boxes in deployment Security-Onion-Solutions/security-onion#1424 
 

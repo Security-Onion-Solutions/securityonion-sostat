@@ -113,3 +113,4 @@ soup:-fix-docker-updates-Security-Onion-Solutionssecurity-onion#1419
 update-copyright-headers
 soup:-create-etcaptapt.conf.d10periodic-Security-Onion-Solutionssecurity-onion#1423
 soup:-output-reminder-to-update-remaining-boxes-in-deployment-Security-Onion-Solutionssecurity-onion#1424
+soup:-check-for-lock-Security-Onion-Solutionssecurity-onion#1428

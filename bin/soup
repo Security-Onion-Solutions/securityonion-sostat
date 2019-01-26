@@ -58,6 +58,17 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
 fi
 
 #########################################
+# Got lock?
+# soup: check for lock #1428
+# https://github.com/Security-Onion-Solutions/security-onion/issues/1428
+#########################################
+if /usr/bin/lsof /var/lib/dpkg/lock* >/dev/null; then
+	echo "/var/lib/dpkg/ is locked by another process!"
+	/usr/bin/lsof /var/lib/dpkg/lock*
+	exit
+fi
+
+#########################################
 # Options
 #########################################
 
