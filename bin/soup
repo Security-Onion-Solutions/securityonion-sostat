@@ -155,10 +155,10 @@ if [ $SKIP -ne 1 ]; then
 	if [ -f $SSH_CONF ]; then
 		source $SSH_CONF
 		echo "Checking to see if the master server has already been updated, please wait..."
-		SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/sbin/so-apt-check --human-readable | grep 'packages can be updated' | awk '{print \$1}'")
+		SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/sbin/so-apt-check 2>&1 | cut -d\; -f1")
 		if [ "$SERVER_PKG" -ne 0 ]; then
 			echo
-			echo "The master server reports that it has $SERVER_PKG updates that need to be installed."
+			echo "The master server reports that it has $SERVER_PKG update(s) available for installation."
 			echo "We highly recommend updating the master server before updating this sensor."
 			echo
 			echo "Recommendation: Press Ctrl-c now and then update your master server."

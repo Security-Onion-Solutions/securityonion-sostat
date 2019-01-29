@@ -1,0 +1,40 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion120) xenial; urgency=medium
+ .
+   * soup: node checking master for updates fails if master has 1 update Security-Onion-Solutions/security-onion#1434
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -155,10 +155,10 @@ if [ $SKIP -ne 1 ]; then
+ 	if [ -f $SSH_CONF ]; then
+ 		source $SSH_CONF
+ 		echo "Checking to see if the master server has already been updated, please wait..."
+-		SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/sbin/so-apt-check --human-readable | grep 'packages can be updated' | awk '{print \$1}'")
++		SERVER_PKG=$(ssh -i "$KEY" $SSH_USERNAME@$SERVERNAME "/usr/sbin/so-apt-check 2>&1 | cut -d\; -f1")
+ 		if [ "$SERVER_PKG" -ne 0 ]; then
+ 			echo
+-			echo "The master server reports that it has $SERVER_PKG updates that need to be installed."
++			echo "The master server reports that it has $SERVER_PKG update(s) available for installation."
+ 			echo "We highly recommend updating the master server before updating this sensor."
+ 			echo
+ 			echo "Recommendation: Press Ctrl-c now and then update your master server."

@@ -114,3 +114,4 @@ update-copyright-headers
 soup:-create-etcaptapt.conf.d10periodic-Security-Onion-Solutionssecurity-onion#1423
 soup:-output-reminder-to-update-remaining-boxes-in-deployment-Security-Onion-Solutionssecurity-onion#1424
 soup:-check-for-lock-Security-Onion-Solutionssecurity-onion#1428
+soup:-node-checking-master-for-updates-fails-if-master-has-1-update-Security-Onion-Solutionssecurity-onion#1434

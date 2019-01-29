@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion120) xenial; urgency=medium
+
+  * soup: node checking master for updates fails if master has 1 update Security-Onion-Solutions/security-onion#1434 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 29 Jan 2019 08:09:10 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion119) xenial; urgency=medium
 
   * soup: check for lock Security-Onion-Solutions/security-onion#1428 
