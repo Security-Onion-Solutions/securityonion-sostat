@@ -135,7 +135,7 @@ if [ $SKIP -ne 1 ]; then
 	echo
 	echo "Please review the following for more information"
 	echo "about the update process and recent updates:"
-	echo "https://securityonion.net/wiki/Upgrade"
+	echo "https://securityonion.net/docs/Upgrade"
 	echo "https://blog.securityonion.net"
 	echo
 	echo "If you're running a distributed deployment, please run soup"

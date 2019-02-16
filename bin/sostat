@@ -387,8 +387,6 @@ if [ "$ELSA" = "YES" ]; then
         echo
         echo "ELSA Buffers in Queue:"
         ls -al /nsm/elsa/data/elsa/tmp/buffers/ | wc -l
-	echo "If this number is consistently higher than 20, please see:"
-	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/FAQ#why-does-sostat-show-a-high-number-of-elsa-buffers-in-queue"
         echo
         echo "ELSA Directory Sizes:"
         du --max-depth=0 -h /nsm/elsa/data /var/lib/mysql/syslog /var/lib/mysql/syslog_data
@@ -462,8 +460,6 @@ if [ "$ELSA" = "YES" ]; then
 			echo
 			mysql --defaults-file=/etc/mysql/debian.cnf -Delsa_web -e 'select * from saved_results'
 			echo
-			echo "Try troubleshooting, using the steps provided here:"
-                        echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/FAQ#why-does-sostat-show-high-loadcpu-usage-and-large-number-of-perl-processes"
 		fi
 	fi
 fi
@@ -685,7 +681,7 @@ if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	header "Time Zone"
 	echo "WARNING! Timezone is NOT set to UTC!"
 	echo "Please see:"
-	echo "https://github.com/Security-Onion-Solutions/security-onion/wiki/TimeZones"
+	echo "https://securityonion.net/docs/TimeZones"
 fi
 
 FILE="/etc/os-release"

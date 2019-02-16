@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion121) xenial; urgency=medium
+
+  * securityonion-sostat: change wiki links to docs Security-Onion-Solutions/security-onion#1454 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 16 Feb 2019 08:11:13 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion120) xenial; urgency=medium
 
   * soup: node checking master for updates fails if master has 1 update Security-Onion-Solutions/security-onion#1434 
