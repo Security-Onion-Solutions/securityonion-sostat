@@ -188,7 +188,7 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
                         if [[ -n $PF_TOT_LOST ]] && [[ $PF_TOT_LOST -gt 0 ]] ; then
                                 PF_PERCENT_LOST=$(echo "scale=2 ; $PF_TOT_LOST * 10/$PF_TOT_IN * 10" | bc)
                         else
-                            PF_PERCENT_LOST=0
+                        	PF_PERCENT_LOST=0
                         fi
                         echo "Appl. Name: $APP_NAME"
 			echo "Tot Packets: $PF_TOT_IN"
