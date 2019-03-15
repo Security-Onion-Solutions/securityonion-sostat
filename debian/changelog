@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion122) xenial; urgency=medium
+
+  * securityonion-sostat: implement better error handling for zero packet count Security-Onion-Solutions/security-onion#1464 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 15 Mar 2019 13:53:00 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion121) xenial; urgency=medium
 
   * securityonion-sostat: change wiki links to docs Security-Onion-Solutions/security-onion#1454 
