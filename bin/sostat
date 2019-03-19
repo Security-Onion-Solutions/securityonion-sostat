@@ -232,9 +232,10 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
                 echo "${underline}Bro${normal}:"
                 echo
 		echo -n "Average packet loss as percent across all Bro workers: "
-                cat $TMP | sed \
-                's/[a-z]*=//g' | awk '{ drop += $4 ; link += $5 } \
-                END { printf("%f\n", ((drop/NR) / (link/NR)) * 100) }'
+                cat $TMP | \
+		sed 's/[a-z]*=//g' | \
+		awk '{ drop += $4 ; link += $5 } \
+		END { if ( drop >=1 && link >=1 ) printf("%f\n", ((drop/NR) / (link/NR)) * 100); else print("Information not yet provided."); }'
                 echo
                 cat $TMP
                 echo
