@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion123) xenial; urgency=medium
+
+  * securityonion-sostat: awk division error when Bro doesn't report stats correctly Security-Onion-Solutions/security-onion#817 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 20 Mar 2019 09:03:12 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion122) xenial; urgency=medium
 
   * securityonion-sostat: implement better error handling for zero packet count Security-Onion-Solutions/security-onion#1464 

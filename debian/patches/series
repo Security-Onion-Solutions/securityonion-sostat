@@ -117,3 +117,4 @@ soup:-check-for-lock-Security-Onion-Solutionssecurity-onion#1428
 soup:-node-checking-master-for-updates-fails-if-master-has-1-update-Security-Onion-Solutionssecurity-onion#1434
 securityonion-sostat:-change-wiki-links-to-docs-Security-Onion-Solutionssecurity-onion#1454
 securityonion-sostat:-implement-better-error-handling-for-zero-packet-count-Security-Onion-Solutionssecurity-onion#1464
+securityonion-sostat:-awk-division-error-when-Bro-doesn't-report-stats-correctly-Security-Onion-Solutionssecurity-onion#817

@@ -235,7 +235,7 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
                 cat $TMP | \
 		sed 's/[a-z]*=//g' | \
 		awk '{ drop += $4 ; link += $5 } \
-		END { if ( drop >=1 && link >=1 ) printf("%f\n", ((drop/NR) / (link/NR)) * 100); else print("No packets seen. Please check SPAN port and/or cabling."); }'
+		END { if ( link >=1 ) printf("%f\n", ((drop/NR) / (link/NR)) * 100); else print("No packets seen."); }'
                 echo
                 cat $TMP
                 echo
