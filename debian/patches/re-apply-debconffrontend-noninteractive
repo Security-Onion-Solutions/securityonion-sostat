@@ -1,0 +1,39 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion124) xenial; urgency=medium
+ .
+   * re-apply debconf/frontend noninteractive
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -205,6 +205,11 @@ echo
+ echo "Checking for updates..."
+ apt-get update -qq
+ 
++# If new debconf package installs, it may reset our noninteractive setting.
++# This may result in things like wireshark prompting the user about dumpcap privs.
++# Re-apply the noninteractive setting so that soup can proceed unattended.
++echo "debconf debconf/frontend select noninteractive" | debconf-set-selections
++
+ # If our docker config is present, check for updates for docker-ce and individual docker images
+ if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ] && [ -x /usr/bin/docker ]; then
+ 	echo

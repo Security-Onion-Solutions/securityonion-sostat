@@ -1,3 +1,21 @@
+securityonion-sostat (20120722-0ubuntu0securityonion126) xenial; urgency=medium
+
+  * catch errors in preinst and postinst 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 20 May 2019 05:54:06 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion125) xenial; urgency=medium
+
+  * re-apply debconf/frontend noninteractive in preinst 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sun, 19 May 2019 20:56:08 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion124) xenial; urgency=medium
+
+  * re-apply debconf/frontend noninteractive 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sun, 19 May 2019 16:24:29 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion123) xenial; urgency=medium
 
   * securityonion-sostat: awk division error when Bro doesn't report stats correctly Security-Onion-Solutions/security-onion#817 

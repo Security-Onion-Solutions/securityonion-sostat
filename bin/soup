@@ -205,6 +205,11 @@ echo
 echo "Checking for updates..."
 apt-get update -qq
 
+# If new debconf package installs, it may reset our noninteractive setting.
+# This may result in things like wireshark prompting the user about dumpcap privs.
+# Re-apply the noninteractive setting so that soup can proceed unattended.
+echo "debconf debconf/frontend select noninteractive" | debconf-set-selections
+
 # If our docker config is present, check for updates for docker-ce and individual docker images
 if [ -f /etc/nsm/elasticdownload.conf ] && [ -f /usr/sbin/so-elastic-stop ] && [ -f /usr/sbin/so-elastic-common ] && [ -x /usr/bin/docker ]; then
 	echo
