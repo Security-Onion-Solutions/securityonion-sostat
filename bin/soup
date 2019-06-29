@@ -44,6 +44,7 @@ RESTART_CONTAINERS=no
 SNORT=no
 SURICATA=no
 BRO=no
+WAZUH=no
 
 # no apt options by default
 # this is set later if the user passed the -y option to skip interactive mode
@@ -330,6 +331,9 @@ echo $UPDATES | grep securityonion-suricata >/dev/null && SURICATA=yes
 # Is there a Bro update available?
 echo $UPDATES | grep securityonion-bro >/dev/null && BRO=yes
 
+# Is there a Wazuh update available?
+echo $UPDATES | grep ossec-hids-server >/dev/null && WAZUH=yes
+
 # If there is a kernel update available, we need to reboot at the end
 echo $UPDATES | grep -A1000 "The following NEW packages will be installed:" | grep -B1000 "The following packages will be upgraded:" | grep linux-image >/dev/null && REBOOT=yes
 
@@ -387,6 +391,19 @@ if [ -f /etc/nsm/sensortab ] && [ $(grep -v "^#" /etc/nsm/sensortab | wc -l) -gt
 	fi
 fi
 
+# If Wazuh update, remind user to review Wazuh config
+if [ $WAZUH == "yes" ]; then
+	echo "Wazuh has been updated. Please review your Wazuh configuration at /var/ossec/etc/ossec.conf and manually re-apply any local customizations."
+
+	# If user had previously deployed agents, remind them to update to latest Wazuh agent
+	WAZUH_KEYS=/var/ossec/etc/client.keys
+	if [ -s $WAZUH_KEYS ]; then
+		WAZUH_VERSION=$(dpkg -l |grep ossec-hids-server | awk '{print $3}' | cut -d. -f1,2,3)
+		echo "Also, please make sure the following agents have been updated to Wazuh $WAZUH_VERSION:"
+		awk '{print $1,$2,$3}' $WAZUH_KEYS
+	fi
+fi
+ 
 echo
 echo "If this is a distributed deployment, please update the remaining boxes in your deployment to ensure all boxes are running the same updates."
 
