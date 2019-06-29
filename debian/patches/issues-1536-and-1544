@@ -1,0 +1,84 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion127) xenial; urgency=medium
+ .
+   * issues 1536 and 1544
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/soup
++++ securityonion-sostat-20120722/bin/soup
+@@ -44,6 +44,7 @@ RESTART_CONTAINERS=no
+ SNORT=no
+ SURICATA=no
+ BRO=no
++WAZUH=no
+ 
+ # no apt options by default
+ # this is set later if the user passed the -y option to skip interactive mode
+@@ -330,6 +331,9 @@ echo $UPDATES | grep securityonion-suric
+ # Is there a Bro update available?
+ echo $UPDATES | grep securityonion-bro >/dev/null && BRO=yes
+ 
++# Is there a Wazuh update available?
++echo $UPDATES | grep ossec-hids-server >/dev/null && WAZUH=yes
++
+ # If there is a kernel update available, we need to reboot at the end
+ echo $UPDATES | grep -A1000 "The following NEW packages will be installed:" | grep -B1000 "The following packages will be upgraded:" | grep linux-image >/dev/null && REBOOT=yes
+ 
+@@ -371,22 +375,35 @@ if [ -f /etc/nsm/sensortab ] && [ $(grep
+ 	# If Snort updated, remind user to review snort.conf
+ 	if [ $SNORT == "yes" ]; then
+ 		echo
+-		echo "Snort has been updated.  Please review snort.conf and manually re-apply any local customizations."
++		echo "Snort has been updated.  Please review your snort.conf file(s) and manually re-apply any local customizations.  You may also need to run rule-update to update your NIDS rules."
+ 	fi
+ 
+ 	# If Suricata updated, remind user to review suricata.yaml
+ 	if [ $SURICATA == "yes" ]; then
+ 		echo
+-		echo "Suricata has been updated.  Please review suricata.yaml and manually re-apply any local customizations."
++		echo "Suricata has been updated.  Please review your suricata.yaml file(s) and manually re-apply any local customizations.  You may also need to run rule-update to update your NIDS rules."
+ 	fi
+ 
+ 	# If Bro updated, remind user to review Bro config
+ 	if [ $BRO == "yes" ]; then
+ 		echo
+-		echo "Bro has been updated.  Please review Bro configuration and manually re-apply any local customizations."
++		echo "Bro has been updated.  Please review your Bro configuration and manually re-apply any local customizations."
+ 	fi
+ fi
+ 
++# If Wazuh update, remind user to review Wazuh config
++if [ $WAZUH == "yes" ]; then
++	echo "Wazuh has been updated. Please review your Wazuh configuration at /var/ossec/etc/ossec.conf and manually re-apply any local customizations."
++
++	# If user had previously deployed agents, remind them to update to latest Wazuh agent
++	WAZUH_KEYS=/var/ossec/etc/client.keys
++	if [ -s $WAZUH_KEYS ]; then
++		WAZUH_VERSION=$(dpkg -l |grep ossec-hids-server | awk '{print $3}' | cut -d. -f1,2,3)
++		echo "Also, please make sure the following agents have been updated to Wazuh $WAZUH_VERSION:"
++		awk '{print $1,$2,$3}' $WAZUH_KEYS
++	fi
++fi
++ 
+ echo
+ echo "If this is a distributed deployment, please update the remaining boxes in your deployment to ensure all boxes are running the same updates."
+ 
