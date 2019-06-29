@@ -393,6 +393,7 @@ fi
 
 # If Wazuh update, remind user to review Wazuh config
 if [ $WAZUH == "yes" ]; then
+	echo
 	echo "Wazuh has been updated. Please review your Wazuh configuration at /var/ossec/etc/ossec.conf and manually re-apply any local customizations."
 
 	# If user had previously deployed agents, remind them to update to latest Wazuh agent

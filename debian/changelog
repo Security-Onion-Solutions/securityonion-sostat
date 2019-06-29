@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion128) xenial; urgency=medium
+
+  * fix spacing 
+
+ -- Doug Burks <doug.burks@gmail.com>  Sat, 29 Jun 2019 08:08:05 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion127) xenial; urgency=medium
 
   * issues 1536 and 1544 
