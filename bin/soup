@@ -371,19 +371,19 @@ if [ -f /etc/nsm/sensortab ] && [ $(grep -v "^#" /etc/nsm/sensortab | wc -l) -gt
 	# If Snort updated, remind user to review snort.conf
 	if [ $SNORT == "yes" ]; then
 		echo
-		echo "Snort has been updated.  Please review snort.conf and manually re-apply any local customizations."
+		echo "Snort has been updated.  Please review your snort.conf file(s) and manually re-apply any local customizations.  You may also need to run rule-update to update your NIDS rules."
 	fi
 
 	# If Suricata updated, remind user to review suricata.yaml
 	if [ $SURICATA == "yes" ]; then
 		echo
-		echo "Suricata has been updated.  Please review suricata.yaml and manually re-apply any local customizations."
+		echo "Suricata has been updated.  Please review your suricata.yaml file(s) and manually re-apply any local customizations.  You may also need to run rule-update to update your NIDS rules."
 	fi
 
 	# If Bro updated, remind user to review Bro config
 	if [ $BRO == "yes" ]; then
 		echo
-		echo "Bro has been updated.  Please review Bro configuration and manually re-apply any local customizations."
+		echo "Bro has been updated.  Please review your Bro configuration and manually re-apply any local customizations."
 	fi
 fi
 
