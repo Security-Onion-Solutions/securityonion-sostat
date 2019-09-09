@@ -1,3 +1,15 @@
+securityonion-sostat (20120722-0ubuntu0securityonion130) xenial; urgency=medium
+
+  * securityonion-sostat: update Elastic verbiage for when components are not running Security-Onion-Solutions/security-onion#1633 
+
+ -- Doug Burks <doug.burks@gmail.com>  Mon, 09 Sep 2019 15:52:53 -0400
+
+securityonion-sostat (20120722-0ubuntu0securityonion129) xenial; urgency=medium
+
+  * sostat: support elastic auth #1562 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 12 Jul 2019 15:16:18 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion128) xenial; urgency=medium
 
   * fix spacing 

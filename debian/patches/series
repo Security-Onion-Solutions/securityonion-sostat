@@ -121,3 +121,5 @@ securityonion-sostat:-awk-division-error-when-Bro-doesn't-report-stats-correctly
 re-apply-debconffrontend-noninteractive
 issues-1536-and-1544
 fix-spacing
+sostat:-support-elastic-auth-#1562
+securityonion-sostat:-update-Elastic-verbiage-for-when-components-are-not-running-Security-Onion-Solutionssecurity-onion#1633

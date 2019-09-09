@@ -1,0 +1,98 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion130) xenial; urgency=medium
+ .
+   * securityonion-sostat: update Elastic verbiage for when components are not running Security-Onion-Solutions/security-onion#1633
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -517,7 +517,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+         else
+                 echo
+                 CLUST_NAME=$(grep cluster.name /etc/elasticsearch/elasticsearch.yml | awk '{print $2}'|sed -e 's/^"//' -e 's/"$//')
+-                echo && echo -e "Elasticsearch is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-elasticsearch'\n\n\nIf that does not work, try checking /var/log/elasticsearch/"$CLUST_NAME".log for clues."
++                echo && echo -e "Elasticsearch is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-elasticsearch-start'\n\n\nIf that does not work, try checking /var/log/elasticsearch/"$CLUST_NAME".log for clues."
+         fi
+ 
+ 	if [ "$LOGSTASH_ENABLED" = "yes" ]; then
+@@ -565,7 +565,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+ 				echo "To obtain queue stats, try running sostat again in a few minutes."
+ 			fi
+ 		else
+-			echo && echo -e "Logstash is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-logstash'\n\n\nIf that does not work, try checking /var/log/logstash/logstash.log for clues."
++			echo && echo -e "Logstash is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-logstash-start'\n\n\nIf that does not work, try checking /var/log/logstash/logstash.log for clues."
+         	fi
+ 	fi
+ 
+@@ -590,7 +590,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+ 		echo
+ 			docker stats --no-stream so-kibana
+ 		else
+-			echo && echo -e "Kibana is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-kibana'\n\n\nIf that does not work, try checking /var/log/kibana/kibana.log for clues."
++			echo && echo -e "Kibana is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-kibana-start'\n\n\nIf that does not work, try checking /var/log/kibana/kibana.log for clues."
+         	fi
+ 	fi
+ 
+@@ -602,7 +602,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+ 			echo
+                         docker stats --no-stream so-elastalert
+                 else
+-			echo && echo -e "ElastAlert is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-elastalert'\n\n\nIf that does not work, try checking /var/log/elastalert/elastalert_stderr.log for clues."
++			echo && echo -e "ElastAlert is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-elastalert-start'\n\n\nIf that does not work, try checking /var/log/elastalert/elastalert_stderr.log for clues."
+                 fi
+         fi
+ 
+@@ -614,7 +614,7 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+                         echo
+                         docker stats --no-stream so-curator
+                 else
+-                        echo && echo -e "Curator is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-curator'\n\n\nIf that does not work, try checking /var/log/curator/curator.log for clues."
++                        echo && echo -e "Curator is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-curator-start'\n\n\nIf that does not work, try checking /var/log/curator/curator.log for clues."
+                 fi
+         fi
+ 	
+@@ -634,10 +634,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+ 				echo "Freq Server is working."
+ 			else
+ 				echo
+-				echo "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-freqserver'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
++				echo "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-freqserver-start'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
+ 			fi
+                 else
+-                        echo && echo -e "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-freqserver'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
++                        echo && echo -e "Freq_server is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-freqserver-start'\n\n\nIf that does not work, try checking /var/log/freq_server/freq_server.log for clues."
+                 fi
+ 	fi
+ 	
+@@ -657,10 +657,10 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ];
+ 				echo "Domain_stats is working."
+ 			else
+ 				echo
+-				echo "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-domainstats'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
++				echo "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-domainstats-start'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
+ 			fi
+                 else
+-                        echo && echo -e "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo docker start so-domainstats'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
++                        echo && echo -e "Domain_stats is not running.\n\nTry starting it with:\n\n'sudo so-elastic-start'\n OR\n'sudo so-domainstats-start'\n\n\nIf that does not work, try checking /var/log/domain_stats/domain_stats.log for clues."
+                 fi
+         fi
+ 	if [ "$ES_RUNNING" ]; then
