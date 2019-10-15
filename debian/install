@@ -1,2 +1,2 @@
 bin/* usr/sbin
-preferences.d/ etc/apt/preferences.d
+preferences.d/* etc/apt/preferences.d
