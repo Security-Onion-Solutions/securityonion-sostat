@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion133) xenial; urgency=medium
+
+  * securityonion-sostat: block bad docker packages Security-Onion-Solutions/security-onion#1652 
+
+ -- Doug Burks <doug.burks@gmail.com>  Tue, 15 Oct 2019 13:00:10 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion132) xenial; urgency=medium
 
   * securityonion-sostat: block bad docker packages Security-Onion-Solutions/security-onion#1652 

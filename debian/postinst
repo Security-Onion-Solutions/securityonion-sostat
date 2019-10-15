@@ -41,8 +41,11 @@ case "$1" in
 
 	# Emergency check for docker issue
 	if dpkg -l |grep docker |grep -q "5:19.03.3~3-0~ubuntu-xenial"; then
+		echo
 		echo "Docker 19.03.3 detected! This version has issues:"
 		echo "https://blog.securityonion.net/2019/10/docker-package-issues-please-do-not.html"
+		echo
+		echo "We've blocked this version in /etc/apt/preferences.d/securityonion-docker-block."
 		echo
 		echo "We recommend removing the docker-ce and docker-ce-cli packages and re-installing:"
 		echo "sudo apt purge docker-ce docker-ce-cli && sudo apt install docker-ce docker-ce-cli"
