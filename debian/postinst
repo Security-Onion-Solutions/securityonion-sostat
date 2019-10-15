@@ -39,6 +39,15 @@ case "$1" in
 	# Re-apply the noninteractive setting so that soup can proceed unattended.
 	echo "debconf debconf/frontend select noninteractive" | debconf-set-selections || echo "Unable to set debconf to noninteractive!"
 
+	# Emergency check for docker issue
+	if dpkg -l |grep docker |grep -q "5:19.03.3~3-0~ubuntu-xenial"; then
+		echo "Docker 19.03.3 detected! This version has issues:"
+		echo "https://blog.securityonion.net/2019/10/docker-package-issues-please-do-not.html"
+		echo
+		echo "We recommend removing the docker-ce and docker-ce-cli packages and re-installing:"
+		echo "sudo apt purge docker-ce docker-ce-cli && sudo apt install docker-ce docker-ce-cli"
+	fi
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

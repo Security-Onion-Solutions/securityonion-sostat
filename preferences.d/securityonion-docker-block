@@ -1,0 +1,7 @@
+Package: docker-ce
+Pin: version 5:19.03.3~3-0~ubuntu-xenial
+Pin-Priority: -1
+
+Package: docker-ce-cli
+Pin: version 5:19.03.3~3-0~ubuntu-xenial
+Pin-Priority: -1
