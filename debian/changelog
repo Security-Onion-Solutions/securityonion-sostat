@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion134) xenial; urgency=medium
+
+  * securityonion-sostat: check for syslog-ng drops Security-Onion-Solutions/security-onion#1660 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 30 Oct 2019 10:14:03 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion133) xenial; urgency=medium
 
   * securityonion-sostat: block bad docker packages Security-Onion-Solutions/security-onion#1652 

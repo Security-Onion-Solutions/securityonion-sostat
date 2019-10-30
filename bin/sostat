@@ -683,6 +683,26 @@ if [ "$ELASTICSEARCH_ENABLED" = "yes" ]; then
 	        fi
 	fi
 fi
+
+# securityonion-sostat: check for syslog-ng drops #1660
+# https://github.com/Security-Onion-Solutions/security-onion/issues/1660
+if pgrep syslog-ng >/dev/null; then
+	echo
+	header "syslog-ng stats"
+	echo
+	syslog-ng-ctl stats |grep -v ";0$"
+	TOTAL_DROPPED=0
+	for LINE in $(syslog-ng-ctl stats |grep ";dropped;"); do 
+		DROPPED=$(echo $LINE | cut -d\; -f6)
+		let TOTAL_DROPPED=TOTAL_DROPPED+DROPPED
+	done
+	if [ $TOTAL_DROPPED -gt 0 ]; then
+		echo
+		echo "WARNING! syslog-ng reports drops!"
+		syslog-ng-ctl stats |grep ";dropped;" | grep -v ";dropped;0$"
+	fi
+fi
+
 if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	echo
 	header "Time Zone"
