@@ -126,3 +126,4 @@ securityonion-sostat:-update-Elastic-verbiage-for-when-components-are-not-runnin
 securityonion-sostat:-block-bad-docker-packages-#1652
 securityonion-sostat:-block-bad-docker-packages-Security-Onion-Solutionssecurity-onion#1652-soup
 securityonion-sostat:-check-for-syslog-ng-drops-Security-Onion-Solutionssecurity-onion#1660
+securityonion-sostat:-calculate-suricata-packet-loss-as-percentage-Security-Onion-Solutionssecurity-onion#1663

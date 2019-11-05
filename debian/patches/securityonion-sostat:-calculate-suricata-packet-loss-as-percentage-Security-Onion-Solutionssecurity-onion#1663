@@ -1,0 +1,61 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ securityonion-sostat (20120722-0ubuntu0securityonion135) xenial; urgency=medium
+ .
+   * securityonion-sostat: calculate suricata packet loss as percentage Security-Onion-Solutions/security-onion#1663
+Author: Doug Burks <doug.burks@gmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- securityonion-sostat-20120722.orig/bin/sostat
++++ securityonion-sostat-20120722/bin/sostat
+@@ -202,18 +202,21 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INT
+ 	echo "${underline}IDS Engine ($ENGINE) packet drops${normal}:"
+ 	echo
+ 	if [ "$ENGINE" = "suricata" ]; then
+-        for i in /nsm/sensor_data/*/stats.log; do
+-                echo "$i"
+-                if [ $( tail -n 50 $i | grep -c drop ) -ne 0 ]; then
+-			echo
+-			tail -n 50 "$i" | grep -e "Date: " -e "drop"
+-			echo
+-		else
+-			echo
+-			echo "No packet drops reported."
+-			echo
+-		fi
+-        done
++		for i in /nsm/sensor_data/*/stats.log; do
++			echo "$i"
++			if [ $( tail -n 50 $i | grep -c drop ) -ne 0 ]; then
++				echo
++				SURI_CAPTURE=`tail -n 50 "$i" | grep -m1 "capture.kernel_packets" | awk '{print $5}'`
++				SURI_DROPS=`tail -n 50 "$i" | grep -m1 "capture.kernel_drops" | awk '{print $5}'`
++				SURI_PCT=$(echo "scale=2 ; $SURI_DROPS * 10/$SURI_CAPTURE * 10" | bc)
++				echo $SURI_PCT% Loss
++				echo
++			else
++				echo
++				echo "No packet drops reported."
++				echo
++			fi
++		done
+         else
+ 		for i in /nsm/sensor_data/*/snort-*.stats; do
+ 			if grep -q '^[^#]' "$i"; then
