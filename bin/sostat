@@ -204,18 +204,22 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	if [ "$ENGINE" = "suricata" ]; then
 		for i in /nsm/sensor_data/*/stats.log; do
 			echo "$i"
-			if [ $( tail -n 50 $i | grep -c drop ) -ne 0 ]; then
-				echo
-				SURI_CAPTURE=`tail -n 50 "$i" | grep -m1 "capture.kernel_packets" | awk '{print $5}'`
-				SURI_DROPS=`tail -n 50 "$i" | grep -m1 "capture.kernel_drops" | awk '{print $5}'`
+			echo
+
+			# Grab the latest stats section from the log
+			LATEST_STATS=$(grep -A1000 "$(grep '^Date: ' $i | tail -1)" $i)
+
+			# Did Suricata report any drops?
+			if [ $( echo "$LATEST_STATS" | grep -c drop ) -ne 0 ]; then
+				SURI_CAPTURE=$(echo "$LATEST_STATS" | grep -m1 "capture.kernel_packets" | awk '{print $5}')
+				SURI_DROPS=$(echo "$LATEST_STATS" | grep -m1 "capture.kernel_drops" | awk '{print $5}')
 				SURI_PCT=$(echo "scale=2 ; $SURI_DROPS * 10/$SURI_CAPTURE * 10" | bc)
 				echo $SURI_PCT% Loss
-				echo
 			else
-				echo
 				echo "No packet drops reported."
-				echo
 			fi
+
+			echo
 		done
         else
 		for i in /nsm/sensor_data/*/snort-*.stats; do
