@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion137) xenial; urgency=medium
+
+  * securityonion-sostat: improve netsniff packet loss calculation Security-Onion-Solutions/security-onion#1673 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 06 Dec 2019 16:26:57 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion136) xenial; urgency=medium
 
   * improve suricata packet loss check 

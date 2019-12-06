@@ -128,3 +128,4 @@ securityonion-sostat:-block-bad-docker-packages-Security-Onion-Solutionssecurity
 securityonion-sostat:-check-for-syslog-ng-drops-Security-Onion-Solutionssecurity-onion#1660
 securityonion-sostat:-calculate-suricata-packet-loss-as-percentage-Security-Onion-Solutionssecurity-onion#1663
 improve-suricata-packet-loss-check
+securityonion-sostat:-improve-netsniff-packet-loss-calculation-Security-Onion-Solutionssecurity-onion#1673
