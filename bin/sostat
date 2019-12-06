@@ -272,57 +272,25 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	echo
 	echo "-------------------------------------------------------------------------"
 	if ls /var/log/nsm/*/netsniff-ng.log > /dev/null 2>&1; then
-            echo
-            echo "${underline}Netsniff-NG${normal}:"
-            for i in /var/log/nsm/*/netsniff-ng.log;
-            do
-                if grep -q -e "-[1-9]*)" "$i"; then
-                    echo
-                    echo "This may take a second..."
-                    echo
-                    RCVD=()
-                    DRPD=()
-                    IFS=".(+"
-                    for line in `cat "$i"`;
-                    do
-                        #echo $line
-                        for word in "${line[@]}";
-                        do
-                            if [[ $word =~ ')' ]]; then
-                                RCVD+=(`echo "$word" | cut -d '/' -f1`);
-                            fi
-                        done;
-                    done < "$i"
-
-                    IFS='+' rcvd_sum=$(echo "scale=1;${RCVD[*]}"|bc)
-                    TOT_RCVD=`echo $rcvd_sum`
-
-                    IFS="-"
-                    for line in `cat "$i"`
-                    do
-                        for word in "${line[@]}";
-                        do
-                            if [[ $word =~ ')' ]]; then
-                                DRPD+=(`echo "$word" | cut -d ')' -f1`);
-                            fi
-                        done;
-                    done < "$i"
-
-                    IFS='+' drpd_sum=$(echo "scale=1;${DRPD[*]}"|bc)
-                    TOT_DRPD=`echo $drpd_sum`
-                    TOT_PKTS=`echo 'scale=2; '$TOT_DRPD'+'$TOT_RCVD''|bc`
-                    DRPD_PCT=`echo 'scale=2; '$TOT_DRPD'*100/'$TOT_PKTS''|bc`
-                    echo
-                    echo Percentage of packets dropped:
-                    echo
-                    echo $i " -- " $DRPD_PCT
-                    echo
-                else
-                    echo
-                    echo "0 Loss"
-                fi
+		echo
+		echo "${underline}Netsniff-NG${normal}:"
+		for i in /var/log/nsm/*/netsniff-ng.log; do
+			if grep -q -e "-[1-9]*)" "$i"; then
+				RCVD=$(cat $i | tr ').(' '\n' |grep "^+" | sed 's|+||g' | sed 's|/-| |g' |awk '{print $1}' | paste -sd+ - | bc)
+				DRPD=$(cat $i | tr ').(' '\n' |grep "^+" | sed 's|+||g' | sed 's|/-| |g' |awk '{print $2}' | paste -sd+ - | bc)
+				let TOT_PKTS=RCVD+DRPD
+				DRPD_PCT=`echo 'scale=2; '$DRPD'*100/'$TOT_PKTS''|bc`
+				echo
+				echo Percentage of packets dropped:
+				echo
+				echo " $i -- $DRPD_PCT"
+				echo
+			else
+				echo
+				echo "0 Loss"
+	                fi
 		done
-        fi
+	fi
 	echo
 	header "PF_RING"
         cat /proc/net/pf_ring/info
