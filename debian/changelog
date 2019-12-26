@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion139) xenial; urgency=medium
+
+  * update copyright 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 26 Dec 2019 15:35:08 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion138) xenial; urgency=medium
 
   * securityonion-sostat: migrate from Bro to Zeek #1692 

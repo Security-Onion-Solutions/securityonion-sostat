@@ -130,3 +130,4 @@ securityonion-sostat:-calculate-suricata-packet-loss-as-percentage-Security-Onio
 improve-suricata-packet-loss-check
 securityonion-sostat:-improve-netsniff-packet-loss-calculation-Security-Onion-Solutionssecurity-onion#1673
 securityonion-sostat:-migrate-from-Bro-to-Zeek-#1692
+update-copyright
