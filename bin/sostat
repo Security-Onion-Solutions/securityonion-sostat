@@ -234,7 +234,7 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	echo "-------------------------------------------------------------------------"
 	echo
         TMP=`mktemp`
-        su sguil -c '/opt/zeek/bin/zeekctl netstats 2>&1 | grep -v "Warning: ZeekControl plugin uses legacy BroControl API. Use" | grep -v "'import ZeekControl.plugin' instead of 'import BroControl.plugin'" ' > $TMP
+        su sguil -c '/opt/zeek/bin/zeekctl netstats 2>&1 | grep -v "Warning: ZeekControl plugin uses legacy BroControl API. Use" | grep -v "import BroControl.plugin" | grep -v "^$" ' > $TMP
         if [ -s $TMP ]; then
                 echo "${underline}Zeek${normal}:"
                 echo
