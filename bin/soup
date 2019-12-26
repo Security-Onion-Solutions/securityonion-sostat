@@ -40,7 +40,7 @@ KEY="/root/.ssh/securityonion"
 # Should we restart Docker containers at the end?
 RESTART_CONTAINERS=no
 
-# If Snort, Suricata, or Bro are updated, remind user to verify config at end
+# If Snort, Suricata, or Zeek (Bro) are updated, remind user to verify config at end
 SNORT=no
 SURICATA=no
 BRO=no
@@ -328,7 +328,7 @@ echo $UPDATES | grep securityonion-snort >/dev/null && SNORT=yes
 # Is there a Suricata update available?
 echo $UPDATES | grep securityonion-suricata >/dev/null && SURICATA=yes
 
-# Is there a Bro update available?
+# Is there a Zeek update available?
 echo $UPDATES | grep securityonion-bro >/dev/null && BRO=yes
 
 # Is there a Wazuh update available?
@@ -384,10 +384,10 @@ if [ -f /etc/nsm/sensortab ] && [ $(grep -v "^#" /etc/nsm/sensortab | wc -l) -gt
 		echo "Suricata has been updated.  Please review your suricata.yaml file(s) and manually re-apply any local customizations.  You may also need to run rule-update to update your NIDS rules."
 	fi
 
-	# If Bro updated, remind user to review Bro config
+	# If Zeek updated, remind user to review Zeek config
 	if [ $BRO == "yes" ]; then
 		echo
-		echo "Bro has been updated.  Please review your Bro configuration and manually re-apply any local customizations."
+		echo "Zeek has been updated.  Please review your Zeek configuration and manually re-apply any local customizations."
 	fi
 fi
 

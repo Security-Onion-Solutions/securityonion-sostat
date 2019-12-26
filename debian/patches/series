@@ -129,3 +129,4 @@ securityonion-sostat:-check-for-syslog-ng-drops-Security-Onion-Solutionssecurity
 securityonion-sostat:-calculate-suricata-packet-loss-as-percentage-Security-Onion-Solutionssecurity-onion#1663
 improve-suricata-packet-loss-check
 securityonion-sostat:-improve-netsniff-packet-loss-calculation-Security-Onion-Solutionssecurity-onion#1673
+securityonion-sostat:-migrate-from-Bro-to-Zeek-#1692

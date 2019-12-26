@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion138) xenial; urgency=medium
+
+  * securityonion-sostat: migrate from Bro to Zeek #1692 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 26 Dec 2019 15:32:31 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion137) xenial; urgency=medium
 
   * securityonion-sostat: improve netsniff packet loss calculation Security-Onion-Solutions/security-onion#1673 

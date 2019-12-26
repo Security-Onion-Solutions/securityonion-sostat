@@ -234,11 +234,11 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	echo "-------------------------------------------------------------------------"
 	echo
         TMP=`mktemp`
-        su sguil -c '/opt/bro/bin/broctl netstats' > $TMP
+        su sguil -c '/opt/zeek/bin/zeekctl netstats' > $TMP
         if [ -s $TMP ]; then
-                echo "${underline}Bro${normal}:"
+                echo "${underline}Zeek${normal}:"
                 echo
-		echo -n "Average packet loss as percent across all Bro workers: "
+		echo -n "Average packet loss as percent across all Zeek workers: "
                 cat $TMP | \
 		sed 's/[a-z]*=//g' | \
 		awk '{ drop += $4 ; link += $5 } \
@@ -246,20 +246,20 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
                 echo
                 cat $TMP
                 echo
-                if [ -f /nsm/bro/logs/current/capture_loss.log ]; then
+                if [ -f /nsm/zeek/logs/current/capture_loss.log ]; then
 			echo "Capture Loss:"
 			echo
-			# If Bro is writing logs in json format, then parse with jq
-			if grep -q '^@load json-logs' /opt/bro/share/bro/site/local.bro; then
-                                CL_LOG="/nsm/bro/logs/current/capture_loss.log"
+			# If Zeek is writing logs in json format, then parse with jq
+			if grep -q '^@load json-logs' /opt/zeek/share/zeek/site/local.zeek; then
+                                CL_LOG="/nsm/zeek/logs/current/capture_loss.log"
                                 PERCENT_LOST=$(cat $CL_LOG | jq .percent_lost | sort -u)
                                 for i in $(cat $CL_LOG | jq .peer | sort -u); do
                                         PEER=$(echo $i | sed s'/"//g')
                                         echo "$PEER: $PERCENT_LOST"
                                 done
-			# If Bro is writing logs in tsv format, then parse with bro-cut
+			# If Zeek is writing logs in tsv format, then parse with zeek-cut
                         else
-                                echo "`/opt/bro/bin/bro-cut peer percent_lost < /nsm/bro/logs/current/capture_loss.log | sort -u`"
+                                echo "`/opt/zeek/bin/zeek-cut peer percent_lost < /nsm/zeek/logs/current/capture_loss.log | sort -u`"
                         fi
 			echo
 			echo "If you are seeing capture loss without dropped packets, this"
@@ -304,8 +304,8 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 		cd ->/dev/null
 		echo
 	done
-	DAYS=`ls /nsm/bro/logs/ | grep -v current | grep -v stats | wc -l`
-	echo "/nsm/bro/logs/ - $DAYS days"; cd /nsm/bro/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
+	DAYS=`ls /nsm/zeek/logs/ | grep -v current | grep -v stats | wc -l`
+	echo "/nsm/zeek/logs/ - $DAYS days"; cd /nsm/zeek/logs/; du --max-depth=1 -h |sort -k2; cd ->/dev/null
 fi
 if [ -d /var/lib/mysql/securityonion_db ]; then
 	echo
