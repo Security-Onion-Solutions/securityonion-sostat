@@ -133,3 +133,4 @@ securityonion-sostat:-migrate-from-Bro-to-Zeek-#1692
 update-copyright
 clean-up-zeek-warnings
 more-zeek-cleanup
+sostat:-don't-show-pf_ring-output-if-af_packet-in-use-#1623
