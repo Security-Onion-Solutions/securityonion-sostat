@@ -178,7 +178,7 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	done
 	echo "-------------------------------------------------------------------------"
 	echo
-	if [ -f /proc/net/pf_ring/info ]; then
+	if [ -f /proc/net/pf_ring/info ] && ls /proc/net/pf_ring/*-* >/dev/null 2>&1; then
 		echo "${underline}pf_ring${normal}:"
 		for i in /proc/net/pf_ring/*-* ; do
 			echo
