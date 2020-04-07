@@ -134,3 +134,4 @@ update-copyright
 clean-up-zeek-warnings
 more-zeek-cleanup
 sostat:-don't-show-pf_ring-output-if-af_packet-in-use-#1623
+sostat:-don't-show-pf_ring-output-if-af_packet-in-use-#1623-again
