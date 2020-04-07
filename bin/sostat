@@ -176,26 +176,30 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	for IFACE in $INTERFACES;do
 		echo "$IFACE:" && echo && echo `ifconfig $IFACE |awk '/dropped:/ {print $1,$2,$4}'` && echo ""
 	done
-	echo "-------------------------------------------------------------------------"
-	echo
-	if [ -f /proc/net/pf_ring/info ] && ls /proc/net/pf_ring/*-* >/dev/null 2>&1; then
+	# sostat: don't show pf_ring output if af_packet in use #1623
+	# https://github.com/Security-Onion-Solutions/security-onion/issues/1623
+	if [ -f /proc/net/pf_ring/info ] && [ $(grep "Total rings" /proc/net/pf_ring/info | awk '{print $4}') -gt 0 ]; then
+		echo "-------------------------------------------------------------------------"
+		echo
 		echo "${underline}pf_ring${normal}:"
-		for i in /proc/net/pf_ring/*-* ; do
-			echo
-			APP_NAME=`grep "Appl. Name" $i | awk '{print $4}'`
-                        PF_TOT_IN=`grep "Tot Packets" $i | awk '{print $4}'`
-                        PF_TOT_LOST=`grep "Tot Pkt Lost" $i | awk '{print $5}'`
-                        if [[ -n $PF_TOT_LOST ]] && [[ $PF_TOT_LOST -gt 0 ]] ; then
-                                PF_PERCENT_LOST=$(echo "scale=2 ; $PF_TOT_LOST * 10/$PF_TOT_IN * 10" | bc)
-                        else
-                        	PF_PERCENT_LOST=0
-                        fi
-                        echo "Appl. Name: $APP_NAME"
-			echo "Tot Packets: $PF_TOT_IN"
-			echo "Tot Pkt Lost: $PF_TOT_LOST"
-			echo "Loss as a percentage: $PF_PERCENT_LOST"
-			echo
-		done
+		echo
+		if [ $(ls /proc/net/pf_ring/ | wc -l) -gt 0 ]; then
+			for i in /proc/net/pf_ring/*-* ; do
+				APP_NAME=`grep "Appl. Name" $i | awk '{print $4}'`
+                        	PF_TOT_IN=`grep "Tot Packets" $i | awk '{print $4}'`
+	                        PF_TOT_LOST=`grep "Tot Pkt Lost" $i | awk '{print $5}'`
+        	                if [[ -n $PF_TOT_LOST ]] && [[ $PF_TOT_LOST -gt 0 ]] ; then
+                	                PF_PERCENT_LOST=$(echo "scale=2 ; $PF_TOT_LOST * 10/$PF_TOT_IN * 10" | bc)
+	                        else
+        	                	PF_PERCENT_LOST=0
+                	        fi
+                        	echo "Appl. Name: $APP_NAME"
+				echo "Tot Packets: $PF_TOT_IN"
+				echo "Tot Pkt Lost: $PF_TOT_LOST"
+				echo "Loss as a percentage: $PF_PERCENT_LOST"
+				echo
+			done
+		fi
 	fi
 	echo "-------------------------------------------------------------------------"
 	echo
