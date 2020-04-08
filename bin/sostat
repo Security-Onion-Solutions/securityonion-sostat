@@ -295,9 +295,13 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 	                fi
 		done
 	fi
-	echo
-	header "PF_RING"
-        cat /proc/net/pf_ring/info
+	# sostat: don't show pf_ring output if af_packet in use #1623
+	# https://github.com/Security-Onion-Solutions/security-onion/issues/1623
+	if [ -f /proc/net/pf_ring/info ] && [ $(grep "Total rings" /proc/net/pf_ring/info | awk '{print $4}') -gt 0 ]; then
+		echo
+		header "PF_RING"
+        	cat /proc/net/pf_ring/info
+	fi
 	echo
 	header "Log Archive"
 	for i in /nsm/sensor_data/*; do
