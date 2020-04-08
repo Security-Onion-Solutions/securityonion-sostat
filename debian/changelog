@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion144) xenial; urgency=medium
+
+  * sostat: don't show pf_ring output if af_packet in use #1623 
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 08 Apr 2020 06:10:36 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion143) xenial; urgency=medium
 
   * sostat: don't show pf_ring output if af_packet in use #1623 
