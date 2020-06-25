@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion145) xenial; urgency=medium
+
+  * sostat: fix Suricata packet loss calculation #1774 
+
+ -- Doug Burks <doug.burks@gmail.com>  Thu, 25 Jun 2020 17:44:53 -0400
+
 securityonion-sostat (20120722-0ubuntu0securityonion144) xenial; urgency=medium
 
   * sostat: don't show pf_ring output if af_packet in use #1623 

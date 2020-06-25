@@ -217,7 +217,14 @@ if [ -d /nsm/sensor_data ] && [ $NUM_INTERFACES -gt 0 ]; then
 			if [ $( echo "$LATEST_STATS" | grep -c drop ) -ne 0 ]; then
 				SURI_CAPTURE=$(echo "$LATEST_STATS" | grep -m1 "capture.kernel_packets" | awk '{print $5}')
 				SURI_DROPS=$(echo "$LATEST_STATS" | grep -m1 "capture.kernel_drops" | awk '{print $5}')
-				SURI_PCT=$(echo "scale=2 ; $SURI_DROPS * 10/$SURI_CAPTURE * 10" | bc)
+				SENSOR=$(echo $i | cut -d\/ -f4)
+				source /etc/nsm/$SENSOR/sensor.conf
+				if [ "$SURICATA_CAPTURE" = "af-packet" ]; then
+					let SURI_TOTAL=SURI_CAPTURE+SURI_DROPS
+				else
+					let SURI_TOTAL=SURI_CAPTURE
+				fi
+				SURI_PCT=$(echo "scale=2 ; $SURI_DROPS * 10/$SURI_TOTAL * 10" | bc)
 				echo $SURI_PCT% Loss
 			else
 				echo "No packet drops reported."
