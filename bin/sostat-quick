@@ -65,7 +65,7 @@ header_single "                        Security Onion Quick Compliance Check v1.
 
 echo "Collecting Security Onion Setup ...."
 echo -e "\nPlease be patient as this can take a few minutes to complete ...."
-echo "${yellow}The Security Onion Documentation can be referenced at https://securityonion.net/docs${normal}"
+echo "${yellow}The Security Onion Documentation can be referenced at https://docs.securityonion.net/en/16.04/${normal}"
 echo -e "\nNow that your Security Onion Installation has been completed, you will now need to fine tune its settings to your Network Requirements"
 echo "Fine Tuning will take several weeks of your time, however; in the end it will provide you with all of the tools to protect your network environment."
 echo -e "\nThis 'Quick' report will help to identify the ${red}' Most Common ' ${normal}issues and is not intended to be a ' Complete ' report of your installation. "
@@ -100,10 +100,10 @@ echo "$data" | grep -A 28 'PID USER'
 next
 
 
-header_top "The Server/Sensor memory is listed below. Please compare to the recommended specs at https://securityonion.net/docs/Hardware."
+header_top "The Server/Sensor memory is listed below. Please compare to the recommended specs at https://docs.securityonion.net/en/16.04/Hardware."
 header_mid "If you are maxing out the SO Installations memory, this can cause significant issues with your installation."
 header_mid "Usage of SWAP memory can cause significant performance issues"
-url_bot "Help URL: https://securityonion.net/docs/Hardware"
+url_bot "Help URL: https://docs.securityonion.net/en/16.04/Hardware"
 echo
 echo "$data" | grep 'Mem:'
 echo "$data" | grep 'Swap:'
@@ -111,8 +111,8 @@ next
 
 
 header_top "Check to see the you have sufficent Hard Drive Space"
-url_top "Help URL: https://securityonion.net/docs/FAQ   ${normal}' Why is my disk filling up? '${yellow}"
-url_bot "Help URL: https://securityonion.net/docs/Hardware"
+url_top "Help URL: https://docs.securityonion.net/en/16.04/FAQ   ${normal}' Why is my disk filling up? '${yellow}"
+url_bot "Help URL: https://docs.securityonion.net/en/16.04/Hardware"
 echo
 df -h
 next
@@ -120,7 +120,7 @@ next
 header_top "Check Link Statistics"
 header_mid "Look at the interfaces below to see if you are getting traffic on your monitoring interfaces"
 header_mid "You can also run ${normal}' tcpdump -nnvvAi {monitoring interface address} '${red}, To help diagnose network issues."
-url_bot "Help URL: https://securityonion.net/docs/NetworkConfiguration"
+url_bot "Help URL: https://docs.securityonion.net/en/16.04/NetworkConfiguration"
 echo
 ip -s -s link
 next
@@ -130,7 +130,7 @@ header_top "If The number of enabled rules is over 12,000, You should consider d
 header_mid "Too many rules enabled and can lead to performance issues.  You should disable any rules you don't need."
 header_mid "If you do not see any ${normal}' Enabled Rules '${red}, you can run ${normal}' sudo rule-update '${red}"
 header_mid "If you receive a '504' error on sudo rule-update, it could be an issue with the SNORT website or an oinkcode issue."
-url_bot "Help URL: https://securityonion.net/docs/ManagingAlerts"
+url_bot "Help URL: https://docs.securityonion.net/en/16.04/ManagingAlerts"
 echo
 echo "$data" | grep -m 1 'Enabled Rules:'
 next
@@ -155,7 +155,7 @@ header_mid "  lower your uncategorized events in sguild with the following comma
 header_mid "* If you suppressed in threshold.conf correctly and restarted services but the events kept coming in, it's possible that barnyard2 was still"
 header_mid "  processing a backlog of events that would've stopped whenever barnyard2 was fully caught up."
 
-url_top "Help URL: https://securityonion.net/docs/ManagingAlerts"
+url_top "Help URL: https://docs.securityonion.net/en/16.04/ManagingAlerts"
 url_bot "Help URL: http://taosecurity.blogspot.com/2013/02/recovering-from-suricata-gone-wild.html"
 echo
 echo "$data" | grep -A 1 COUNT
@@ -177,7 +177,7 @@ header_top "Check to see if Snort/Suricata is dropping traffic"
 header_mid "If you are seeing packet drops, this can be related to several possibilities."
 header_mid "Underpowered Box (CPU and/or Memory), Failed Services, Too many Enabled Rules and several others..."
 header_mid "Follow all of the comments/recommendations in this report to determine the root cause."
-url_bot "Help URL: https://securityonion.net/docs/ManagingAlerts"
+url_bot "Help URL: https://docs.securityonion.net/en/16.04/ManagingAlerts"
 echo
 if [ "$ENGINE" = "suricata" ]; then
         for i in /nsm/sensor_data/*/stats.log; do
@@ -219,7 +219,7 @@ header_mid "The default firewall configuration tool for Ubuntu is ufw. By defaul
 header_mid "You may want to restrict ports to only accepting connections from a subset of IP addresses."
 header_mid "NOTE! Before attempting any firewall changes, you should always ensure you have a backup plan should you accidentally block your own connection."
 header_mid "So make sure that you have DRAC/KVM/physical or some other form of access."
-url_bot "https://securityonion.net/docs/Firewall"
+url_bot "https://docs.securityonion.net/en/16.04/Firewall"
 echo "First 28 lines of UFW are shown. If you have more than 28 lines in UFW, please run ${red}' sudo ufw status '${normal} after this report for a complete output."
 sudo ufw status | head -n 28
 next

@@ -698,7 +698,7 @@ if [ -f /etc/timezone ] && ! grep "Etc/UTC" /etc/timezone >/dev/null 2>&1; then
 	header "Time Zone"
 	echo "WARNING! Timezone is NOT set to UTC!"
 	echo "Please see:"
-	echo "https://securityonion.net/docs/TimeZones"
+	echo "https://docs.securityonion.net/en/16.04/timezones.html"
 fi
 
 FILE="/etc/os-release"

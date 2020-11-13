@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion146) xenial; urgency=medium
+
+  * Update links to documentation Security-Onion-Solutions/security-onion#1794 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 13 Nov 2020 10:12:55 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion145) xenial; urgency=medium
 
   * sostat: fix Suricata packet loss calculation #1774 
