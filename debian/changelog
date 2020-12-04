@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion147) xenial; urgency=medium
+
+  * soup: add EOL reminder Security-Onion-Solutions/security-onion#1803 
+
+ -- Doug Burks <doug.burks@gmail.com>  Fri, 04 Dec 2020 16:08:07 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion146) xenial; urgency=medium
 
   * Update links to documentation Security-Onion-Solutions/security-onion#1794 

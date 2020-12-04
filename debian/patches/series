@@ -138,3 +138,4 @@ sostat:-don't-show-pf_ring-output-if-af_packet-in-use-#1623-again
 sostat:-don't-show-pf_ring-output-if-af_packet-in-use-#1623-additional-fix
 sostat:-fix-Suricata-packet-loss-calculation-#1774
 Update-links-to-documentation-Security-Onion-Solutionssecurity-onion#1794
+soup:-add-EOL-reminder-Security-Onion-Solutionssecurity-onion#1803

@@ -131,6 +131,14 @@ if [ $SKIP -ne 1 ]; then
 	echo
 	echo "SOUP - Security Onion UPdater"
 	echo
+	echo $BANNER
+	echo "PLEASE NOTE!"
+	echo "Ubuntu 16.04 reaches EOL in April 2021 and so therefore Security Onion 16.04 does as well."
+	echo "We will not provide any support for Security Onion 16.04 after April 16, 2021."
+	echo "Please plan to upgrade or replace any existing 16.04 systems before then."
+	echo "https://docs.securityonion.net/en/16.04/eol.html"
+	echo $BANNER
+	echo
 	echo "soup will automatically install all available updates"
 	echo "and remove any old kernels (keeping at least two kernels)."
 	echo
