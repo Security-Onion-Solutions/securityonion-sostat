@@ -1,3 +1,9 @@
+securityonion-sostat (20120722-0ubuntu0securityonion148) xenial; urgency=medium
+
+  * soup: work around Docker change Security-Onion-Solutions/security-onion#1804
+
+ -- Doug Burks <doug.burks@gmail.com>  Wed, 09 Dec 2020 12:35:08 -0500
+
 securityonion-sostat (20120722-0ubuntu0securityonion147) xenial; urgency=medium
 
   * soup: add EOL reminder Security-Onion-Solutions/security-onion#1803 

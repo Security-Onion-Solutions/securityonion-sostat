@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if grep -q "After=network-online.target firewalld.service containerd.service multi-user.target" /lib/systemd/system/docker.service; then
+	cp /lib/systemd/system/docker.service /etc/systemd/system/
+	sed -i 's|After=network-online.target firewalld.service containerd.service multi-user.target|After=network-online.target firewalld.service containerd.service|g' /etc/systemd/system/docker.service
+fi
